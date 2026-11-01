@@ -107,13 +107,39 @@ const ICONS = {
     },
     "gigit": {
       label: "JANGAN GIGIT",
-      svg: `<img class="warning-icon-svg" src="icons/JANGAN GIGIT.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JANGAN GIGIT">`
+      svg: `<svg class="warning-icon-svg" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="56" height="56" rx="8" fill="#FFFFFF" stroke="#000000" stroke-width="2.5"/>
+        <!-- Gigi Atas -->
+        <path d="M 16 15 L 16 23 L 23 23 L 23 15 M 23 23 L 30 23 L 30 15 M 30 23 L 37 23 L 37 15 M 37 23 L 44 23 L 44 15" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round"/>
+        <line x1="14" y1="15" x2="46" y2="15" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Gigi Bawah -->
+        <path d="M 16 45 L 16 37 L 23 37 L 23 45 M 23 37 L 30 37 L 30 45 M 30 37 L 37 37 L 37 45 M 37 37 L 44 37 L 44 45" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round"/>
+        <line x1="14" y1="45" x2="46" y2="45" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Tablet Ubat Di Tengah -->
+        <ellipse cx="30" cy="30" rx="9" ry="5.5" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
+        <line x1="30" y1="24.5" x2="30" y2="35.5" stroke="#000000" stroke-width="1.5"/>
+        <!-- Tanda Larangan Merah -->
+        <circle cx="30" cy="30" r="22" fill="none" stroke="#DC2626" stroke-width="3"/>
+        <line x1="14.5" y1="14.5" x2="45.5" y2="45.5" stroke="#DC2626" stroke-width="3"/>
+      </svg>`
     },
     "lidah": {
       label: "BAWAH LIDAH",
-      svg: `<svg class="warning-icon-svg" viewBox="0 0 951.6 989.4" xmlns="http://www.w3.org/2000/svg">
-        <path d="M951.4,107.5C951.2,42.6,909,0,846.3,0,597.7.3,349.2.6,100.7,1.3,59.1,1.4,29.1,21.6,10.4,58.7,2.3,74.8,0,92.1,0,109.9c0,129.1,1.9,258.1,1.9,387.2s-.2,261.7,0,392.6c.1,58.1,42.7,99.8,100.5,99.7,108.6-.2,217.2-.5,325.8-.6,142.1-.1,284.1,0,426.2-.1,45.4,0,82.7-29.3,92.9-73.7,3.3-14.2,3.8-29.2,3.8-43.8.3-156,.2-312.1.2-468.1,0-98.5.4-197,0-295.5ZM918.4,339c0,52.8,0,105.7,0,158.5h-.4c0,129.8-.3,259.6.2,389.4.1,33.3-24.7,69.9-68.8,69.7-187.4-.6-374.8-.1-562.2,0-60.8,0-121.6.3-182.4.2-34.3,0-59.4-18.1-67.1-48-2-7.9-2.9-16.3-3-24.5-.5-173.7-.7-347.3-1.1-521-.2-85.2-.8-170.4-.8-255.6,0-28.9,10.2-53.1,37.6-66.4,9-4.4,19.9-7,30-7,182.7-.6,365.4-.6,548.1-.9,65.1,0,130.2-.5,195.3-.8,46-.1,74.4,27.4,74.5,73.4.3,77.7,0,155.3,0,233Z"/>
-        <path d="M765.5,524.6c-1.1,45.6-13.8,118.2-40.1,188.1-32.7,86.9-95.1,140.7-185,163.2-62.6,15.7-124.8,13.5-186.3-4.9-86.6-25.9-142.4-83.5-173-168-28.4-78.5-40.2-159.3-38.3-242.2,1.6-70.1,12.6-138.9,41-203.6,23.5-53.7,59-97.9,112.4-124.8,36.6-18.4,74.4-25.4,114-7.2,27,12.4,55,16.1,83.3,2.3,52.6-25.6,100.5-11.4,144.6,20.1,49,35.1,79.7,83.9,97.9,141,21.4,67.3,31.6,136.3,29.4,235.9ZM165.9,461.6c-.6,85.4,11.4,165.8,41,243.4,20.1,52.7,52.5,94.9,102.5,121.7,75.8,40.7,155.9,45.1,237.5,22.8,67.7-18.5,118.9-59.2,147.6-124,12.7-28.7,22.8-59.1,30.1-89.6,25.4-106.8,24.4-213.5-4.5-319.8-15.7-57.7-42.5-108.5-90.9-145.2-35.8-27.2-75.8-44-120.4-23.6-37.3,17-73.1,15.9-109.3-.2-26.6-11.9-52.7-10-78.4.7-55.8,23.2-92.6,65.8-116,120.1-27,62.5-36.7,128.8-39.1,193.7Z"/>
+      svg: `<svg class="warning-icon-svg" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="56" height="56" rx="8" fill="#FFFFFF" stroke="#000000" stroke-width="2.5"/>
+        <!-- Bentuk Mulut Terbuka -->
+        <path d="M 10 30 C 10 16, 50 16, 50 30 C 50 46, 10 46, 10 30 Z" fill="#F8FAFC" stroke="#000000" stroke-width="2.5"/>
+        <!-- Gigi Atas -->
+        <rect x="20" y="20" width="20" height="6" rx="2" fill="#FFFFFF" stroke="#000000" stroke-width="1.8"/>
+        <line x1="26" y1="20" x2="26" y2="26" stroke="#000000" stroke-width="1.2"/>
+        <line x1="33" y1="20" x2="33" y2="26" stroke="#000000" stroke-width="1.2"/>
+        <!-- Lidah Terangkat ke Atas -->
+        <path d="M 18 36 C 22 28, 38 28, 42 36 C 36 34, 24 34, 18 36 Z" fill="#FECDD3" stroke="#000000" stroke-width="2"/>
+        <!-- Tablet Ubat Terletak Tepat di Bawah Lidah -->
+        <circle cx="30" cy="41" r="4.5" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
+        <line x1="27.5" y1="41" x2="32.5" y2="41" stroke="#000000" stroke-width="1.2"/>
+        <!-- Anak Panah Merah Menunjuk ke Bawah Lidah -->
+        <path d="M 30 26 L 30 33 M 28 31 L 30 33.5 L 32 31" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`
     },
     "kanak": {
@@ -138,7 +164,24 @@ const ICONS = {
     },
     "kunyah": {
       label: "JANGAN KUNYAH",
-      svg: `<img class="warning-icon-svg" src="icons/JANGAN GIGIT.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JANGAN KUNYAH">`
+      svg: `<svg class="warning-icon-svg" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="56" height="56" rx="8" fill="#FFFFFF" stroke="#000000" stroke-width="2.5"/>
+        <!-- Tablet Ubat Retak/Hancur -->
+        <g stroke="#000000" stroke-width="2" fill="#FFFFFF" stroke-linejoin="round">
+          <!-- Separuh Kiri Retak -->
+          <path d="M 28 17 A 12 12 0 0 0 17 31 C 17 37, 21 41, 26 43 L 28 37 L 25 33 L 29 27 Z"/>
+          <!-- Separuh Kanan Retak -->
+          <path d="M 32 17 A 12 12 0 0 1 43 31 C 43 37, 39 41, 34 43 L 32 37 L 35 33 L 31 27 Z"/>
+        </g>
+        <!-- Serpihan Ubat Hancur -->
+        <circle cx="15" cy="22" r="1.8" fill="#000000"/>
+        <circle cx="45" cy="23" r="1.8" fill="#000000"/>
+        <circle cx="30" cy="46" r="1.8" fill="#000000"/>
+        <circle cx="30" cy="14" r="1.5" fill="#000000"/>
+        <!-- Tanda Larangan Merah (Jangan Hancurkan / Kunyah) -->
+        <circle cx="30" cy="30" r="22" fill="none" stroke="#DC2626" stroke-width="3"/>
+        <line x1="14.5" y1="14.5" x2="45.5" y2="45.5" stroke="#DC2626" stroke-width="3"/>
+      </svg>`
     }
   }
 };
@@ -1552,12 +1595,12 @@ function updatePreview() {
     const captions = {
       "mengantuk": "BOLEH MENYEBABKAN MENGANTUK",
       "cahaya": "JAUHKAN DARI CAHAYA MATAHARI",
-      "gigit": "JANGAN DIGIGIT / DIKUNYAH",
+      "gigit": "JANGAN DIGIGIT",
       "lidah": "LETAK DI BAWAH LIDAH",
       "kanak": "JAUHKAN DARI KANAK-KANAK",
       "potong": "JANGAN DIPOTONG",
       "sejuk": "SIMPAN DI PETI SEJUK",
-      "kunyah": "JANGAN DIGIGIT / DIKUNYAH"
+      "kunyah": "JANGAN DIKUNYAH (TELAN BULAT)"
     };
     
     wItem.innerHTML = `
