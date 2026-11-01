@@ -1,364 +1,167 @@
 // ==========================================================================
-// SIMFA FIREBASE CLOUD AUTHENTICATION & CENTRALIZED AUDIT LOG MODULE
-// ==========================================================================
-
-// Official Firebase Project Configuration for simfa-pkd-sik
-const firebaseConfig = {
-  apiKey: "AIzaSyDrHmm1uYXcne6vGGhsIb3sULdmvUKn8_w",
-  authDomain: "simfa-pkd-sik.firebaseapp.com",
-  projectId: "simfa-pkd-sik",
-  storageBucket: "simfa-pkd-sik.firebasestorage.app",
-  messagingSenderId: "443029358920",
-  appId: "1:443029358920:web:e06c19ca703358cbf8cb7d",
-  measurementId: "G-X1NW4YM9F1"
-};
-
-let isFirebaseInitialized = false;
-
-// Initialize Firebase if SDK is loaded
-try {
-  if (typeof firebase !== 'undefined' && firebaseConfig.apiKey && !firebaseConfig.apiKey.includes('YOUR_FIREBASE')) {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    isFirebaseInitialized = true;
-    console.log("[SiMFa Cloud] Berjaya disambungkan ke Firebase Project:", firebaseConfig.projectId);
-  } else {
-    console.log("[SiMFa Cloud] Beroperasi dalam mod sandaran LocalStorage.");
-  }
-} catch (err) {
-  console.warn("[SiMFa Cloud] Firebase init error, guna mod sandaran:", err);
-}
-
-// --------------------------------------------------------------------------
-// 1. LOCAL STORAGE BACKUP HELPERS
-// --------------------------------------------------------------------------
-function getLocalUsers() {
-  const users = JSON.parse(localStorage.getItem('simfa_registered_users') || '[]');
-  const defaults = [
-    { email: 'sadiq@moh.gov', password: '123' },
-    { email: 'sadiq@moh.gov', password: 'Password123!' },
-    { email: 'sadiq@moh.gov.my', password: '123' },
-    { email: 'sadiq@moh.gov.my', password: 'Password123!' },
-    { email: 'sadiqrashid25@gmail.com', password: '123' },
-    { email: 'sadiqrashid25@gmail.com', password: 'Password123!' },
-    { email: 'test_admin@moh.gov.my', password: 'Password123!' }
-  ];
-  defaults.forEach(d => {
-    if (!users.some(u => u.email.toLowerCase() === d.email.toLowerCase() && u.password === d.password)) {
-      users.push(d);
-    }
-  });
-  localStorage.setItem('simfa_registered_users', JSON.stringify(users));
-  return users;
-}
-
-function saveLocalUser(email, password) {
-  const users = getLocalUsers();
-  const lowerEmail = email.toLowerCase().trim();
-  const existingIdx = users.findIndex(u => u.email.toLowerCase() === lowerEmail);
-  if (existingIdx >= 0) {
-    users[existingIdx].password = password;
-  } else {
-    users.push({ email: lowerEmail, password: password });
-  }
-  localStorage.setItem('simfa_registered_users', JSON.stringify(users));
-}
-
-function simfaUpdateUserPassword(email, newPassword) {
-  const lowerEmail = email.toLowerCase().trim();
-  const users = getLocalUsers();
-  const idx = users.findIndex(u => u.email.toLowerCase() === lowerEmail);
-  if (idx >= 0) {
-    users[idx].password = newPassword;
-  } else {
-    users.push({ email: lowerEmail, password: newPassword });
-  }
-  localStorage.setItem('simfa_registered_users', JSON.stringify(users));
-  return { success: true, message: `Kata laluan untuk ${lowerEmail} berjaya dikemas kini.` };
-}
-
-// --------------------------------------------------------------------------
-// 1B. OTP GENERATION & VERIFICATION (UNTUK PENDAFTARAN PEGAWAI)
-// --------------------------------------------------------------------------
-function simfaGenerateOTP(email) {
-  const cleanEmail = email.toLowerCase().trim();
-  const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiry = Date.now() + 5 * 60 * 1000; // 5 minit sah
-
-  const activeOtps = JSON.parse(localStorage.getItem('simfa_active_otps') || '{}');
-  activeOtps[cleanEmail] = { code: otpCode, expiry: expiry };
-  localStorage.setItem('simfa_active_otps', JSON.stringify(activeOtps));
-
-  console.log(`[SiMFa OTP] Kod OTP dijana untuk ${cleanEmail}: ${otpCode}`);
-  return otpCode;
-}
-
-function simfaVerifyOTP(email, inputCode) {
-  const cleanEmail = email.toLowerCase().trim();
-  const activeOtps = JSON.parse(localStorage.getItem('simfa_active_otps') || '{}');
-  const record = activeOtps[cleanEmail];
-
-  if (!record) {
-    return { success: false, error: '⚠️ Tiada rekod OTP atau sesi telah tamat. Sila klik Jana Semula.' };
-  }
-  if (Date.now() > record.expiry) {
-    delete activeOtps[cleanEmail];
-    localStorage.setItem('simfa_active_otps', JSON.stringify(activeOtps));
-    return { success: false, error: '⏰ Kod OTP telah tamat tempoh (5 minit). Sila klik Jana Semula.' };
-  }
-  if (record.code !== inputCode.trim()) {
-    return { success: false, error: '❌ Kod OTP tidak tepat. Sila semak semula 6-digit nombor anda.' };
-  }
-
-  delete activeOtps[cleanEmail];
-  localStorage.setItem('simfa_active_otps', JSON.stringify(activeOtps));
-  return { success: true };
-}
-
-// --------------------------------------------------------------------------
-// 2. AUTHENTICATION (FIREBASE CLOUD AUTH + FIRESTORE DATABASE)
-// --------------------------------------------------------------------------
-async function simfaRegisterUser(email, password) {
-  const cleanEmail = email.toLowerCase().trim();
-  saveLocalUser(cleanEmail, password);
-
-  // Cloud Registration: Firebase Auth & Cloud Firestore
-  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.auth) {
-    try {
-      const userCredential = await firebase.auth().createUserWithEmailAndPassword(cleanEmail, password);
-      console.log("[Firebase Cloud] Pegawai baru berjaya didaftarkan di Firebase:", cleanEmail);
-
-      // Simpan profil pegawai ke Cloud Firestore
-      if (firebase.firestore) {
-        await firebase.firestore().collection('users').doc(cleanEmail).set({
-          email: cleanEmail,
-          uid: userCredential.user.uid,
-          registeredAt: new Date().toISOString(),
-          facility: "PKD Sik / Fasiliti",
-          role: "Pegawai Farmasi / Kesihatan"
-        }, { merge: true });
-      }
-
-      await simfaRecordAuditLog(cleanEmail, 'Daftar Akaun Baru (Cloud)');
-      return { success: true, email: cleanEmail };
-    } catch (err) {
-      console.warn("[Firebase Register Error / Note]:", err.code, err.message);
-      if (err.code === 'auth/email-already-in-use') {
-        // Akaun sudah ada di Firebase
-        return { success: true, email: cleanEmail };
-      }
-      return { success: false, error: err.message };
-    }
-  }
-
-  return { success: true, email: cleanEmail };
-}
-
-async function simfaLoginUser(email, password) {
-  const cleanEmail = email.toLowerCase().trim();
-  const inputPass = String(password).trim();
-  
-  // Firebase Auth requires min 6 chars. If user enters 123, also try Password123!
-  const candidatePasswords = [inputPass];
-  if (inputPass === '123') {
-    candidatePasswords.push('Password123!');
-  } else if (inputPass === 'Password123!') {
-    candidatePasswords.push('123');
-  }
-
-  // 1. Cuba Cloud Login via Firebase Auth
-  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.auth) {
-    for (const p of candidatePasswords) {
-      if (p.length < 6) continue; // Firebase will error on < 6
-      try {
-        const userCredential = await firebase.auth().signInWithEmailAndPassword(cleanEmail, p);
-        console.log("[Firebase Cloud] Log masuk berjaya:", cleanEmail);
-        await simfaRecordAuditLog(cleanEmail, 'Log Masuk (Cloud)');
-        return { success: true, user: userCredential.user, email: userCredential.user.email };
-      } catch (err) {
-        console.warn("[Firebase Login Attempt]:", p, err.code, err.message);
-      }
-    }
-  }
-
-  // 2. Sandaran Local Storage jika Firebase offline atau belum authorize domain
-  const users = getLocalUsers();
-  const matched = users.find(u => 
-    u.email.toLowerCase() === cleanEmail && 
-    (u.password === inputPass || 
-     (inputPass === '123' && u.password === 'Password123!') || 
-     (inputPass === 'Password123!' && u.password === '123'))
-  );
-
-  if (matched) {
-    await simfaRecordAuditLog(cleanEmail, 'Log Masuk (Lokal/Akses Pantas)');
-    return { success: true, email: matched.email };
-  } else if (!users.some(u => u.email.toLowerCase() === cleanEmail)) {
-    return { success: false, needOtp: true, email: cleanEmail, error: "ℹ️ Akaun belum wujud. Pengesahan OTP kali pertama diperlukan untuk mendaftar." };
-  } else {
-    return { success: false, error: "❌ Kata laluan tidak tepat. Sila gunakan kata laluan 'Password123!' atau '123'." };
-  }
-}
-
-async function simfaResetPassword(email) {
-  const cleanEmail = email.toLowerCase().trim();
-
-  // Send REAL official password reset email from Google Firebase
-  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.auth) {
-    try {
-      await firebase.auth().sendPasswordResetEmail(cleanEmail);
-      await simfaRecordAuditLog(cleanEmail, 'Pautan Reset Emel Dihantar (Cloud)');
-      return {
-        success: true,
-        message: `✅ Emel rasmi penetapan semula kata laluan telah dihantar ke: ${cleanEmail}. Sila buka inbox atau folder Spam emel anda untuk klik pautan tukar kata laluan.`
-      };
-    } catch (err) {
-      console.warn("[Firebase Reset Password Error]:", err.code, err.message);
-      return {
-        success: false,
-        error: `⚠️ Ralat Firebase: ${err.message}`
-      };
-    }
-  }
-
-  return {
-    success: true,
-    message: `✅ Kata laluan untuk akaun lokal telah dikemas kini.`
-  };
-}
-
-// --------------------------------------------------------------------------
-// 3. CENTRALIZED AUDIT LOG MANAGEMENT (CLOUD FIRESTORE + LOCAL STORAGE)
-// --------------------------------------------------------------------------
-async function simfaRecordAuditLog(email, action) {
-  const now = new Date();
-  const logEntry = {
-    email: email,
-    action: action, // 'Log Masuk' | 'Log Keluar' | dsb.
-    timestamp: now.toISOString(),
-    datetime: now.toLocaleString('ms-MY', {
-      timeZone: 'Asia/Kuala_Lumpur',
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit'
-    })
-  };
-
-  // Local Storage Backup
-  const logs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
-  logs.unshift(logEntry);
-  if (logs.length > 500) logs.splice(500);
-  localStorage.setItem('simfa_audit_log', JSON.stringify(logs));
-
-  // Simpan ke Cloud Firestore (Semua fasiliti kongsi satu rekod berpusat)
-  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.firestore) {
-    try {
-      await firebase.firestore().collection('audit_logs').add({
-        ...logEntry,
-        clientIp: "Fasiliti Web",
-        device: navigator.platform || "Web",
-        createdServerTime: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log("[SiMFa Cloud] Log aktiviti berjaya dihantar ke Cloud Firestore.");
-    } catch (err) {
-      console.warn("[Firestore Log Note]:", err.message);
-    }
-  }
-}
-
-// Dapatkan rekod log aktiviti berpusat dari Cloud Firestore
-async function simfaFetchCentralAuditLogs() {
-  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.firestore) {
-    try {
-      const snapshot = await firebase.firestore()
-        .collection('audit_logs')
-        .orderBy('timestamp', 'desc')
-        .limit(100)
-        .get();
-
-      if (!snapshot.empty) {
-        const cloudLogs = [];
-        snapshot.forEach(doc => {
-          cloudLogs.push(doc.data());
-        });
-        return cloudLogs;
-      }
-    } catch (err) {
-      console.warn("[Firestore Fetch Logs Note]:", err.message);
-    }
-  }
-  // Sandaran lokal
-  return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
-}
-
-// Aliases for compatibility
-function getAuditLogs() {
-  return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
-}
-
-function recordAuditLog(email, action) {
-  return simfaRecordAuditLog(email, action);
-}
-
-// ==========================================================================
 // SIMFA MEDICINE LABEL DESIGNER - APPLICATION LOGIC (SKETCH GRID DESIGN)
 // ==========================================================================
-
-// Global Image Fallback Handler: Menjamin imej keluar walaupun fail di subfolder icons/ atau di root folder GitHub
-window.addEventListener("error", function(e) {
-  if (e.target && e.target.tagName === "IMG" && e.target.src) {
-    if (e.target.src.includes("/icons/")) {
-      e.target.src = e.target.src.replace("/icons/", "/");
-    }
-  }
-}, true);
 
 // 1. REFINED, DETAILED VECTOR GRAPHICS FOR MEDICINE SYMBOLS
 const ICONS = {
   dosage: {
     "half": {
       label: "1/2 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SETENGAH BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1/2 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke-linecap="round" stroke-linejoin="round">
+          <!-- Base pill outline -->
+          <circle cx="25" cy="25" r="17" fill="#FFFFFF" stroke="#0D47A1" stroke-width="3"/>
+          <!-- Active left half (blue fill) -->
+          <path d="M 25 25 L 25 8 A 17 17 0 0 0 25 42 Z" fill="#0D47A1"/>
+          <!-- Base blue score lines -->
+          <line x1="8" y1="25" x2="42" y2="25" stroke="#0D47A1" stroke-width="2"/>
+          <line x1="25" y1="8" x2="25" y2="42" stroke="#0D47A1" stroke-width="2"/>
+          <!-- White score lines on active left half -->
+          <line x1="9" y1="25" x2="25" y2="25" stroke="#FFFFFF" stroke-width="2"/>
+          <line x1="25" y1="9" x2="25" y2="41" stroke="#FFFFFF" stroke-width="2"/>
+        </g>
+      </svg>`
     },
     "1": {
       label: "1 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SATU BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="25" cy="25" r="17" fill="#0D47A1" stroke="#0D47A1" stroke-width="3"/>
+        <line x1="9" y1="25" x2="41" y2="25" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+        <line x1="25" y1="9" x2="25" y2="41" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+      </svg>`
     },
     "2": {
       label: "2 Biji",
-      svg: `<img class="table-dose-svg" src="icons/DUA BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="2 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#0D47A1" stroke="#0D47A1" stroke-width="2.5" stroke-linecap="round">
+          <!-- Pill 1 -->
+          <circle cx="16" cy="25" r="11"/>
+          <line x1="6" y1="25" x2="26" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
+          <line x1="16" y1="15" x2="16" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
+          <!-- Pill 2 -->
+          <circle cx="34" cy="25" r="11"/>
+          <line x1="24" y1="25" x2="44" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
+          <line x1="34" y1="15" x2="34" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
+        </g>
+      </svg>`
     },
     "3": {
       label: "3 Biji",
-      svg: `<img class="table-dose-svg" src="icons/TIGA BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="3 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#0D47A1" stroke="#0D47A1" stroke-width="2.2" stroke-linecap="round">
+          <!-- Pill 1 (Top Centered) -->
+          <circle cx="25" cy="15" r="9"/>
+          <line x1="17" y1="15" x2="33" y2="15" stroke="#FFFFFF" stroke-width="1.5"/>
+          <line x1="25" y1="7" x2="25" y2="23" stroke="#FFFFFF" stroke-width="1.5"/>
+          <!-- Pill 2 (Bottom Left) -->
+          <circle cx="14" cy="33" r="9"/>
+          <line x1="6" y1="33" x2="22" y2="33" stroke="#FFFFFF" stroke-width="1.5"/>
+          <line x1="14" y1="25" x2="14" y2="41" stroke="#FFFFFF" stroke-width="1.5"/>
+          <!-- Pill 3 (Bottom Right) -->
+          <circle cx="36" cy="33" r="9"/>
+          <line x1="28" y1="33" x2="44" y2="33" stroke="#FFFFFF" stroke-width="1.5"/>
+          <line x1="36" y1="25" x2="36" y2="41" stroke="#FFFFFF" stroke-width="1.5"/>
+        </g>
+      </svg>`
     },
     "3/4": {
       label: "3/4 Biji",
-      svg: `<img class="table-dose-svg" src="icons/TIGA PEREMPAT BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="3/4 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke-linecap="round" stroke-linejoin="round">
+          <!-- Base pill outline -->
+          <circle cx="25" cy="25" r="17" fill="#FFFFFF" stroke="#0D47A1" stroke-width="3"/>
+          <!-- Active three quarters (blue fill) -->
+          <path d="M 25 25 L 25 8 A 17 17 0 1 0 42 25 Z" fill="#0D47A1"/>
+          <!-- Base blue score lines -->
+          <line x1="8" y1="25" x2="42" y2="25" stroke="#0D47A1" stroke-width="2"/>
+          <line x1="25" y1="8" x2="25" y2="42" stroke="#0D47A1" stroke-width="2"/>
+          <!-- White score lines on active quarters -->
+          <line x1="9" y1="25" x2="25" y2="25" stroke="#FFFFFF" stroke-width="2"/>
+          <line x1="25" y1="25" x2="25" y2="41" stroke="#FFFFFF" stroke-width="2"/>
+          <line x1="25" y1="25" x2="41" y2="25" stroke="#FFFFFF" stroke-width="2"/>
+        </g>
+      </svg>`
     },
     "1/4": {
       label: "1/4 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SUKU BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1/4 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke-linecap="round" stroke-linejoin="round">
+          <!-- Base pill outline -->
+          <circle cx="25" cy="25" r="17" fill="#FFFFFF" stroke="#0D47A1" stroke-width="3"/>
+          <!-- Active top-right quarter (blue fill) -->
+          <path d="M 25 25 L 42 25 A 17 17 0 0 0 25 8 Z" fill="#0D47A1"/>
+          <!-- Base blue score lines -->
+          <line x1="8" y1="25" x2="42" y2="25" stroke="#0D47A1" stroke-width="2"/>
+          <line x1="25" y1="8" x2="25" y2="42" stroke="#0D47A1" stroke-width="2"/>
+          <!-- White score lines on active quarter -->
+          <line x1="25" y1="25" x2="41" y2="25" stroke="#FFFFFF" stroke-width="2"/>
+          <line x1="25" y1="9" x2="25" y2="25" stroke="#FFFFFF" stroke-width="2"/>
+        </g>
+      </svg>`
     },
     "1_half": {
       label: "1 1/2 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SATU BIJI SETENGAH.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1 1/2 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke-linecap="round">
+          <!-- Pill 1 (Full, blue fill) -->
+          <circle cx="16" cy="25" r="11" fill="#0D47A1" stroke="#0D47A1" stroke-width="2.5"/>
+          <line x1="6" y1="25" x2="26" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
+          <line x1="16" y1="15" x2="16" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
+          <!-- Pill 2 (Half, active on right) -->
+          <circle cx="34" cy="25" r="11" fill="#FFFFFF" stroke="#0D47A1" stroke-width="2.5"/>
+          <path d="M 34 25 L 34 14 A 11 11 0 0 1 34 36 Z" fill="#0D47A1"/>
+          <!-- Base blue score lines for Pill 2 -->
+          <line x1="24" y1="25" x2="44" y2="25" stroke="#0D47A1" stroke-width="1.8"/>
+          <line x1="34" y1="14" x2="34" y2="36" stroke="#0D47A1" stroke-width="1.8"/>
+          <!-- White score lines on active right half of Pill 2 -->
+          <line x1="34" y1="25" x2="43" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
+          <line x1="34" y1="15" x2="34" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
+        </g>
+      </svg>`
     },
     "4": {
       label: "4 Biji",
-      svg: `<img class="table-dose-svg" src="icons/EMPAT BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="4 Biji">`
+      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#0D47A1" stroke="#0D47A1" stroke-width="2.2" stroke-linecap="round">
+          <!-- Pill 1 -->
+          <circle cx="15" cy="15" r="8"/>
+          <line x1="8" y1="15" x2="22" y2="15" stroke="#FFFFFF" stroke-width="1.2"/>
+          <line x1="15" y1="8" x2="15" y2="22" stroke="#FFFFFF" stroke-width="1.2"/>
+          <!-- Pill 2 -->
+          <circle cx="35" cy="15" r="8"/>
+          <line x1="28" y1="15" x2="42" y2="15" stroke="#FFFFFF" stroke-width="1.2"/>
+          <line x1="35" y1="8" x2="35" y2="22" stroke="#FFFFFF" stroke-width="1.2"/>
+          <!-- Pill 3 -->
+          <circle cx="15" cy="35" r="8"/>
+          <line x1="8" y1="35" x2="22" y2="35" stroke="#FFFFFF" stroke-width="1.2"/>
+          <line x1="15" y1="28" x2="15" y2="42" stroke="#FFFFFF" stroke-width="1.2"/>
+          <!-- Pill 4 -->
+          <circle cx="35" cy="35" r="8"/>
+          <line x1="28" y1="35" x2="42" y2="35" stroke="#FFFFFF" stroke-width="1.2"/>
+          <line x1="35" y1="28" x2="35" y2="42" stroke="#FFFFFF" stroke-width="1.2"/>
+        </g>
+      </svg>`
     },
     "cucuk": {
       label: "Cucuk",
       svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#000000" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <g stroke="#0D47A1" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Needle -->
           <line x1="12" y1="38" x2="19" y2="31" stroke-width="1.8" />
-          <rect x="15" y="13" width="22" height="9" rx="1.5" transform="rotate(-45 26 17.5)" fill="#FFFFFF" stroke="#000000" />
+          <!-- Syringe Body -->
+          <rect x="15" y="13" width="22" height="9" rx="1.5" transform="rotate(-45 26 17.5)" fill="#FFFFFF" />
+          <!-- Plunger shaft -->
           <line x1="31" y1="19" x2="39" y2="11" stroke-width="3" />
+          <!-- Plunger top -->
           <line x1="36" y1="8" x2="42" y2="14" stroke-width="3" />
+          <!-- Measurement tick marks -->
           <line x1="21" y1="21" x2="23" y2="23" stroke-width="1.2" />
           <line x1="24" y1="18" x2="26" y2="20" stroke-width="1.2" />
           <line x1="27" y1="15" x2="29" y2="17" stroke-width="1.2" />
+          <!-- Liquid level/fill -->
+          <path d="M 17 31 L 25 23 L 29 27 L 21 35 Z" fill="#0D47A1" opacity="0.3" stroke="none" />
+          <!-- Droplet at needle tip -->
+          <path d="M 9 41 C 9 41 8 44 10 44 C 11 44 11 41 9 41 Z" fill="#0D47A1" stroke="none" />
         </g>
       </svg>`
     }
@@ -366,36 +169,102 @@ const ICONS = {
   timing: {
     "pagi": {
       label: "Pagi",
-      svg: `<img class="table-time-svg" src="icons/PAGI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Pagi">`
+      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#FFB300" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 6 36 L 44 36" stroke="#263238" stroke-width="2.5"/>
+          <path d="M 16 36 A 9 9 0 0 1 34 36 Z" fill="#FFE082"/>
+          <line x1="25" y1="22" x2="25" y2="18"/>
+          <line x1="14" y1="27" x2="11" y2="24"/>
+          <line x1="36" y1="27" x2="39" y2="24"/>
+          <line x1="19" y1="22" x2="17" y2="19"/>
+          <line x1="31" y1="22" x2="33" y2="19"/>
+          <path d="M 25 12 L 25 3 M 21 7 L 25 3 L 29 7" stroke="#0D47A1" stroke-width="2.8"/>
+        </g>
+      </svg>`
     },
     "tengah_hari": {
       label: "Tengah Hari",
-      svg: `<img class="table-time-svg" src="icons/TENGAH HARI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Tengah Hari">`
+      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#FFB300" stroke-width="2.5" fill="none" stroke-linecap="round">
+          <circle cx="25" cy="25" r="9" fill="#FFB300"/>
+          <line x1="25" y1="11" x2="25" y2="6"/>
+          <line x1="25" y1="39" x2="25" y2="44"/>
+          <line x1="11" y1="25" x2="6" y2="25"/>
+          <line x1="39" y1="25" x2="44" y2="25"/>
+          <line x1="15" y1="15" x2="11" y2="11"/>
+          <line x1="35" y1="35" x2="39" y2="39"/>
+          <line x1="15" y1="35" x2="11" y2="39"/>
+          <line x1="35" y1="15" x2="39" y2="11"/>
+        </g>
+      </svg>`
     },
     "petang": {
       label: "Petang",
-      svg: `<img class="table-time-svg" src="icons/PETANG.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Petang">`
+      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#FFB300" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 6 36 L 44 36" stroke="#263238" stroke-width="2.5"/>
+          <path d="M 16 36 A 9 9 0 0 1 34 36 Z" fill="#FFE082"/>
+          <line x1="25" y1="23" x2="25" y2="19"/>
+          <line x1="15" y1="27" x2="12" y2="24"/>
+          <line x1="35" y1="27" x2="38" y2="24"/>
+          <path d="M 25 3 L 25 12 M 21 8 L 25 12 L 29 8" stroke="#0D47A1" stroke-width="2.8"/>
+        </g>
+      </svg>`
     },
     "malam": {
       label: "Malam",
-      svg: `<img class="table-time-svg" src="icons/MALAM VERSI 1.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Malam">`
+      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 16 11 A 14 14 0 0 0 31 31 A 12 12 0 1 1 16 11 Z" fill="#0D47A1" stroke="#0D47A1" stroke-width="1.8"/>
+          <path d="M 33 11 L 34.5 13.5 L 37 14.5 L 34.5 15.5 L 33 18 L 31.5 15.5 L 29 14.5 L 31.5 13.5 Z" fill="#FFB300"/>
+          <path d="M 11 31 L 12 32.5 L 14 33 L 12 33.5 L 11 35 L 10 33.5 L 8 33 L 10 32.5 Z" fill="#FFB300"/>
+        </g>
+      </svg>`
     },
     "bila_perlu": {
       label: "Bila Perlu",
       svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#000000" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="25" cy="25" r="14" stroke="#000000" stroke-width="2"/>
-          <path d="M 16 25 L 21 25 L 23 18 L 27 32 L 29 25 L 34 25" stroke="#000000" stroke-width="2.5" />
+        <g stroke="#0D47A1" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 25 12 C 25 12, 16 18, 16 26 C 16 31, 20 35, 25 35 C 30 35, 34 31, 34 26 C 34 18, 25 12, 25 12 Z" fill="#FFE082" opacity="0.4" stroke="#263238" stroke-width="2" />
+          <path d="M 10 26 L 18 26 L 21 17 L 25 33 L 28 23 L 31 26 L 40 26" stroke="#D32F2F" stroke-width="2.5" />
         </g>
       </svg>`
     },
     "sebelum": {
-      label: "Sebelum Makan",
-      svg: `<img class="table-meal-svg" src="icons/SEBELUM MAKAN VERSI 1.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Sebelum Makan">`
+      label: "Sebelum Makan – ambil sebelum makan",
+      svg: `<svg class="table-meal-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Plate with food cover -->
+          <path d="M 13 28 A 12 12 0 0 1 37 28 Z" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
+          <circle cx="25" cy="14" r="2" fill="#263238"/>
+          <path d="M 8 32 L 42 32" stroke="#263238" stroke-width="3"/>
+          <!-- Thick Fork on the Left -->
+          <path d="M 5 22 L 5 32" stroke="#263238" stroke-width="2.5"/>
+          <path d="M 3 14 L 3 22 C 3 24, 7 24, 7 22 L 7 14" stroke="#263238" stroke-width="2.5"/>
+          <line x1="5" y1="14" x2="5" y2="20" stroke="#263238" stroke-width="2.5"/>
+          <!-- Thick Spoon on the Right -->
+          <path d="M 45 22 L 45 32" stroke="#263238" stroke-width="2.5"/>
+          <ellipse cx="45" cy="18" rx="4" ry="5.5" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
+        </g>
+      </svg>`
     },
     "selepas": {
-      label: "Selepas Makan",
-      svg: `<img class="table-meal-svg" src="icons/SELEPAS MAKAN VERSI 2.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Selepas Makan">`
+      label: "Selepas Makan – ambil selepas makan",
+      svg: `<svg class="table-meal-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Plate in the center -->
+          <circle cx="25" cy="25" r="11" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
+          <!-- Food item on plate -->
+          <path d="M 21 25 C 21 23, 29 23, 29 25 Z" fill="#B0BEC5" stroke="#263238" stroke-width="2"/>
+          <!-- Thick Fork on the Left -->
+          <path d="M 7 22 L 7 32" stroke="#263238" stroke-width="2.5"/>
+          <path d="M 5 14 L 5 22 C 5 24, 9 24, 9 22 L 9 14" stroke="#263238" stroke-width="2.5"/>
+          <line x1="7" y1="14" x2="7" y2="20" stroke="#263238" stroke-width="2.5"/>
+          <!-- Thick Spoon on the Right -->
+          <path d="M 43 22 L 43 32" stroke="#263238" stroke-width="2.5"/>
+          <ellipse cx="43" cy="18" rx="4" ry="5.5" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
+        </g>
+      </svg>`
     }
   },
   warning: {
@@ -1061,406 +930,63 @@ const PRESETS = {
     schedule: [{ dosage: "1", timing: "pagi", meal: "selepas" }],
     warnings: ["potong"]
   }
-};
+};;
 
 // 3. APPLICATION STATE
 const state = {
   userEmail: "user@email.com",
-  medicineName: "METFORMIN HCL 500MG TABLET",
+  medicineName: "METFORMIN 500mg",
   schedule: [
-    { dosage: "2", timing: "pagi", meal: "selepas" },
-    { dosage: "2", timing: "malam", meal: "selepas" }
+    { dosage: "1", timing: "pagi", meal: "selepas" },
+    { dosage: "1", timing: "malam", meal: "selepas" }
   ],
-  warnings: ["kanak", "gigit"],
-  printerConfig: {
-    activePrinter: "phis",
-    phis: { name: "PhIS / eHIS", x: 0, y: 0 },
-    fisicien_l: { name: "FiSiCien (L)", x: -6, y: -6 },
-    fisicien_s: { name: "FiSiCien (S)", x: -4, y: -4 }
-  }
+  warnings: ["gigit"]
 };
 
 // ==========================================================================
-// PRINTER CALIBRATION & HARDWARE OFFSET LOGIC (PhIS, FiSiCien, Zebra, Toshiba)
+// INITIALIZATION AND SELECTOR GENERATORS
 // ==========================================================================
-function initPrinterConfig() {
-  const saved = localStorage.getItem("simfa_printer_config");
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === "object") {
-        if (parsed.activePrinter && state.printerConfig[parsed.activePrinter]) {
-          state.printerConfig.activePrinter = parsed.activePrinter;
-        }
-        ['phis', 'fisicien_l', 'fisicien_s'].forEach(key => {
-          if (parsed[key]) {
-            state.printerConfig[key].x = Number(parsed[key].x) || 0;
-            state.printerConfig[key].y = Number(parsed[key].y) || 0;
-          }
-        });
-      }
-    } catch (e) {
-      console.warn("Could not parse saved printer config", e);
-    }
-  }
-}
-
-function savePrinterConfig() {
-  try {
-    localStorage.setItem("simfa_printer_config", JSON.stringify(state.printerConfig));
-  } catch (e) {
-    console.warn("Could not save printer config", e);
-  }
-}
-
-function applyPrintOffset() {
-  const activeKey = state.printerConfig.activePrinter || 'phis';
-  const cfg = state.printerConfig[activeKey] || { name: 'PhIS / eHIS', x: 0, y: 0 };
-  const x = cfg.x;
-  const y = cfg.y;
-
-  // Set CSS Custom Properties on :root
-  document.documentElement.style.setProperty('--print-offset-x', `${x}mm`);
-  document.documentElement.style.setProperty('--print-offset-y', `${y}mm`);
-
-  // Ensure dynamic print offset style tag exists for foolproof print engine support
-  let dynStyle = document.getElementById("dynamic-print-offsets");
-  if (!dynStyle) {
-    dynStyle = document.createElement("style");
-    dynStyle.id = "dynamic-print-offsets";
-    document.head.appendChild(dynStyle);
-  }
-  dynStyle.textContent = `
-    @media print {
-      #print-label {
-        transform: translate(${x}mm, ${y}mm) !important;
-      }
-    }
-  `;
-
-  // Update badge in preview panel
-  const badgeText = document.getElementById("printer-badge-text");
-  if (badgeText) {
-    const formatMm = (val) => `${val > 0 ? '+' : ''}${val}mm`;
-    badgeText.textContent = `${cfg.name} (X: ${formatMm(x)}, Y: ${formatMm(y)})`;
-  }
-}
-
-function setupPrinterAdjustControls() {
-  initPrinterConfig();
-
-  const printerButtons = document.querySelectorAll("#printer-type-group .pill-btn");
-  const xSlider = document.getElementById("adjust-x-slider");
-  const ySlider = document.getElementById("adjust-y-slider");
-  const xValText = document.getElementById("adjust-x-val");
-  const yValText = document.getElementById("adjust-y-val");
-  const resetBtn = document.getElementById("btn-reset-offset");
-
-  // Toggle alignment panel on right side
-  const alignmentPanel = document.getElementById("printer-alignment-panel");
-  const toggleBtn = document.getElementById("btn-toggle-alignment");
-  const closeBtn = document.getElementById("btn-close-alignment");
-  const badgeBtn = document.getElementById("printer-status-badge");
-
-  function toggleAlignmentPanel() {
-    if (!alignmentPanel) return;
-    const isHidden = alignmentPanel.style.display === "none" || !alignmentPanel.style.display;
-    alignmentPanel.style.display = isHidden ? "block" : "none";
-    if (toggleBtn) {
-      toggleBtn.classList.toggle("active", isHidden);
-    }
-  }
-
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", toggleAlignmentPanel);
-  }
-
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      if (alignmentPanel) alignmentPanel.style.display = "none";
-      if (toggleBtn) toggleBtn.classList.remove("active");
-    });
-  }
-
-  if (badgeBtn) {
-    badgeBtn.addEventListener("click", toggleAlignmentPanel);
-  }
-
-  function updateUiFromState() {
-    const activeKey = state.printerConfig.activePrinter;
-    const cfg = state.printerConfig[activeKey] || { x: 0, y: 0 };
-
-    printerButtons.forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.printer === activeKey);
-    });
-
-    if (xSlider) xSlider.value = cfg.x;
-    if (ySlider) ySlider.value = cfg.y;
-
-    const formatMm = (val) => `${val > 0 ? '+' : ''}${val}mm`;
-    if (xValText) xValText.textContent = formatMm(cfg.x);
-    if (yValText) yValText.textContent = formatMm(cfg.y);
-
-    applyPrintOffset();
-  }
-
-  printerButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const printer = btn.dataset.printer;
-      if (printer && state.printerConfig[printer]) {
-        state.printerConfig.activePrinter = printer;
-        savePrinterConfig();
-        updateUiFromState();
-      }
-    });
-  });
-
-  if (xSlider) {
-    xSlider.addEventListener("input", (e) => {
-      const val = parseInt(e.target.value, 10) || 0;
-      const activeKey = state.printerConfig.activePrinter;
-      if (state.printerConfig[activeKey]) {
-        state.printerConfig[activeKey].x = val;
-        if (xValText) xValText.textContent = `${val > 0 ? '+' : ''}${val}mm`;
-        applyPrintOffset();
-        savePrinterConfig();
-      }
-    });
-  }
-
-  if (ySlider) {
-    ySlider.addEventListener("input", (e) => {
-      const val = parseInt(e.target.value, 10) || 0;
-      const activeKey = state.printerConfig.activePrinter;
-      if (state.printerConfig[activeKey]) {
-        state.printerConfig[activeKey].y = val;
-        if (yValText) yValText.textContent = `${val > 0 ? '+' : ''}${val}mm`;
-        applyPrintOffset();
-        savePrinterConfig();
-      }
-    });
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      const activeKey = state.printerConfig.activePrinter;
-      if (state.printerConfig[activeKey]) {
-        state.printerConfig[activeKey].x = 0;
-        state.printerConfig[activeKey].y = 0;
-        savePrinterConfig();
-        updateUiFromState();
-      }
-    });
-  }
-
-  // Initial UI refresh
-  updateUiFromState();
-}
-
-// ==========================================================================
-// FUKKM INTEGRATION & PRESETS GENERATOR
-// ==========================================================================
-function loadFukkmDrugs() {
-  if (typeof FUKKM_DRUGS !== 'undefined' && Array.isArray(FUKKM_DRUGS)) {
-    FUKKM_DRUGS.forEach(drug => {
-      if (!PRESETS[drug.key]) {
-        PRESETS[drug.key] = {
-          medicineName: drug.medicineName,
-          schedule: drug.schedule,
-          warnings: drug.warnings,
-          category: drug.category || "FUKKM"
-        };
-      }
-    });
-  }
-}
-
-function populatePresetsDropdown(filterQuery = "") {
+function populatePresetsDropdown() {
   const dropdown = document.getElementById("medication-preset");
   if (!dropdown) return;
 
-  const currentVal = dropdown.value;
+  // Clear existing options except custom
   dropdown.innerHTML = '<option value="custom">-- Pilihan Custom --</option>';
 
-  const query = (filterQuery || "").trim().toLowerCase();
-
+  // Sort presets alphabetically by medicineName
   const sortedKeys = Object.keys(PRESETS)
     .filter(key => !key.startsWith("custom_tpl_") && !key.startsWith("shared_tpl_"))
-    .filter(key => {
-      if (!query) return true;
-      const name = (PRESETS[key].medicineName || "").toLowerCase();
-      return name.includes(query);
-    })
     .sort((a, b) => PRESETS[a].medicineName.localeCompare(PRESETS[b].medicineName));
 
+  // Add all sorted presets
   sortedKeys.forEach(key => {
     const opt = document.createElement("option");
     opt.value = key;
     opt.textContent = PRESETS[key].medicineName;
     dropdown.appendChild(opt);
   });
-
-  if (currentVal && PRESETS[currentVal] && (!query || PRESETS[currentVal].medicineName.toLowerCase().includes(query))) {
-    dropdown.value = currentVal;
-  }
-}
-
-function setupPresetSearch() {
-  const searchInput = document.getElementById("preset-search-input");
-  const clearBtn = document.getElementById("btn-clear-preset-search");
-  if (!searchInput) return;
-
-  searchInput.addEventListener("input", (e) => {
-    const q = e.target.value;
-    if (clearBtn) clearBtn.style.display = q ? "block" : "none";
-    populatePresetsDropdown(q);
-  });
-
-  if (clearBtn) {
-    clearBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      clearBtn.style.display = "none";
-      populatePresetsDropdown("");
-      searchInput.focus();
-    });
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   setupAuthFlow();
-  setupOtpModal();
   loadSavedUserSession();
   generateWarningsSelector();
-  // loadFukkmDrugs(); // FUKKM list undur/disabled
-  populatePresetsDropdown();
-  setupPresetSearch();
-  loadCustomTemplatesIntoDropdown();
-  bindInputListeners();
-  setupPrinterAdjustControls();
-  setupWalkthroughModal();
-  setupForgotPasswordModal();
-  setupActivityLogModal();
-  renderDynamicRowCustomizer();
-  updatePreview();
+  
+  // Load shared templates from templates.json first
+  loadSharedTemplatesFromFile().then(() => {
+    populatePresetsDropdown();
+    loadSharedTemplatesIntoDropdown();
+    loadCustomTemplatesIntoDropdown();
+    bindInputListeners();
+    setupWalkthroughModal();
+    setupForgotPasswordModal();
+    setupActivityLogModal();
+    renderDynamicRowCustomizer();
+    updatePreview();
+  });
 });
 
-// ==========================================================================
-// OTP VERIFICATION SYSTEM
-// ==========================================================================
-let pendingRegistration = { email: '', password: '', timer: null, timeLeft: 60 };
-
-function openOtpModal(email, password) {
-  pendingRegistration.email = email;
-  pendingRegistration.password = password;
-
-  const otpCode = simfaGenerateOTP(email);
-  const modal = document.getElementById("otp-modal");
-  const targetEmailEl = document.getElementById("otp-target-email");
-  const demoCodeEl = document.getElementById("demo-otp-code");
-  const errorMsg = document.getElementById("otp-error-msg");
-  const successMsg = document.getElementById("otp-success-msg");
-  const otpInput = document.getElementById("otp-input");
-
-  targetEmailEl.textContent = email;
-  demoCodeEl.textContent = otpCode;
-  errorMsg.style.display = "none";
-  successMsg.style.display = "none";
-  otpInput.value = "";
-
-  modal.classList.remove("hidden");
-  setTimeout(() => { otpInput.focus(); }, 100);
-
-  startOtpCountdown();
-}
-
-function startOtpCountdown() {
-  const timerEl = document.getElementById("otp-timer");
-  const resendBtn = document.getElementById("btn-resend-otp");
-
-  if (pendingRegistration.timer) clearInterval(pendingRegistration.timer);
-  pendingRegistration.timeLeft = 60;
-  resendBtn.style.pointerEvents = "none";
-  resendBtn.style.opacity = "0.5";
-  timerEl.textContent = `(${pendingRegistration.timeLeft}s)`;
-
-  pendingRegistration.timer = setInterval(() => {
-    pendingRegistration.timeLeft--;
-    if (pendingRegistration.timeLeft <= 0) {
-      clearInterval(pendingRegistration.timer);
-      timerEl.textContent = "";
-      resendBtn.style.pointerEvents = "auto";
-      resendBtn.style.opacity = "1";
-    } else {
-      timerEl.textContent = `(${pendingRegistration.timeLeft}s)`;
-    }
-  }, 1000);
-}
-
-function setupOtpModal() {
-  const modal = document.getElementById("otp-modal");
-  const closeBtn = document.getElementById("close-otp-modal");
-  const otpForm = document.getElementById("otp-form");
-  const otpInput = document.getElementById("otp-input");
-  const autofillBtn = document.getElementById("btn-autofill-otp");
-  const resendBtn = document.getElementById("btn-resend-otp");
-  const demoCodeEl = document.getElementById("demo-otp-code");
-  const errorMsg = document.getElementById("otp-error-msg");
-  const successMsg = document.getElementById("otp-success-msg");
-
-  if (!modal) return;
-
-  closeBtn.addEventListener("click", () => {
-    modal.classList.add("hidden");
-    if (pendingRegistration.timer) clearInterval(pendingRegistration.timer);
-  });
-
-  autofillBtn.addEventListener("click", () => {
-    otpInput.value = demoCodeEl.textContent.trim();
-    otpInput.focus();
-  });
-
-  resendBtn.addEventListener("click", () => {
-    if (pendingRegistration.timeLeft > 0) return;
-    const newCode = simfaGenerateOTP(pendingRegistration.email);
-    demoCodeEl.textContent = newCode;
-    otpInput.value = "";
-    successMsg.textContent = "✅ Kod OTP baru telah dihantar!";
-    successMsg.style.display = "block";
-    errorMsg.style.display = "none";
-    setTimeout(() => { successMsg.style.display = "none"; }, 3000);
-    startOtpCountdown();
-  });
-
-  otpForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const codeVal = otpInput.value.trim();
-    const res = simfaVerifyOTP(pendingRegistration.email, codeVal);
-
-    if (!res.success) {
-      errorMsg.textContent = res.error || "❌ Kod OTP tidak tepat.";
-      errorMsg.style.display = "block";
-      successMsg.style.display = "none";
-      return;
-    }
-
-    // OTP Verified!
-    errorMsg.style.display = "none";
-    successMsg.textContent = "🎉 Kod OTP disahkan! Mengaktifkan akaun pegawai...";
-    successMsg.style.display = "block";
-
-    setTimeout(async () => {
-      await simfaRegisterUser(pendingRegistration.email, pendingRegistration.password);
-      state.userEmail = pendingRegistration.email;
-      saveUserSession(pendingRegistration.email);
-      modal.classList.add("hidden");
-      if (pendingRegistration.timer) clearInterval(pendingRegistration.timer);
-      recordAuditLog(state.userEmail, 'Pengesahan OTP Berjaya (Pendaftaran)');
-      transitionToWorkspace(true);
-    }, 600);
-  });
-}
-
-// Authentication Tab Switches and Submissions
+// Mock Authentication Tab Switches and Submissions
 function setupAuthFlow() {
   const tabSignup = document.getElementById("tab-signup");
   const tabLogin = document.getElementById("tab-login");
@@ -1471,10 +997,10 @@ function setupAuthFlow() {
   const btnLogout = document.getElementById("btn-logout");
   const errorMsg = document.getElementById("auth-error-msg");
 
-  // Email validator - accepts .gov.my, .gov and any valid email format
+  // GOV Email validator
   function isGovEmail(email) {
     const lower = email.toLowerCase().trim();
-    return lower.includes('@') && lower.includes('.');
+    return lower.endsWith('.gov.my') || lower.endsWith('.gov') || lower === 'sadiqrashid25@gmail.com';
   }
 
   function showAuthError(msg) {
@@ -1502,60 +1028,50 @@ function setupAuthFlow() {
   signupForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const emailVal = document.getElementById("reg-email").value.trim();
-    const passVal = document.getElementById("reg-password").value;
-
     if (!isGovEmail(emailVal)) {
-      showAuthError('⛔ E-mel mesti menggunakan domain rasmi kerajaan (.gov.my atau .gov). Contoh: nama@moh.gov.my');
+      showAuthError('⛔ E-mel mesti menggunakan domain kerajaan (.gov.my atau .gov). Contoh: nama@bahagian.gov.my');
       return;
     }
-
-    // Open OTP verification modal
-    openOtpModal(emailVal, passVal);
+    state.userEmail = emailVal;
+    saveUserSession(emailVal);
+    transitionToWorkspace();
   });
 
-  loginForm.addEventListener("submit", async (e) => {
+  loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const loginEmailVal = document.getElementById("login-email").value.trim();
     const loginPassVal = document.getElementById("login-password").value;
 
     if (!isGovEmail(loginEmailVal)) {
-      showAuthError('⛔ E-mel mesti menggunakan domain rasmi kerajaan (.gov.my atau .gov). Contoh: nama@moh.gov.my');
+      showAuthError('⛔ E-mel mesti menggunakan domain kerajaan (.gov.my atau .gov). Contoh: nama@bahagian.gov.my');
       return;
     }
 
-    const res = await simfaLoginUser(loginEmailVal, loginPassVal);
-    if (!res.success) {
-      if (res.needOtp) {
-        // Trigger OTP modal for new gov staff registration
-        openOtpModal(loginEmailVal, loginPassVal);
-        return;
-      }
-      showAuthError(res.error || '❌ E-mel atau kata laluan tidak tepat. Sila cuba semula.');
+    // Hardcoded GOV credentials check
+    const VALID_USERS = [
+      { email: 'sadiq@moh.gov', password: '123' },
+      { email: 'sadiqrashid25@gmail.com', password: '123' }
+    ];
+
+    const matched = VALID_USERS.find(u =>
+      u.email.toLowerCase() === loginEmailVal.toLowerCase() && u.password === loginPassVal
+    );
+
+    if (!matched) {
+      showAuthError('❌ E-mel atau kata laluan tidak tepat. Sila cuba semula.');
       return;
     }
 
-    state.userEmail = res.email;
-    saveUserSession(res.email);
-    transitionToWorkspace(true);
+    state.userEmail = loginEmailVal;
+    saveUserSession(loginEmailVal);
+    transitionToWorkspace();
   });
 
-  const btnGuest = document.getElementById("btn-guest-login");
-  if (btnGuest) {
-    btnGuest.addEventListener("click", () => {
-      state.userEmail = "sadiq@moh.gov";
-      saveUserSession(state.userEmail);
-      transitionToWorkspace(true);
-    });
-  }
-
   btnLogout.addEventListener("click", () => {
-    if (state.userEmail) {
-      recordAuditLog(state.userEmail, 'logout');
-    }
-    localStorage.removeItem("simfa_active_login");
+    recordAuditLog(state.userEmail, 'logout');
     appContainer.classList.add("hidden");
     authContainer.classList.remove("hidden");
-    tabLogin.click();
+    localStorage.removeItem("simfa_active_login");
   });
 }
 
@@ -1567,30 +1083,21 @@ function loadSavedUserSession() {
   const savedEmail = localStorage.getItem("simfa_user_email");
   const activeLogin = localStorage.getItem("simfa_active_login");
   if (savedEmail) {
+    state.userEmail = savedEmail;
     document.getElementById("reg-email").value = savedEmail;
     document.getElementById("login-email").value = savedEmail;
   }
-  // Only restore workspace if user has an active authenticated session
-  if (activeLogin === "true" && savedEmail) {
-    state.userEmail = savedEmail;
-    transitionToWorkspace(false); // false = do not duplicate login audit entry on page reload
-  } else {
-    document.getElementById("auth-container").classList.remove("hidden");
-    document.getElementById("app-container").classList.add("hidden");
+  if (activeLogin === "true") {
+    transitionToWorkspace();
   }
 }
 
-function transitionToWorkspace(shouldRecordLogin = true) {
+function transitionToWorkspace() {
   document.getElementById("auth-container").classList.add("hidden");
   document.getElementById("app-container").classList.remove("hidden");
-  const userDisplay = document.getElementById("user-email-display");
-  if (userDisplay) {
-    userDisplay.textContent = state.userEmail;
-  }
+  document.getElementById("user-email-display").textContent = state.userEmail;
   localStorage.setItem("simfa_active_login", "true");
-  if (shouldRecordLogin && state.userEmail) {
-    recordAuditLog(state.userEmail, 'login');
-  }
+  recordAuditLog(state.userEmail, 'login');
   updatePreview();
 }
 
@@ -1683,7 +1190,6 @@ function bindInputListeners() {
 
   // Action buttons
   document.getElementById("btn-print").addEventListener("click", () => {
-    applyPrintOffset();
     window.print();
   });
 
@@ -1951,7 +1457,7 @@ function updatePreview() {
       tdDose.innerHTML = `
         <div class="table-cell-content">
           ${doseSvg}
-          <span class="table-cell-label">${doseLabel.toUpperCase()}</span>
+          <span class="table-cell-label">${doseLabel}</span>
         </div>
       `;
     } else {
@@ -1963,7 +1469,7 @@ function updatePreview() {
       tdTime.innerHTML = `
         <div class="table-cell-content">
           ${timeObj.svg}
-          <span class="table-cell-label">${timeObj.label.toUpperCase()}</span>
+          <span class="table-cell-label">${timeObj.label}</span>
         </div>
       `;
     } else {
@@ -1972,11 +1478,11 @@ function updatePreview() {
     
     const mealObj = ICONS.timing[activeEntry.meal];
     if (mealObj) {
-      const mealLabel = mealObj.label.split(" – ")[0].split(" ??? ")[0];
+      const mealLabel = mealObj.label.split(" – ")[0];
       tdMeal.innerHTML = `
         <div class="table-cell-content">
           ${mealObj.svg}
-          <span class="table-cell-label">${mealLabel.toUpperCase()}</span>
+          <span class="table-cell-label">${mealLabel}</span>
         </div>
       `;
     } else {
@@ -2002,16 +1508,16 @@ function updatePreview() {
     const wItem = document.createElement("div");
     wItem.className = "label-warning-item";
     
-    // Caption text mapping (exact matches to standard label sticker captions)
+    // Caption text mapping (short Malay phrases for medical instruction)
     const captions = {
-      "mengantuk": "BOLEH MENYEBABKAN MENGANTUK",
-      "cahaya": "JAUHKAN DARI CAHAYA MATAHARI",
-      "gigit": "JANGAN DIGIGIT",
-      "lidah": "LETAK DI BAWAH LIDAH",
-      "kanak": "JAUHKAN DARI KANAK-KANAK",
-      "potong": "JANGAN DIPOTONG",
-      "sejuk": "SIMPAN DI PETI SEJUK",
-      "kunyah": "JANGAN DIKUNYAH (TELAN BULAT)"
+      "mengantuk": "Boleh menyebabkan mengantuk",
+      "cahaya": "Jauhi dari cahaya matahari",
+      "gigit": "Jangan digigit / dikunyah",
+      "lidah": "Letak di bawah lidah",
+      "kanak": "Jauhkan dari kanak-kanak",
+      "potong": "Jangan dipotong",
+      "sejuk": "Simpan di peti sejuk",
+      "kunyah": "Jangan dikunyah"
     };
     
     wItem.innerHTML = `
@@ -2044,13 +1550,6 @@ function saveCustomTemplate() {
 // Load Custom Saved Templates into Medication Presets dropdown
 function loadCustomTemplatesIntoDropdown() {
   const dropdown = document.getElementById("medication-preset");
-  if (!dropdown) return;
-
-  const sharedDivider = dropdown.querySelector('optgroup[label="Template Berkongsi"]');
-  if (sharedDivider) {
-    sharedDivider.remove();
-  }
-
   const savedTemplates = JSON.parse(localStorage.getItem("simfa_saved_templates") || "{}");
 
   const customDivider = dropdown.querySelector('optgroup[label="Template Disimpan"]');
@@ -2072,6 +1571,61 @@ function loadCustomTemplatesIntoDropdown() {
     });
 
     dropdown.appendChild(optgroup);
+  }
+}
+
+// Load shared templates from file at startup
+function loadSharedTemplatesFromFile() {
+  return fetch('templates.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('templates.json fail to load or does not exist');
+      }
+      return response.json();
+    })
+    .then(sharedTemplates => {
+      if (sharedTemplates && typeof sharedTemplates === 'object') {
+        Object.keys(sharedTemplates).forEach(key => {
+          const presetKey = `shared_tpl_${key}`;
+          PRESETS[presetKey] = sharedTemplates[key];
+        });
+      }
+    })
+    .catch(err => {
+      console.log('Shared templates from file could not be loaded:', err.message);
+    });
+}
+
+// Populate shared templates into dropdown menu
+function loadSharedTemplatesIntoDropdown() {
+  const dropdown = document.getElementById("medication-preset");
+  if (!dropdown) return;
+
+  const sharedDivider = dropdown.querySelector('optgroup[label="Template Berkongsi"]');
+  if (sharedDivider) {
+    sharedDivider.remove();
+  }
+
+  const keys = Object.keys(PRESETS).filter(key => key.startsWith("shared_tpl_"));
+  if (keys.length > 0) {
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = "Template Berkongsi";
+
+    keys.forEach(key => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      const tplName = key.substring("shared_tpl_".length);
+      opt.textContent = tplName;
+      optgroup.appendChild(opt);
+    });
+
+    // Insert at the top of the option groups (before custom templates)
+    const customDivider = dropdown.querySelector('optgroup[label="Template Disimpan"]');
+    if (customDivider) {
+      dropdown.insertBefore(optgroup, customDivider);
+    } else {
+      dropdown.appendChild(optgroup);
+    }
   }
 }
 
@@ -2127,9 +1681,10 @@ function setupWalkthroughModal() {
 
   btnWalkthrough.addEventListener("click", () => {
     modal.classList.remove("hidden");
-    if (document.getElementById("preview-sym-1")) document.getElementById("preview-sym-1").innerHTML = ICONS.dosage["1"].svg;
-    if (document.getElementById("preview-sym-half")) document.getElementById("preview-sym-half").innerHTML = ICONS.dosage["half"].svg;
-    if (document.getElementById("preview-sym-2")) document.getElementById("preview-sym-2").innerHTML = ICONS.dosage["2"].svg;
+    // Load preview icons in the symbols tab dynamically
+    document.getElementById("preview-sym-1").innerHTML = ICONS.dosage["1"].svg;
+    document.getElementById("preview-sym-half").innerHTML = ICONS.dosage["half"].svg;
+    document.getElementById("preview-sym-2").innerHTML = ICONS.dosage["2"].svg;
   });
 
   const closeModal = () => {
@@ -2163,33 +1718,26 @@ function setupWalkthroughModal() {
 // AUDIT LOG SYSTEM
 // ==========================================================================
 function recordAuditLog(email, action) {
-  if (typeof simfaRecordAuditLog === 'function') {
-    simfaRecordAuditLog(email, action);
-  } else {
-    const logs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
-    const now = new Date();
-    logs.unshift({
-      email: email,
-      action: action, // 'login' | 'logout'
-      timestamp: now.toISOString(),
-      datetime: now.toLocaleString('ms-MY', {
-        timeZone: 'Asia/Kuala_Lumpur',
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      })
-    });
-    if (logs.length > 500) logs.splice(500);
-    localStorage.setItem('simfa_audit_log', JSON.stringify(logs));
-  }
+  const logs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
+  const now = new Date();
+  logs.unshift({
+    email: email,
+    action: action, // 'login' | 'logout'
+    timestamp: now.toISOString(),
+    datetime: now.toLocaleString('ms-MY', {
+      timeZone: 'Asia/Kuala_Lumpur',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    })
+  });
+  // Keep max 500 records
+  if (logs.length > 500) logs.splice(500);
+  localStorage.setItem('simfa_audit_log', JSON.stringify(logs));
 }
 
 function getAuditLogs() {
-  if (typeof simfaGetAuditLogs === 'function') {
-    return simfaGetAuditLogs();
-  }
   return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
 }
-
 
 // ==========================================================================
 // FORGOT PASSWORD MODAL
@@ -2201,8 +1749,6 @@ function setupForgotPasswordModal() {
   const closeBtnFooter = document.getElementById("close-forgot-pw-footer");
   const forgotForm = document.getElementById("forgot-pw-form");
   const forgotEmailInput = document.getElementById("forgot-email");
-  const forgotNewPass = document.getElementById("forgot-new-password");
-  const forgotConfirmPass = document.getElementById("forgot-confirm-password");
   const forgotSuccess = document.getElementById("forgot-pw-success");
   const forgotError = document.getElementById("forgot-pw-error");
 
@@ -2213,9 +1759,7 @@ function setupForgotPasswordModal() {
     modal.classList.remove("hidden");
     if (forgotSuccess) forgotSuccess.style.display = "none";
     if (forgotError) forgotError.style.display = "none";
-    if (forgotEmailInput) forgotEmailInput.value = document.getElementById("login-email") ? document.getElementById("login-email").value : "";
-    if (forgotNewPass) forgotNewPass.value = "";
-    if (forgotConfirmPass) forgotConfirmPass.value = "";
+    if (forgotEmailInput) forgotEmailInput.value = "";
   });
 
   const closeModal = () => { modal.classList.add("hidden"); };
@@ -2227,51 +1771,22 @@ function setupForgotPasswordModal() {
     forgotForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const emailVal = forgotEmailInput.value.trim();
-      const newPassVal = forgotNewPass ? forgotNewPass.value : "";
-      const confirmPassVal = forgotConfirmPass ? forgotConfirmPass.value : "";
+      
+      // Validation helper check
+      const lower = emailVal.toLowerCase();
+      const isValid = lower.endsWith('.gov.my') || lower.endsWith('.gov') || lower === 'sadiqrashid25@gmail.com';
 
-      if (!emailVal || !emailVal.includes('@')) {
-        forgotError.textContent = "⛔ Sila masukkan format alamat e-mel yang sah.";
+      if (!isValid) {
+        forgotError.textContent = "⛔ E-mel mesti menggunakan domain kerajaan (.gov.my / .gov) atau e-mel berdaftar.";
         forgotError.style.display = "block";
         forgotSuccess.style.display = "none";
         return;
-      }
-
-      if (!newPassVal || newPassVal.length < 3) {
-        forgotError.textContent = "⚠️ Kata laluan mestilah sekurang-kurangnya 3 aksara.";
-        forgotError.style.display = "block";
-        forgotSuccess.style.display = "none";
-        return;
-      }
-
-      if (newPassVal !== confirmPassVal) {
-        forgotError.textContent = "❌ Kata laluan baru dan pengesahan kata laluan tidak sepadan.";
-        forgotError.style.display = "block";
-        forgotSuccess.style.display = "none";
-        return;
-      }
-
-      // Perform local password update
-      simfaUpdateUserPassword(emailVal, newPassVal);
-      if (typeof simfaRecordAuditLog === 'function') {
-        simfaRecordAuditLog(emailVal, 'Set Semula Kata Laluan Berjaya');
       }
 
       forgotError.style.display = "none";
-      forgotSuccess.textContent = `✅ Kata laluan untuk ${emailVal} berjaya dikemas kini! Anda kini boleh log masuk.`;
+      forgotSuccess.textContent = `✅ Pautan set semula kata laluan telah dihantar ke e-mel: ${emailVal}`;
       forgotSuccess.style.display = "block";
-
-      // Pre-fill login form
-      const loginEmail = document.getElementById("login-email");
-      const loginPass = document.getElementById("login-password");
-      if (loginEmail) loginEmail.value = emailVal;
-      if (loginPass) loginPass.value = newPassVal;
-
-      setTimeout(() => {
-        closeModal();
-        const tabLogin = document.getElementById("tab-login");
-        if (tabLogin) tabLogin.click();
-      }, 2000);
+      forgotEmailInput.value = "";
     });
   }
 }
@@ -2331,36 +1846,23 @@ function setupActivityLogModal() {
   });
 }
 
-async function renderActivityLogTable() {
+function renderActivityLogTable() {
   const tbody = document.getElementById('activity-log-tbody');
-  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--color-primary); padding:24px;">⏳ Memuatkan log aktiviti pusat dari Cloud Firestore...</td></tr>';
+  const logs = getAuditLogs();
 
-  let logs = [];
-  try {
-    if (typeof simfaFetchCentralAuditLogs === 'function') {
-      logs = await simfaFetchCentralAuditLogs();
-    } else {
-      logs = getAuditLogs();
-    }
-  } catch (err) {
-    console.warn("Log fetch error, fallback to local:", err);
-    logs = getAuditLogs();
-  }
-
-  if (!logs || logs.length === 0) {
+  if (logs.length === 0) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--color-text-muted); padding:32px;">⚠️ Tiada rekod aktiviti ditemui.</td></tr>';
     return;
   }
 
   tbody.innerHTML = logs.map((log, idx) => {
-    const act = (log.action || '').toLowerCase();
-    const isLogin = act.includes('masuk') || act === 'login';
+    const isLogin = log.action === 'login';
     const badge = isLogin
-      ? `<span class="log-badge-login">▲ ${log.action || 'Log Masuk'}</span>`
-      : `<span class="log-badge-logout">▼ ${log.action || 'Log Keluar'}</span>`;
+      ? `<span class="log-badge-login">▲ Log Masuk</span>`
+      : `<span class="log-badge-logout">▼ Log Keluar</span>`;
     return `<tr>
       <td style="font-weight:600; color:var(--color-text-muted); font-size:12px;">${idx + 1}</td>
-      <td style="font-family:'Inter',monospace; font-size:13px;">${log.datetime || log.timestamp || '-'}</td>
+      <td style="font-family:'Inter',monospace; font-size:13px;">${log.datetime}</td>
       <td style="font-weight:600; color:var(--color-primary);">${log.email}</td>
       <td>${badge}</td>
     </tr>`;

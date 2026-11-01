@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=3">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0A1628">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -107,41 +107,15 @@
 
         <!-- Tabs -->
         <div class="auth-tabs">
-          <button id="tab-login" class="tab-btn active">Log Masuk</button>
-          <button id="tab-signup" class="tab-btn">Daftar Akaun</button>
+          <button id="tab-signup" class="tab-btn active">Daftar Akaun</button>
+          <button id="tab-login" class="tab-btn">Log Masuk</button>
         </div>
 
-        <!-- Log In Form (Default Active) -->
-        <form id="login-form" class="auth-form active">
-          <div class="form-group">
-            <label for="login-email">Alamat E-mel Kerajaan (.gov / .gov.my)</label>
-            <input type="email" id="login-email" placeholder="sadiq@moh.gov" required>
-          </div>
-          <div class="form-group">
-            <label for="login-password">Kata Laluan</label>
-            <input type="password" id="login-password" placeholder="Sila masukkan kata laluan (cth: 123)" required>
-          </div>
-          <button type="submit" class="btn-primary">🔑 Log Masuk</button>
-          
-          <div style="margin-top:14px; padding:10px 14px; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; font-size:12.5px; color:#166534; text-align:center; line-height:1.6;">
-            <strong>💡 Akses Pantas Pegawai Farmasi:</strong><br>
-            Emel: <code style="font-weight:700; background:#DCFCE7; padding:2px 6px; border-radius:4px;">sadiq@moh.gov</code> &bull; Kata Laluan: <code style="font-weight:700; background:#DCFCE7; padding:2px 6px; border-radius:4px;">Password123!</code>
-          </div>
-
-          <button type="button" id="btn-guest-login" style="margin-top:10px; width:100%; justify-content:center; background:linear-gradient(135deg, #00ACC1 0%, #0288D1 100%); color:#FFFFFF; border:none; padding:12px; font-weight:700; font-size:14.5px; border-radius:10px; cursor:pointer; box-shadow:0 4px 14px rgba(0,172,193,0.3); transition:all 0.2s ease;">
-            🚀 Masuk Segera (1-Klik Tanpa Kata Laluan)
-          </button>
-
-          <div style="text-align:center; margin-top:14px;">
-            <a href="#" id="btn-forgot-pw" class="forgot-link">Lupa Kata Laluan?</a>
-          </div>
-        </form>
-
         <!-- Sign Up Form -->
-        <form id="signup-form" class="auth-form">
+        <form id="signup-form" class="auth-form active">
           <div class="form-group">
-            <label for="reg-email">Alamat E-mel Kerajaan (.gov / .gov.my)</label>
-            <input type="email" id="reg-email" placeholder="sadiq@moh.gov" required>
+            <label for="reg-email">Alamat E-mel Kerajaan</label>
+            <input type="email" id="reg-email" placeholder="nama@bahagian.gov.my" required>
           </div>
           <div class="form-group">
             <label for="reg-password">Kata Laluan</label>
@@ -149,6 +123,22 @@
             <div class="password-strength-bar"><div class="strength-fill"></div></div>
           </div>
           <button type="submit" class="btn-primary">🔐 Daftar Sekarang</button>
+        </form>
+
+        <!-- Log In Form -->
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="login-email">Alamat E-mel Kerajaan</label>
+            <input type="email" id="login-email" placeholder="nama@bahagian.gov.my" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Kata Laluan</label>
+            <input type="password" id="login-password" placeholder="Sila masukkan kata laluan" required>
+          </div>
+          <button type="submit" class="btn-primary">🔑 Log Masuk</button>
+          <div style="text-align:center; margin-top:14px;">
+            <a href="#" id="btn-forgot-pw" class="forgot-link">Lupa Kata Laluan?</a>
+          </div>
         </form>
 
         <!-- GOV notice -->
@@ -200,6 +190,10 @@
       </div>
 
       <div class="header-right">
+        <div class="user-profile">
+          <span class="user-avatar">👤</span>
+          <span id="user-email-display">user@email.com</span>
+        </div>
         <button id="btn-activity-log" class="btn-secondary">📋 Log Aktiviti</button>
         <button id="btn-walkthrough" class="btn-secondary">📖 Panduan</button>
         <button id="btn-logout" class="btn-secondary btn-logout-red">⏏ Log Keluar</button>
@@ -209,11 +203,10 @@
     <main class="workspace-main">
       <!-- CONTROL PANEL (LEFT) -->
       <section class="control-panel">
-
         <!-- Block 1: Presets -->
         <div class="config-card">
           <div class="config-card-inner">
-            <h3 class="card-title"><span class="icon">💊</span>Pilih Ubat</h3>
+            <h3 class="card-title"><span class="icon">💊</span>Pilih Ubat (Preset)</h3>
             <div class="form-group">
               <select id="medication-preset" class="custom-select">
                 <option value="custom">-- Pilihan Custom --</option>
@@ -250,17 +243,8 @@
       <!-- PREVIEW PANEL (RIGHT) -->
       <section class="preview-panel">
         <div class="preview-sticky-container">
-          <div class="preview-header-flex">
-            <div>
-              <h2 class="preview-section-title" style="margin-bottom: 2px;">Paparan Cetakan Label</h2>
-              <p class="preview-desc" style="margin-bottom: 0;">Saiz fizikal standard label: <strong>90mm x 60mm</strong>.</p>
-            </div>
-            <button type="button" id="printer-status-badge" class="printer-status-pill" title="Klik untuk buka / tutup pelarasan alignment">
-              <span>🖨️</span>
-              <span id="printer-badge-text">PhIS / eHIS (0mm, 0mm)</span>
-              <span style="font-size: 10px; opacity: 0.7;">▼</span>
-            </button>
-          </div>
+          <h2 class="preview-section-title">Paparan Cetakan Label</h2>
+          <p class="preview-desc">Saiz fizikal standard label: <strong>90mm x 60mm</strong>. Grid: [Nama Ubat | Jadual | Amaran].</p>
 
           <div class="label-outer-border">
             <div id="print-label" class="medicine-label">
@@ -276,58 +260,6 @@
             </div>
           </div>
 
-          <!-- Alignment Panel (Right side next to print) -->
-          <div id="printer-alignment-panel" class="config-card printer-config-card" style="margin: 14px 0; display: none;">
-            <div class="config-card-inner">
-              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">
-                <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: #00838F; display: flex; align-items: center; gap: 6px;">
-                  <span>📐</span> Pelarasan Alignment Cetakan
-                </h4>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <button type="button" id="btn-reset-offset" class="btn-micro-reset" title="Set semula kedudukan offset ke 0mm">↺ Reset</button>
-                  <button type="button" id="btn-close-alignment" class="close-btn" style="border: none; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--color-text-muted);">&times;</button>
-                </div>
-              </div>
-
-              <!-- PRINTER TYPE -->
-              <div class="setting-subgroup">
-                <label class="control-label-muted">PRINTER TYPE</label>
-                <div class="pill-btn-group" id="printer-type-group">
-                  <button type="button" class="pill-btn active" data-printer="phis">PhIS / eHIS</button>
-                  <button type="button" class="pill-btn" data-printer="fisicien_l">FiSiCien (L)</button>
-                  <button type="button" class="pill-btn" data-printer="fisicien_s">FiSiCien (S)</button>
-                </div>
-              </div>
-
-              <!-- ADJUST POSITION (MM) -->
-              <div class="setting-subgroup" style="margin-bottom: 0;">
-                <label class="control-label-muted" style="margin-bottom: 6px;">ADJUST POSITION (MM)</label>
-                
-                <!-- Slider X -->
-                <div class="slider-adjust-row">
-                  <span class="slider-axis-label">X:</span>
-                  <input type="range" id="adjust-x-slider" class="custom-slider-accent" min="-25" max="25" step="1" value="0">
-                  <div class="slider-val-box">
-                    <span id="adjust-x-val" class="slider-val-text">0mm</span>
-                  </div>
-                </div>
-
-                <!-- Slider Y -->
-                <div class="slider-adjust-row">
-                  <span class="slider-axis-label">Y:</span>
-                  <input type="range" id="adjust-y-slider" class="custom-slider-accent" min="-25" max="25" step="1" value="0">
-                  <div class="slider-val-box">
-                    <span id="adjust-y-val" class="slider-val-text">0mm</span>
-                  </div>
-                </div>
-
-                <div class="offset-hint-text">
-                  💡 <em>Laraskan nilai X/Y jika cetakan lari pada printer selain Zebra/Toshiba.</em>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="action-buttons-container">
             <button id="btn-print" class="btn-action-primary">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -335,7 +267,6 @@
               </svg>
               Cetak Label (90mm x 60mm)
             </button>
-            <button type="button" id="btn-toggle-alignment" class="btn-action-secondary" title="Buka / tutup pelarasan alignment printer">📐 Alignment Printer</button>
             <button id="btn-save-template" class="btn-action-secondary">Simpan Template</button>
             <button id="btn-export-templates" class="btn-action-secondary">Eksport Template</button>
             <button id="btn-import-templates" class="btn-action-secondary">Import Template</button>
@@ -357,93 +288,40 @@
   </div>
 
   <!-- ================= FORGOT PASSWORD MODAL ================= -->
-  <!-- ================= FORGOT PASSWORD MODAL ================= -->
   <div id="forgot-pw-modal" class="modal-overlay hidden">
     <div class="modal-card" style="max-width:440px;">
       <div class="modal-header">
-        <h2>🔑 Set Semula Kata Laluan</h2>
+        <h2>🔑 Lupa Kata Laluan</h2>
         <button id="close-forgot-pw" class="close-btn">&times;</button>
       </div>
-      <div class="modal-body" style="text-align:center; padding:24px 28px;">
-        <div style="font-size:42px; margin-bottom:12px;">🔐</div>
-        <h3 style="font-size:16px; color:var(--color-text-main); margin-bottom:8px;">Tukar Kata Laluan Pegawai</h3>
-        <p style="font-size:13px; color:var(--color-text-muted); line-height:1.5; margin-bottom:16px;">
-          Sistem beroperasi dalam mod tempatan/offline (tiada pelayan emel luar). Sila masukkan e-mel anda dan tetapkan kata laluan baru secara terus di bawah:
+      <div class="modal-body" style="text-align:center; padding:32px 28px;">
+        <div style="font-size:52px; margin-bottom:16px;">🏛️</div>
+        <h3 style="font-size:16px; color:var(--color-text-main); margin-bottom:12px;">Set Semula Kata Laluan</h3>
+        <p style="font-size:13.5px; color:var(--color-text-muted); line-height:1.6; margin-bottom:20px;">
+          Sila masukkan e-mel berdaftar anda untuk menerima pautan penetapan semula kata laluan.
         </p>
         
         <!-- Alerts inside modal -->
         <div id="forgot-pw-success" style="display:none; background:#D1FAE5; border:1px solid #A7F3D0; color:#065F46; padding:12px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; line-height:1.5; text-align:left;"></div>
         <div id="forgot-pw-error" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:12px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; line-height:1.5; text-align:left;"></div>
 
-        <form id="forgot-pw-form" style="text-align:left; margin-bottom:16px;">
-          <div class="form-group" style="margin-bottom:14px;">
-            <label for="forgot-email" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Alamat E-mel</label>
-            <input type="email" id="forgot-email" placeholder="nama@moh.gov.my" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
+        <form id="forgot-pw-form" style="text-align:left; margin-bottom:20px;">
+          <div class="form-group" style="margin-bottom:16px;">
+            <label for="forgot-email" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Alamat E-mel Berdaftar</label>
+            <input type="email" id="forgot-email" placeholder="nama@bahagian.gov.my atau sadiqrashid25@gmail.com" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
           </div>
-          <div class="form-group" style="margin-bottom:14px;">
-            <label for="forgot-new-password" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Kata Laluan Baru</label>
-            <input type="password" id="forgot-new-password" placeholder="Masukkan kata laluan baru" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
-          </div>
-          <div class="form-group" style="margin-bottom:18px;">
-            <label for="forgot-confirm-password" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Sahkan Kata Laluan Baru</label>
-            <input type="password" id="forgot-confirm-password" placeholder="Ulang kata laluan baru" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
-          </div>
-          <button type="submit" class="btn-primary" style="width:100%; margin-top:0; padding:12px; font-weight:700;">💾 Simpan &amp; Kemas Kini Kata Laluan</button>
+          <button type="submit" class="btn-primary" style="width:100%; margin-top:0;">📧 Hantar Pautan Set Semula</button>
         </form>
 
-        <div style="border-top:1px solid var(--color-border); padding-top:14px; text-align:left;">
-          <p style="font-size:12px; color:var(--color-text-muted); line-height:1.5; margin:0;">
-            💡 Akaun demo sedia ada: <strong>sadiq@moh.gov</strong> (Kata laluan: <strong>123</strong>)
+        <div style="border-top:1px solid var(--color-border); padding-top:16px; text-align:left;">
+          <div style="font-size:12px; color:var(--color-text-muted); font-weight:600; margin-bottom:8px;">Bantuan Alternatif:</div>
+          <p style="font-size:12.5px; color:var(--color-text-muted); line-height:1.5; margin:0;">
+            Hubungi pentadbir di <strong>admin@pkdsik.gov.my</strong> jika menghadapi kesulitan.
           </p>
         </div>
       </div>
       <div class="modal-footer">
         <button id="close-forgot-pw-footer" class="btn-primary" style="margin-top:0; width:auto; padding:10px 28px;">Tutup</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= OTP VERIFICATION MODAL ================= -->
-  <div id="otp-modal" class="modal-overlay hidden">
-    <div class="modal-content" style="max-width: 440px; text-align: center; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); background: #ffffff; overflow: hidden;">
-      <div class="modal-header" style="background: #FAFBFD; border-bottom: 1px solid var(--color-border); padding: 16px 20px;">
-        <h3 class="modal-title" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--color-text-main); margin: 0;">
-          <span>🔐</span> Pengesahan Emel Pegawai (OTP)
-        </h3>
-        <button id="close-otp-modal" class="close-btn" style="font-size: 24px; color: var(--color-text-muted); cursor: pointer; border: none; background: none;">&times;</button>
-      </div>
-      <div class="modal-body" style="padding: 24px 22px;">
-        <div style="font-size: 42px; margin-bottom: 8px;">📧</div>
-        <p style="font-size: 13px; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 12px;">
-          Pendaftaran untuk: <strong id="otp-target-email" style="color: var(--color-primary); font-size: 14.5px;">nama@moh.gov.my</strong>
-        </p>
-
-        <!-- Offline/Local OTP Notice -->
-        <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 12.5px; color: #1E40AF; text-align: left; line-height: 1.4;">
-          ℹ️ <strong>Mod Tempatan (Offline):</strong> Tiada sambungan gateway e-mel luar. Kod OTP dijana terus pada skrin ini:
-        </div>
-
-        <!-- Direct OTP Display Box -->
-        <div id="otp-demo-badge" style="background: #F0FDF4; border: 2px dashed #22C55E; border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: center;">
-          <div style="font-size: 11px; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">KOD OTP KESELAMATAN ANDA</div>
-          <div id="demo-otp-code" style="font-size: 28px; font-weight: 800; letter-spacing: 6px; color: #15803D; font-family: 'Inter', monospace; margin-bottom: 8px;">123456</div>
-          <button type="button" id="btn-autofill-otp" style="background: #16A34A; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: background 0.2s;">⚡ Isi Kod Automatik</button>
-        </div>
-
-        <div id="otp-error-msg" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:10px; border-radius:8px; font-size:12.5px; font-weight:600; margin-bottom:14px; text-align:center;"></div>
-        <div id="otp-success-msg" style="display:none; background:#D1FAE5; border:1px solid #A7F3D0; color:#065F46; padding:10px; border-radius:8px; font-size:12.5px; font-weight:600; margin-bottom:14px; text-align:center;"></div>
-
-        <form id="otp-form">
-          <div style="margin-bottom: 18px;">
-            <label for="otp-input" style="display:block; font-size: 11.5px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px;">Masukkan 6-Digit Kod</label>
-            <input type="text" id="otp-input" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" placeholder="· · · · · ·" autocomplete="one-time-code" required style="width: 100%; max-width: 250px; height: 48px; font-size: 24px; font-family: 'Inter', monospace; text-align: center; letter-spacing: 8px; border: 2px solid var(--color-primary); border-radius: 10px; outline: none; margin: 0 auto; display: block; font-weight: 700; background: #FAFBFD;">
-          </div>
-          <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 700; border-radius: 8px;">✅ Sahkan &amp; Cipta Akaun</button>
-        </form>
-
-        <div style="margin-top: 14px; font-size: 12.5px; color: var(--color-text-muted);">
-          Tidak terima kod? <button type="button" id="btn-resend-otp" style="background: none; border: none; color: var(--color-primary); font-weight: 700; cursor: pointer; text-decoration: underline; padding: 0;">Jana Semula Kod</button> <span id="otp-timer" style="color: var(--color-text-muted);">(60s)</span>
-        </div>
       </div>
     </div>
   </div>
@@ -563,30 +441,15 @@
     </div>
   </div>
 
-  <!-- Firebase Web App, Auth & Firestore Cloud SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="app.js?v=20"></script>
+  <script src="app.js?v=3"></script>
   <script>
-    // Bypass service worker caching during localhost development
+    // Register Service Worker for PWA offline support
     if ('serviceWorker' in navigator) {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        navigator.serviceWorker.getRegistrations().then(regs => {
-          for (let reg of regs) reg.unregister();
-        });
-        if ('caches' in window) {
-          caches.keys().then(keys => {
-            for (let k of keys) caches.delete(k);
-          });
-        }
-      } else {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((reg) => console.log('[PWA] Service Worker registered:', reg.scope))
-            .catch((err) => console.log('[PWA] SW registration failed:', err));
-        });
-      }
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => console.log('[PWA] Service Worker registered:', reg.scope))
+          .catch((err) => console.log('[PWA] SW registration failed:', err));
+      });
     }
   </script>
 </body>

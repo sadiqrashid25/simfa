@@ -771,17 +771,14 @@ select.custom-select:focus {
   box-shadow: 0 4px 15px rgba(211, 47, 47, 0.08);
 }
 
-.selector-item svg,
-.selector-item img {
+.selector-item svg {
   width: 48px;
   height: 48px;
   margin-bottom: 6px;
   transition: transform var(--transition-fast);
-  object-fit: contain;
 }
 
-.selector-item:hover svg,
-.selector-item:hover img {
+.selector-item:hover svg {
   transform: scale(1.08);
 }
 
@@ -962,8 +959,8 @@ select.custom-select:focus {
 .medicine-label {
   width: 90mm;
   height: 60mm;
-  background: #FFFFFF;
-  border: 2px solid #000000;
+  background: white;
+  border: 2.5px solid #000000;
   padding: 0;
   box-sizing: border-box;
   display: flex;
@@ -975,30 +972,39 @@ select.custom-select:focus {
 }
 
 .medicine-label::before {
-  display: none;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  margin: 1mm;
+  z-index: 10;
 }
 
 /* Top Bar: Drug Name (Horizontal Band) */
 .label-top-drugname {
   width: 100%;
   height: 12mm;
-  border-bottom: 2px solid #000000;
+  border-bottom: 2.5px solid #000000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1mm 2mm;
-  background: #FFFFFF;
+  background: #F5F7FA;
   box-sizing: border-box;
 }
 
 #label-out-drugname {
   display: block;
-  font-family: 'Inter', 'Outfit', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-weight: 800;
   font-size: 4.8mm;
-  color: #000000;
+  color: #0D47A1;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -1021,8 +1027,7 @@ select.custom-select:focus {
   width: 68mm;
   height: 100%;
   box-sizing: border-box;
-  border-right: 2px solid #000000;
-  background: #FFFFFF;
+  border-right: 2.5px solid #000000;
 }
 
 .schedule-table {
@@ -1039,7 +1044,6 @@ select.custom-select:focus {
   vertical-align: middle;
   padding: 1mm;
   box-sizing: border-box;
-  background: #FFFFFF;
 }
 
 .schedule-table td:last-child {
@@ -1059,8 +1063,6 @@ select.custom-select:focus {
   width: 10mm;
   height: 10mm;
   display: block;
-  object-fit: contain;
-  margin: 0 auto;
 }
 
 /* Flex container for clean icon + text centering inside table cells */
@@ -1120,7 +1122,8 @@ select.custom-select:focus {
   gap: 2mm;
   padding: 2mm 1mm;
   box-sizing: border-box;
-  background: #FFFFFF;
+  background: #FFFDE7;
+  /* Light yellow precaution background */
 }
 
 /* Individual warning item layout (SVG + caption text stacked vertically) */
@@ -1141,14 +1144,12 @@ select.custom-select:focus {
   justify-content: center;
 }
 
-.warning-icon-svg-wrapper svg,
-.warning-icon-svg-wrapper img {
+.warning-icon-svg-wrapper svg {
   width: 100%;
   height: 100%;
   max-width: 100%;
   max-height: 100%;
   display: block;
-  object-fit: contain;
 }
 
 .warning-caption-text {
@@ -1246,136 +1247,59 @@ select.custom-select:focus {
 /* ==========================================
    @MEDIA PRINT LAYOUT FOR EXACT 90X60MM
    ========================================== */
-@page {
-  size: 90mm 60mm;
-  margin: 0mm !important;
-}
-
 @media print {
 
-  html,
-  body {
-    width: 90mm !important;
-    height: 60mm !important;
-    max-width: 90mm !important;
-    max-height: 60mm !important;
-    background: #ffffff !important;
+  body,
+  html {
+    background: white !important;
     margin: 0 !important;
     padding: 0 !important;
+    height: auto !important;
     overflow: visible !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
   }
 
-  /* Hide all siblings of parents of `#print-label` at each DOM depth level */
-  body > *:not(#app-container) {
+  body * {
     display: none !important;
   }
 
-  #app-container {
-    display: block !important;
-    width: 90mm !important;
-    height: 60mm !important;
-    overflow: visible !important;
-    position: static !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  #app-container > *:not(.workspace-main) {
-    display: none !important;
-  }
-
-  .workspace-main {
-    display: block !important;
-    width: 90mm !important;
-    height: 60mm !important;
-    overflow: visible !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .workspace-main > *:not(.preview-panel) {
-    display: none !important;
-  }
-
-  .preview-panel {
-    display: block !important;
-    background: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 90mm !important;
-    height: 60mm !important;
-    overflow: visible !important;
-  }
-
-  .preview-panel > *:not(.preview-sticky-container) {
-    display: none !important;
-  }
-
-  .preview-sticky-container {
-    display: block !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 90mm !important;
-    height: 60mm !important;
-    overflow: visible !important;
-  }
-
-  .preview-sticky-container > *:not(.label-outer-border) {
-    display: none !important;
-  }
-
-  .label-outer-border {
-    display: block !important;
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 90mm !important;
-    height: 60mm !important;
-    overflow: visible !important;
+  #print-label,
+  #print-label * {
+    display: flex !important;
   }
 
   #print-label {
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-start !important;
-    position: relative !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
     width: 90mm !important;
     height: 60mm !important;
-    max-width: 90mm !important;
-    max-height: 60mm !important;
-    border: 2px solid #000000 !important;
+    border: 2.5px solid #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
     box-sizing: border-box !important;
-    page-break-before: avoid !important;
-    page-break-after: avoid !important;
     page-break-inside: avoid !important;
-    overflow: hidden !important;
     background-color: #ffffff !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    transform: translate(var(--print-offset-x, 0mm), var(--print-offset-y, 0mm)) !important;
   }
 
   .label-top-drugname {
     width: 100% !important;
     height: 12mm !important;
-    border-bottom: 2px solid #000000 !important;
+    border-bottom: 2.5px solid #000000 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     padding: 1mm 2mm !important;
-    background: #FFFFFF !important;
+    background: #F5F7FA !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
   #label-out-drugname {
-    color: #000000 !important;
     display: block !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -1393,8 +1317,7 @@ select.custom-select:focus {
   .label-mid-schedule {
     width: 68mm !important;
     height: 100% !important;
-    border-right: 2px solid #000000 !important;
-    background: #FFFFFF !important;
+    border-right: 2.5px solid #000000 !important;
     display: block !important;
   }
 
@@ -1414,7 +1337,6 @@ select.custom-select:focus {
     border-right: 1.5px solid #000000 !important;
     text-align: center !important;
     vertical-align: middle !important;
-    background: #FFFFFF !important;
   }
 
   .schedule-table td:last-child {
@@ -1431,8 +1353,6 @@ select.custom-select:focus {
     width: 10mm !important;
     height: 10mm !important;
     display: block !important;
-    object-fit: contain !important;
-    margin: 0 auto !important;
   }
 
   .table-cell-content {
@@ -1476,7 +1396,7 @@ select.custom-select:focus {
     justify-content: center !important;
     gap: 2mm !important;
     padding: 2mm 1mm !important;
-    background: #FFFFFF !important;
+    background: #FFFDE7 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -1498,12 +1418,10 @@ select.custom-select:focus {
     justify-content: center !important;
   }
 
-  .warning-icon-svg-wrapper svg,
-  .warning-icon-svg-wrapper img {
+  .warning-icon-svg-wrapper svg {
     width: 100% !important;
     height: 100% !important;
     display: block !important;
-    object-fit: contain !important;
   }
 
   .warning-caption-text {
@@ -1884,276 +1802,39 @@ select.custom-select:focus {
 }
 
 /* ==========================================
-   PRINTER ADJUSTMENT & POSITION OFFSET STYLES
-   (Inspired by FiSiCien & PhIS Calibration UI)
+   PRINT MEDIA STYLE (90mm x 60mm Label Only)
    ========================================== */
-.printer-config-card {
-  border-left: 4px solid #00838F !important;
-}
-
-.setting-subgroup {
-  margin-bottom: 16px;
-}
-
-.setting-subgroup:last-child {
-  margin-bottom: 0;
-}
-
-.control-label-muted {
-  display: block;
-  font-family: 'Outfit', sans-serif;
-  font-size: 11.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #546E7A;
-  margin-bottom: 8px;
-}
-
-/* Pill buttons for label size & printer type */
-.pill-btn-group {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-}
-
-.pill-btn {
-  flex: 1;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: center;
-  border: 1.5px solid var(--color-border);
-  background: #F8FAFC;
-  color: #334155;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  white-space: nowrap;
-}
-
-.pill-btn:hover {
-  background: #EDF2F7;
-  border-color: #94A3B8;
-  transform: translateY(-1px);
-}
-
-.pill-btn.active {
-  background: #00838F;
-  border-color: #00838F;
-  color: #FFFFFF;
-  font-weight: 700;
-  box-shadow: 0 3px 10px rgba(0, 131, 143, 0.35);
-}
-
-/* Position adjustment sliders */
-.adjust-header-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.btn-micro-reset {
-  background: #E2E8F0;
-  color: #475569;
-  border: none;
-  border-radius: 6px;
-  padding: 3px 9px;
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-micro-reset:hover {
-  background: #CBD5E1;
-  color: #0F172A;
-}
-
-.slider-adjust-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.slider-axis-label {
-  font-family: 'Outfit', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: #1E293B;
-  min-width: 20px;
-}
-
-.custom-slider-accent {
-  flex: 1;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 6px;
-  background: #CBD5E1;
-  outline: none;
-  transition: background 0.2s;
-}
-
-.custom-slider-accent::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #00838F;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 131, 143, 0.45);
-  border: 2px solid #FFFFFF;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-
-.custom-slider-accent::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  background: #006064;
-}
-
-.custom-slider-accent::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #00838F;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 131, 143, 0.45);
-  border: 2px solid #FFFFFF;
-}
-
-.slider-val-box {
-  min-width: 62px;
-  text-align: right;
-}
-
-.slider-val-text {
-  font-family: 'Outfit', monospace;
-  font-size: 15px;
-  font-weight: 700;
-  color: #00838F;
-  letter-spacing: 0.5px;
-}
-
-.offset-hint-text {
-  font-size: 12px;
-  color: #64748B;
-  line-height: 1.45;
-  margin-top: 6px;
-  padding: 6px 10px;
-  background: rgba(0, 131, 143, 0.05);
-  border-radius: 8px;
-  border-left: 3px solid #00838F;
-}
-
-/* Medicine name input */
-.custom-text-input {
-  width: 100%;
-  padding: 11px 15px;
-  border-radius: 12px;
-  border: 1.5px solid var(--color-border);
-  background: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: #0F172A;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.custom-text-input:focus {
-  border-color: #00838F;
-  box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
-}
-
-/* Preview Header Alignment Status Badge */
-.preview-header-flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.printer-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #E0F2F1;
-  color: #004D40;
-  border: 1px solid #80CBC4;
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  font-family: 'Outfit', sans-serif;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.printer-status-pill:hover {
-  background: #B2DFDB;
-  border-color: #00838F;
-  transform: translateY(-1px);
-}
-
-/* ==========================================
-   PRESET SEARCH INPUT STYLES
-   ========================================== */
-.search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.search-input-wrapper .search-icon {
-  position: absolute;
-  left: 12px;
-  font-size: 13px;
-  color: #64748B;
-  pointer-events: none;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 32px 10px 34px;
-  border-radius: 10px;
-  border: 1.5px solid var(--color-border);
-  background: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  color: var(--color-text-main);
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.search-input:focus {
-  border-color: #00838F;
-  box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
-}
-
-.clear-search-btn {
-  position: absolute;
-  right: 10px;
-  border: none;
-  background: none;
-  color: #94A3B8;
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 4px;
-  transition: color 0.15s ease;
-}
-
-.clear-search-btn:hover {
-  color: #0F172A;
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .label-outer-border, #print-label, #print-label * {
+    visibility: visible;
+  }
+  #print-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 90mm;
+    height: 60mm;
+    border: 2.5px solid #000000;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    z-index: 9999;
+  }
+  .label-outer-border {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    background: none !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  @page {
+    size: 90mm 60mm;
+    margin: 0;
+  }
 }
