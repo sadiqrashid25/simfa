@@ -1,0 +1,26 @@
+{
+  "name": "SiMFa Designer - Sistem Pelabelan Ubat Profesional",
+  "short_name": "SiMFa",
+  "description": "Aplikasi pelabelan ubat profesional menggunakan Simbol Mudah Faham (SiMFa) untuk label 90mm x 60mm",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0D1B2A",
+  "theme_color": "#0A1628",
+  "orientation": "any",
+  "categories": ["medical", "health", "productivity"],
+  "lang": "ms",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

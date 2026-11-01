@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SiMFa (Simbol Mudah Faham) - Aplikasi Pelabelan Ubat Profesional 90mm x 60mm">
+  <title>SiMFa - Sistem Pelabelan Ubat Profesional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0A1628">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+
+<body>
+
+  <!-- ================= AUTH VIEW ================= -->
+  <div id="auth-container" class="auth-wrapper">
+    <div class="auth-card">
+
+      <!-- GOV Banner with Clear Logo -->
+      <div class="auth-card-banner" style="padding: 24px 32px 14px;">
+        <!-- CLEAR SIMFA LOGO: Capsule + Tablet + Text -->
+        <div class="logo-area" style="margin-top: 0;">
+          <svg class="simfa-logo-svg" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Blue gradient for capsule -->
+              <linearGradient id="capBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#42A5F5"/>
+                <stop offset="100%" stop-color="#1565C0"/>
+              </linearGradient>
+              <!-- Green gradient for capsule -->
+              <linearGradient id="capGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#66BB6A"/>
+                <stop offset="100%" stop-color="#2E7D32"/>
+              </linearGradient>
+              <!-- Cyan gradient for tablet -->
+              <linearGradient id="tabCyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#26C6DA"/>
+                <stop offset="100%" stop-color="#006064"/>
+              </linearGradient>
+              <filter id="premiumDropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+              </filter>
+              <!-- Clip paths for rotated capsule -->
+              <clipPath id="leftClip">
+                <rect x="-80" y="-40" width="80" height="80" />
+              </clipPath>
+              <clipPath id="rightClip">
+                <rect x="0" y="-40" width="80" height="80" />
+              </clipPath>
+            </defs>
+
+            <!-- STYLISH ROTATED CAPSULE & TABLET GROUP -->
+            <g filter="url(#premiumDropShadow)" transform="translate(100, 75)">
+              
+              <!-- Capsule (Rotated -15 degrees) -->
+              <g transform="translate(-25, -20) rotate(-15)">
+                <!-- Capsule Left (Blue) -->
+                <rect x="-70" y="-30" width="140" height="60" rx="30" fill="url(#capBlueGrad)" clip-path="url(#leftClip)"/>
+                <!-- Capsule Right (Green) -->
+                <rect x="-70" y="-30" width="140" height="60" rx="30" fill="url(#capGreenGrad)" clip-path="url(#rightClip)"/>
+                <!-- Center Divider Band -->
+                <rect x="-1" y="-30" width="2" height="60" fill="rgba(255,255,255,0.85)"/>
+                <!-- Capsule Border -->
+                <rect x="-70" y="-30" width="140" height="60" rx="30" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+                <!-- Rx Text inside blue half -->
+                <text x="-35" y="8" font-family="'Outfit', sans-serif" font-weight="700" font-size="20" fill="rgba(255,255,255,0.7)" text-anchor="middle">Rx</text>
+                <!-- Gloss Shine overlay -->
+                <path d="M-55,-18 C-30,-26 30,-26 55,-18 C45,-23 -45,-23 -55,-18 Z" fill="rgba(255,255,255,0.25)"/>
+              </g>
+
+              <!-- Tablet (Rotated 15 degrees, overlapping bottom right) -->
+              <g transform="translate(25, 15) rotate(18)">
+                <!-- Tablet body -->
+                <circle cx="0" cy="0" r="28" fill="url(#tabCyanGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                <!-- Score lines -->
+                <line x1="-24" y1="0" x2="24" y2="0" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                <line x1="0" y1="-24" x2="0" y2="24" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                <!-- Inner shadow effect -->
+                <circle cx="0" cy="0" r="28" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/>
+                <!-- Top Gloss Shine -->
+                <path d="M-18,-12 C-8,-20 8,-20 18,-12 C10,-16 -10,-16 -18,-12 Z" fill="rgba(255,255,255,0.2)"/>
+              </g>
+            </g>
+
+            <!-- SiMFa Brand Text -->
+            <g transform="translate(195, 95)" filter="url(#premiumDropShadow)">
+              <text font-family="'Outfit', sans-serif" font-weight="800" font-size="82" y="0">
+                <tspan fill="#FFFFFF">SiM</tspan><tspan fill="#00E676">Fa</tspan>
+              </text>
+              <text font-family="'Inter', sans-serif" font-weight="600" font-size="14" fill="rgba(255,255,255,0.6)" letter-spacing="5" x="5" y="32">SIMBOL MUDAH FAHAM</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="auth-card-body">
+        <!-- Error / Info message -->
+        <div id="auth-error-msg" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:10px 14px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:14px; line-height:1.5;"></div>
+
+        <!-- Tabs -->
+        <div class="auth-tabs">
+          <button id="tab-login" class="tab-btn active">Log Masuk</button>
+          <button id="tab-signup" class="tab-btn">Daftar Akaun</button>
+        </div>
+
+        <!-- Log In Form (Default Active) -->
+        <form id="login-form" class="auth-form active">
+          <div class="form-group">
+            <label for="login-email">Alamat E-mel Kerajaan (.gov / .gov.my)</label>
+            <input type="email" id="login-email" placeholder="sadiq@moh.gov" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Kata Laluan</label>
+            <input type="password" id="login-password" placeholder="Sila masukkan kata laluan (cth: 123)" required>
+          </div>
+          <button type="submit" class="btn-primary">🔑 Log Masuk</button>
+          <div style="text-align:center; margin-top:14px;">
+            <a href="#" id="btn-forgot-pw" class="forgot-link">Lupa Kata Laluan?</a>
+          </div>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="signup-form" class="auth-form">
+          <div class="form-group">
+            <label for="reg-email">Alamat E-mel Kerajaan (.gov / .gov.my)</label>
+            <input type="email" id="reg-email" placeholder="sadiq@moh.gov" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Kata Laluan</label>
+            <input type="password" id="reg-password" placeholder="Sila masukkan kata laluan" required>
+            <div class="password-strength-bar"><div class="strength-fill"></div></div>
+          </div>
+          <button type="submit" class="btn-primary">🔐 Daftar Sekarang</button>
+        </form>
+
+        <!-- GOV notice -->
+        <div class="auth-notice">
+          🔒 Terhad kepada e-mel domain kerajaan sahaja (<strong>.gov.my</strong> / <strong>.gov</strong>)
+        </div>
+
+        <!-- Copyright -->
+        <div class="auth-copyright">
+          &copy; 2026 Hakcipta PKD Sik. Semua Hak Terpelihara.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APP WORKSPACE VIEW ================= -->
+  <div id="app-container" class="app-workspace hidden">
+    <!-- Navbar -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="mini-logo">
+          <!-- Mini header logo: clear capsule icon -->
+          <svg viewBox="0 0 68 68" width="42" height="42" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="mCapBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#64B5F6"/><stop offset="100%" stop-color="#0D47A1"/>
+              </linearGradient>
+              <linearGradient id="mCapGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#81C784"/><stop offset="100%" stop-color="#1B5E20"/>
+              </linearGradient>
+              <linearGradient id="mTabCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#4DD0E1"/><stop offset="100%" stop-color="#006064"/>
+              </linearGradient>
+              <clipPath id="mClipL"><rect x="0" y="0" width="34" height="36"/></clipPath>
+              <clipPath id="mClipR"><rect x="34" y="0" width="34" height="36"/></clipPath>
+            </defs>
+            <!-- Mini capsule -->
+            <rect x="0" y="0" width="68" height="36" rx="18" fill="url(#mCapBlue)" clip-path="url(#mClipL)"/>
+            <rect x="0" y="0" width="68" height="36" rx="18" fill="url(#mCapGreen)" clip-path="url(#mClipR)"/>
+            <rect x="0" y="0" width="68" height="36" rx="18" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+            <line x1="34" y1="2" x2="34" y2="34" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+            <!-- Mini tablet -->
+            <circle cx="20" cy="54" r="14" fill="url(#mTabCyan)"/>
+            <line x1="7" y1="54" x2="33" y2="54" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="20" y1="41" x2="20" y2="67" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="app-title">SiMFa Designer</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button id="btn-activity-log" class="btn-secondary">📋 Log Aktiviti</button>
+        <button id="btn-walkthrough" class="btn-secondary">📖 Panduan</button>
+        <button id="btn-logout" class="btn-secondary btn-logout-red">⏏ Log Keluar</button>
+      </div>
+    </header>
+
+    <main class="workspace-main">
+      <!-- CONTROL PANEL (LEFT) -->
+      <section class="control-panel">
+
+        <!-- Block 1: Presets -->
+        <div class="config-card">
+          <div class="config-card-inner">
+            <h3 class="card-title"><span class="icon">💊</span>Pilih Ubat</h3>
+            <div class="form-group">
+              <select id="medication-preset" class="custom-select">
+                <option value="custom">-- Pilihan Custom --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block 2: Dynamic Schedule -->
+        <div class="config-card">
+          <div class="config-card-inner">
+            <h3 class="card-title"><span class="icon">📅</span>Jadual Pengambilan</h3>
+            <div class="form-group">
+              <label for="schedule-rows-count">Jumlah Waktu Pengambilan Sehari</label>
+              <select id="schedule-rows-count" class="custom-select">
+                <option value="1">1 Waktu Sehari</option>
+                <option value="2">2 Waktu Sehari</option>
+                <option value="3">3 Waktu Sehari</option>
+              </select>
+            </div>
+            <div id="dynamic-rows-container" class="schedule-rows"></div>
+          </div>
+        </div>
+
+        <!-- Block 3: Warnings -->
+        <div class="config-card">
+          <div class="config-card-inner">
+            <h3 class="card-title"><span class="icon">⚠️</span>Icon Amaran Khas</h3>
+            <div class="warnings-grid-selector" id="warnings-selector"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREVIEW PANEL (RIGHT) -->
+      <section class="preview-panel">
+        <div class="preview-sticky-container">
+          <div class="preview-header-flex">
+            <div>
+              <h2 class="preview-section-title" style="margin-bottom: 2px;">Paparan Cetakan Label</h2>
+              <p class="preview-desc" style="margin-bottom: 0;">Saiz fizikal standard label: <strong>90mm x 60mm</strong>.</p>
+            </div>
+            <button type="button" id="printer-status-badge" class="printer-status-pill" title="Klik untuk buka / tutup pelarasan alignment">
+              <span>🖨️</span>
+              <span id="printer-badge-text">PhIS / eHIS (0mm, 0mm)</span>
+              <span style="font-size: 10px; opacity: 0.7;">▼</span>
+            </button>
+          </div>
+
+          <div class="label-outer-border">
+            <div id="print-label" class="medicine-label">
+              <div class="label-top-drugname">
+                <span id="label-out-drugname">METFORMIN 500mg</span>
+              </div>
+              <div class="label-main-area">
+                <div class="label-mid-schedule">
+                  <table class="schedule-table" id="label-schedule-table"></table>
+                </div>
+                <div class="label-right-precaution" id="label-out-warnings"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alignment Panel (Right side next to print) -->
+          <div id="printer-alignment-panel" class="config-card printer-config-card" style="margin: 14px 0; display: none;">
+            <div class="config-card-inner">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">
+                <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: #00838F; display: flex; align-items: center; gap: 6px;">
+                  <span>📐</span> Pelarasan Alignment Cetakan
+                </h4>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button type="button" id="btn-reset-offset" class="btn-micro-reset" title="Set semula kedudukan offset ke 0mm">↺ Reset</button>
+                  <button type="button" id="btn-close-alignment" class="close-btn" style="border: none; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+                </div>
+              </div>
+
+              <!-- PRINTER TYPE -->
+              <div class="setting-subgroup">
+                <label class="control-label-muted">PRINTER TYPE</label>
+                <div class="pill-btn-group" id="printer-type-group">
+                  <button type="button" class="pill-btn active" data-printer="phis">PhIS / eHIS</button>
+                  <button type="button" class="pill-btn" data-printer="fisicien_l">FiSiCien (L)</button>
+                  <button type="button" class="pill-btn" data-printer="fisicien_s">FiSiCien (S)</button>
+                </div>
+              </div>
+
+              <!-- ADJUST POSITION (MM) -->
+              <div class="setting-subgroup" style="margin-bottom: 0;">
+                <label class="control-label-muted" style="margin-bottom: 6px;">ADJUST POSITION (MM)</label>
+                
+                <!-- Slider X -->
+                <div class="slider-adjust-row">
+                  <span class="slider-axis-label">X:</span>
+                  <input type="range" id="adjust-x-slider" class="custom-slider-accent" min="-25" max="25" step="1" value="0">
+                  <div class="slider-val-box">
+                    <span id="adjust-x-val" class="slider-val-text">0mm</span>
+                  </div>
+                </div>
+
+                <!-- Slider Y -->
+                <div class="slider-adjust-row">
+                  <span class="slider-axis-label">Y:</span>
+                  <input type="range" id="adjust-y-slider" class="custom-slider-accent" min="-25" max="25" step="1" value="0">
+                  <div class="slider-val-box">
+                    <span id="adjust-y-val" class="slider-val-text">0mm</span>
+                  </div>
+                </div>
+
+                <div class="offset-hint-text">
+                  💡 <em>Laraskan nilai X/Y jika cetakan lari pada printer selain Zebra/Toshiba.</em>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-buttons-container">
+            <button id="btn-print" class="btn-action-primary">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+              </svg>
+              Cetak Label (90mm x 60mm)
+            </button>
+            <button type="button" id="btn-toggle-alignment" class="btn-action-secondary" title="Buka / tutup pelarasan alignment printer">📐 Alignment Printer</button>
+            <button id="btn-save-template" class="btn-action-secondary">Simpan Template</button>
+            <button id="btn-export-templates" class="btn-action-secondary">Eksport Template</button>
+            <button id="btn-import-templates" class="btn-action-secondary">Import Template</button>
+            <input type="file" id="input-import-template" accept=".json" style="display: none;">
+            <button id="btn-reset" class="btn-action-secondary">Kosongkan</button>
+          </div>
+
+          <div class="print-tip">
+            <strong>Tip Pencetakan:</strong> Pastikan <strong>Margin: Tiada (None)</strong> dan aktifkan <strong>Grafik Latar Belakang</strong>.
+          </div>
+
+          <!-- App footer copyright -->
+          <div class="app-footer-copyright">
+            &copy; 2026 Hakcipta <strong>PKD Sik</strong>. Semua Hak Terpelihara.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= FORGOT PASSWORD MODAL ================= -->
+  <!-- ================= FORGOT PASSWORD MODAL ================= -->
+  <div id="forgot-pw-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="modal-header">
+        <h2>🔑 Set Semula Kata Laluan</h2>
+        <button id="close-forgot-pw" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align:center; padding:24px 28px;">
+        <div style="font-size:42px; margin-bottom:12px;">🔐</div>
+        <h3 style="font-size:16px; color:var(--color-text-main); margin-bottom:8px;">Tukar Kata Laluan Pegawai</h3>
+        <p style="font-size:13px; color:var(--color-text-muted); line-height:1.5; margin-bottom:16px;">
+          Sistem beroperasi dalam mod tempatan/offline (tiada pelayan emel luar). Sila masukkan e-mel anda dan tetapkan kata laluan baru secara terus di bawah:
+        </p>
+        
+        <!-- Alerts inside modal -->
+        <div id="forgot-pw-success" style="display:none; background:#D1FAE5; border:1px solid #A7F3D0; color:#065F46; padding:12px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; line-height:1.5; text-align:left;"></div>
+        <div id="forgot-pw-error" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:12px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; line-height:1.5; text-align:left;"></div>
+
+        <form id="forgot-pw-form" style="text-align:left; margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:14px;">
+            <label for="forgot-email" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Alamat E-mel</label>
+            <input type="email" id="forgot-email" placeholder="nama@moh.gov.my" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label for="forgot-new-password" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Kata Laluan Baru</label>
+            <input type="password" id="forgot-new-password" placeholder="Masukkan kata laluan baru" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
+          </div>
+          <div class="form-group" style="margin-bottom:18px;">
+            <label for="forgot-confirm-password" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Sahkan Kata Laluan Baru</label>
+            <input type="password" id="forgot-confirm-password" placeholder="Ulang kata laluan baru" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%; margin-top:0; padding:12px; font-weight:700;">💾 Simpan &amp; Kemas Kini Kata Laluan</button>
+        </form>
+
+        <div style="border-top:1px solid var(--color-border); padding-top:14px; text-align:left;">
+          <p style="font-size:12px; color:var(--color-text-muted); line-height:1.5; margin:0;">
+            💡 Akaun demo sedia ada: <strong>sadiq@moh.gov</strong> (Kata laluan: <strong>123</strong>)
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="close-forgot-pw-footer" class="btn-primary" style="margin-top:0; width:auto; padding:10px 28px;">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= OTP VERIFICATION MODAL ================= -->
+  <div id="otp-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 440px; text-align: center; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); background: #ffffff; overflow: hidden;">
+      <div class="modal-header" style="background: #FAFBFD; border-bottom: 1px solid var(--color-border); padding: 16px 20px;">
+        <h3 class="modal-title" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--color-text-main); margin: 0;">
+          <span>🔐</span> Pengesahan Emel Pegawai (OTP)
+        </h3>
+        <button id="close-otp-modal" class="close-btn" style="font-size: 24px; color: var(--color-text-muted); cursor: pointer; border: none; background: none;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 24px 22px;">
+        <div style="font-size: 42px; margin-bottom: 8px;">📧</div>
+        <p style="font-size: 13px; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 12px;">
+          Pendaftaran untuk: <strong id="otp-target-email" style="color: var(--color-primary); font-size: 14.5px;">nama@moh.gov.my</strong>
+        </p>
+
+        <!-- Offline/Local OTP Notice -->
+        <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 12.5px; color: #1E40AF; text-align: left; line-height: 1.4;">
+          ℹ️ <strong>Mod Tempatan (Offline):</strong> Tiada sambungan gateway e-mel luar. Kod OTP dijana terus pada skrin ini:
+        </div>
+
+        <!-- Direct OTP Display Box -->
+        <div id="otp-demo-badge" style="background: #F0FDF4; border: 2px dashed #22C55E; border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: center;">
+          <div style="font-size: 11px; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">KOD OTP KESELAMATAN ANDA</div>
+          <div id="demo-otp-code" style="font-size: 28px; font-weight: 800; letter-spacing: 6px; color: #15803D; font-family: 'Inter', monospace; margin-bottom: 8px;">123456</div>
+          <button type="button" id="btn-autofill-otp" style="background: #16A34A; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: background 0.2s;">⚡ Isi Kod Automatik</button>
+        </div>
+
+        <div id="otp-error-msg" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:10px; border-radius:8px; font-size:12.5px; font-weight:600; margin-bottom:14px; text-align:center;"></div>
+        <div id="otp-success-msg" style="display:none; background:#D1FAE5; border:1px solid #A7F3D0; color:#065F46; padding:10px; border-radius:8px; font-size:12.5px; font-weight:600; margin-bottom:14px; text-align:center;"></div>
+
+        <form id="otp-form">
+          <div style="margin-bottom: 18px;">
+            <label for="otp-input" style="display:block; font-size: 11.5px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px;">Masukkan 6-Digit Kod</label>
+            <input type="text" id="otp-input" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" placeholder="· · · · · ·" autocomplete="one-time-code" required style="width: 100%; max-width: 250px; height: 48px; font-size: 24px; font-family: 'Inter', monospace; text-align: center; letter-spacing: 8px; border: 2px solid var(--color-primary); border-radius: 10px; outline: none; margin: 0 auto; display: block; font-weight: 700; background: #FAFBFD;">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 700; border-radius: 8px;">✅ Sahkan &amp; Cipta Akaun</button>
+        </form>
+
+        <div style="margin-top: 14px; font-size: 12.5px; color: var(--color-text-muted);">
+          Tidak terima kod? <button type="button" id="btn-resend-otp" style="background: none; border: none; color: var(--color-primary); font-weight: 700; cursor: pointer; text-decoration: underline; padding: 0;">Jana Semula Kod</button> <span id="otp-timer" style="color: var(--color-text-muted);">(60s)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ACTIVITY LOG MODAL ================= -->
+  <div id="activity-log-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:680px;">
+      <div class="modal-header">
+        <h2>📋 Log Aktiviti Pengguna</h2>
+        <button id="close-activity-log" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <p style="font-size:13.5px; color:var(--color-text-muted); margin:0;">Rekod masuk dan keluar semua pengguna sistem.</p>
+          <button id="btn-export-log" class="btn-action-secondary" style="flex:none; padding:8px 16px; font-size:13px;">⬇ Export CSV</button>
+        </div>
+        <div id="activity-log-table-wrapper" style="overflow-x:auto; max-height:55vh; overflow-y:auto; border:1px solid var(--color-border); border-radius:10px;">
+          <table class="activity-log-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tarikh &amp; Masa</th>
+                <th>Pengguna</th>
+                <th>Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="activity-log-tbody">
+              <tr><td colspan="4" style="text-align:center; color:var(--color-text-muted); padding:24px;">Tiada rekod aktiviti.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+          <button id="btn-clear-log" style="background:none; border:1.5px solid #FECACA; color:#C62828; font-family:'Outfit',sans-serif; font-weight:600; font-size:13px; padding:8px 16px; border-radius:8px; cursor:pointer;">🗑 Padam Semua Log</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="close-activity-log-footer" class="btn-primary" style="margin-top:0; width:auto; padding:10px 28px;">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= WALKTHROUGH MODAL ================= -->
+  <div id="walkthrough-modal" class="modal-overlay hidden">
+    <div class="modal-card walkthrough-card">
+      <div class="modal-header">
+        <h2>📖 Panduan Penggunaan &amp; Walkthrough</h2>
+        <button id="close-walkthrough" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="walkthrough-tabs">
+          <button class="wt-tab-btn active" data-tab="tab-grid">📐 Susun Atur Grid</button>
+          <button class="wt-tab-btn" data-tab="tab-symbols">⊕ Simbol &amp; Dos</button>
+          <button class="wt-tab-btn" data-tab="tab-presets">💊 Preset Ubat</button>
+          <button class="wt-tab-btn" data-tab="tab-print">🖨️ Tip Cetak</button>
+        </div>
+
+        <div class="walkthrough-content">
+          <div id="tab-grid" class="wt-pane active">
+            <h3>📐 Susun Atur Grid Label (90mm x 60mm)</h3>
+            <p>Label ubat direka khas mengikut lakaran grid 3 lajur:</p>
+            <div class="grid-spec-diagram">
+              <div class="spec-col">Lajur Kiri (22mm)<br><strong>Nama Ubat (Menegak)</strong></div>
+              <div class="spec-col">Lajur Tengah (46mm)<br><strong>Jadual (Dos / Masa / Makan)</strong></div>
+              <div class="spec-col">Lajur Kanan (22mm)<br><strong>Amaran Khas (Kotak Kuning)</strong></div>
+            </div>
+            <ul>
+              <li><strong>Lajur Kiri:</strong> Nama dan kekuatan ubat secara menegak (putar 90°).</li>
+              <li><strong>Lajur Tengah:</strong> Jadual ubat — bilangan biji (dos), waktu, dan kaitan makan.</li>
+              <li><strong>Lajur Kanan:</strong> Lambang amaran disusun menegak dalam kotak amaran kuning.</li>
+            </ul>
+          </div>
+
+          <div id="tab-symbols" class="wt-pane">
+            <h3>⊕ Simbol &amp; Pecahan Dos</h3>
+            <p>Simbol dos ubat menggunakan reka bentuk tablet terbelah (scored tablet):</p>
+            <div class="symbols-showcase">
+              <div class="sym-item"><div class="sym-icon-preview" id="preview-sym-1"></div><span>1 Biji</span></div>
+              <div class="sym-item"><div class="sym-icon-preview" id="preview-sym-half"></div><span>1/2 Biji</span></div>
+              <div class="sym-item"><div class="sym-icon-preview" id="preview-sym-2"></div><span>2 Biji</span></div>
+            </div>
+          </div>
+
+          <div id="tab-presets" class="wt-pane">
+            <h3>💊 Senarai Preset Ubat</h3>
+            <p>Sistem ini telah diprogramkan dengan 69 jenis ubat standard beserta jadual dos dan amaran khasnya.</p>
+            <div class="presets-table-container">
+              <table class="presets-info-table">
+                <thead><tr><th>Nama Ubat</th><th>Jadual</th><th>Amaran</th></tr></thead>
+                <tbody>
+                  <tr><td>Metformin 500mg</td><td>2x sehari (Pagi &amp; Malam) — Selepas Makan</td><td>Jangan Gigit</td></tr>
+                  <tr><td>Metformin XR 500mg</td><td>1x sehari (Malam) — Selepas Makan</td><td>Jangan Gigit</td></tr>
+                  <tr><td>Amlodipine 5mg / 10mg</td><td>1x sehari (Pagi) — Selepas Makan</td><td>Jauhi Kanak-kanak</td></tr>
+                  <tr><td>Bisoprolol 2.5mg / 5mg</td><td>1x sehari (Pagi) — Selepas Makan</td><td>Jauhi Kanak-kanak</td></tr>
+                  <tr><td>Gliclazide 80mg</td><td>2x sehari (Pagi &amp; Tengah Hari) — Sebelum Makan</td><td>Jauhi Kanak-kanak</td></tr>
+                  <tr><td>GTN 0.5mg</td><td>1x sehari (Pagi) — Sebelum Makan</td><td>Jauhi Cahaya, Bawah Lidah</td></tr>
+                  <tr><td>Insulin Novomix-30</td><td>2x sehari (Pagi &amp; Malam) — Sebelum Makan</td><td>Simpan Sejuk</td></tr>
+                  <tr><td>...dan 62 lagi preset</td><td colspan="2" style="color:var(--color-text-muted);">Pilih dari dropdown Pilih Ubat</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-print" class="wt-pane">
+            <h3>🖨️ Tip Pencetakan Label (90mm x 60mm)</h3>
+            <ol>
+              <li>Pilih pencetak label anda (cth: TSC, Zebra, Brother).</li>
+              <li>Tetapkan <strong>Saiz Kertas</strong> kepada <strong>90mm x 60mm</strong>.</li>
+              <li>Set <strong>Margin</strong> kepada <strong>Tiada (None)</strong>.</li>
+              <li>Aktifkan <strong>Grafik Latar Belakang (Background graphics)</strong>.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-walkthrough-footer" class="btn-primary" style="margin-top:0; width:auto; padding:10px 24px;">Faham &amp; Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Web App, Auth & Firestore Cloud SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <!-- <script src="fukkm-data.js?v=1"></script> (FUKKM list disabled) -->
+  <script src="app.js?v=14"></script>
+  <script>
+    // Bypass service worker caching during localhost development
+    if ('serviceWorker' in navigator) {
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (let reg of regs) reg.unregister();
+        });
+        if ('caches' in window) {
+          caches.keys().then(keys => {
+            for (let k of keys) caches.delete(k);
+          });
+        }
+      } else {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('[PWA] Service Worker registered:', reg.scope))
+            .catch((err) => console.log('[PWA] SW registration failed:', err));
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>
