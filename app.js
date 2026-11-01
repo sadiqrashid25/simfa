@@ -2,40 +2,49 @@
 // SIMFA MEDICINE LABEL DESIGNER - APPLICATION LOGIC (SKETCH GRID DESIGN)
 // ==========================================================================
 
+// Global Image Fallback Handler: Menjamin imej keluar walaupun fail di subfolder icons/ atau di root folder GitHub
+window.addEventListener("error", function(e) {
+  if (e.target && e.target.tagName === "IMG" && e.target.src) {
+    if (e.target.src.includes("/icons/")) {
+      e.target.src = e.target.src.replace("/icons/", "/");
+    }
+  }
+}, true);
+
 // 1. REFINED, DETAILED VECTOR GRAPHICS FOR MEDICINE SYMBOLS
 const ICONS = {
   dosage: {
     "half": {
       label: "1/2 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SETENGAH BIJI.svg" alt="1/2 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/SETENGAH BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1/2 Biji">`
     },
     "1": {
       label: "1 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SATU BIJI.svg" alt="1 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/SATU BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1 Biji">`
     },
     "2": {
       label: "2 Biji",
-      svg: `<img class="table-dose-svg" src="icons/DUA BIJI.svg" alt="2 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/DUA BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="2 Biji">`
     },
     "3": {
       label: "3 Biji",
-      svg: `<img class="table-dose-svg" src="icons/TIGA BIJI.svg" alt="3 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/TIGA BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="3 Biji">`
     },
     "3/4": {
       label: "3/4 Biji",
-      svg: `<img class="table-dose-svg" src="icons/TIGA PEREMPAT BIJI.svg" alt="3/4 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/TIGA PEREMPAT BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="3/4 Biji">`
     },
     "1/4": {
       label: "1/4 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SUKU BIJI.svg" alt="1/4 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/SUKU BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1/4 Biji">`
     },
     "1_half": {
       label: "1 1/2 Biji",
-      svg: `<img class="table-dose-svg" src="icons/SATU BIJI SETENGAH.svg" alt="1 1/2 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/SATU BIJI SETENGAH.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="1 1/2 Biji">`
     },
     "4": {
       label: "4 Biji",
-      svg: `<img class="table-dose-svg" src="icons/EMPAT BIJI.svg" alt="4 Biji">`
+      svg: `<img class="table-dose-svg" src="icons/EMPAT BIJI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="4 Biji">`
     },
     "cucuk": {
       label: "Cucuk",
@@ -55,19 +64,19 @@ const ICONS = {
   timing: {
     "pagi": {
       label: "Pagi",
-      svg: `<img class="table-time-svg" src="icons/PAGI.svg" alt="Pagi">`
+      svg: `<img class="table-time-svg" src="icons/PAGI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Pagi">`
     },
     "tengah_hari": {
       label: "Tengah Hari",
-      svg: `<img class="table-time-svg" src="icons/TENGAH HARI.svg" alt="Tengah Hari">`
+      svg: `<img class="table-time-svg" src="icons/TENGAH HARI.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Tengah Hari">`
     },
     "petang": {
       label: "Petang",
-      svg: `<img class="table-time-svg" src="icons/PETANG.svg" alt="Petang">`
+      svg: `<img class="table-time-svg" src="icons/PETANG.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Petang">`
     },
     "malam": {
       label: "Malam",
-      svg: `<img class="table-time-svg" src="icons/MALAM VERSI 1.svg" alt="Malam">`
+      svg: `<img class="table-time-svg" src="icons/MALAM VERSI 1.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Malam">`
     },
     "bila_perlu": {
       label: "Bila Perlu",
@@ -80,37 +89,40 @@ const ICONS = {
     },
     "sebelum": {
       label: "Sebelum Makan",
-      svg: `<img class="table-meal-svg" src="icons/SEBELUM MAKAN VERSI 1.svg" alt="Sebelum Makan">`
+      svg: `<img class="table-meal-svg" src="icons/SEBELUM MAKAN VERSI 1.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Sebelum Makan">`
     },
     "selepas": {
       label: "Selepas Makan",
-      svg: `<img class="table-meal-svg" src="icons/SELEPAS MAKAN VERSI 2.svg" alt="Selepas Makan">`
+      svg: `<img class="table-meal-svg" src="icons/SELEPAS MAKAN VERSI 2.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="Selepas Makan">`
     }
   },
   warning: {
     "mengantuk": {
       label: "MENGANTUK",
-      svg: `<img class="warning-icon-svg" src="icons/MENGANTUK.svg" alt="MENGANTUK">`
+      svg: `<img class="warning-icon-svg" src="icons/MENGANTUK.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="MENGANTUK">`
     },
     "cahaya": {
       label: "JAUHI CAHAYA",
-      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI CAHAYA.svg" alt="JAUHI CAHAYA">`
+      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI CAHAYA.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JAUHI CAHAYA">`
     },
     "gigit": {
       label: "JANGAN GIGIT",
-      svg: `<img class="warning-icon-svg" src="icons/JANGAN GIGIT.svg" alt="JANGAN GIGIT">`
+      svg: `<img class="warning-icon-svg" src="icons/JANGAN GIGIT.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JANGAN GIGIT">`
     },
     "lidah": {
       label: "BAWAH LIDAH",
-      svg: `<img class="warning-icon-svg" src="icons/BAWAH LIDAH.svg" alt="BAWAH LIDAH">`
+      svg: `<svg class="warning-icon-svg" viewBox="0 0 951.6 989.4" xmlns="http://www.w3.org/2000/svg">
+        <path d="M951.4,107.5C951.2,42.6,909,0,846.3,0,597.7.3,349.2.6,100.7,1.3,59.1,1.4,29.1,21.6,10.4,58.7,2.3,74.8,0,92.1,0,109.9c0,129.1,1.9,258.1,1.9,387.2s-.2,261.7,0,392.6c.1,58.1,42.7,99.8,100.5,99.7,108.6-.2,217.2-.5,325.8-.6,142.1-.1,284.1,0,426.2-.1,45.4,0,82.7-29.3,92.9-73.7,3.3-14.2,3.8-29.2,3.8-43.8.3-156,.2-312.1.2-468.1,0-98.5.4-197,0-295.5ZM918.4,339c0,52.8,0,105.7,0,158.5h-.4c0,129.8-.3,259.6.2,389.4.1,33.3-24.7,69.9-68.8,69.7-187.4-.6-374.8-.1-562.2,0-60.8,0-121.6.3-182.4.2-34.3,0-59.4-18.1-67.1-48-2-7.9-2.9-16.3-3-24.5-.5-173.7-.7-347.3-1.1-521-.2-85.2-.8-170.4-.8-255.6,0-28.9,10.2-53.1,37.6-66.4,9-4.4,19.9-7,30-7,182.7-.6,365.4-.6,548.1-.9,65.1,0,130.2-.5,195.3-.8,46-.1,74.4,27.4,74.5,73.4.3,77.7,0,155.3,0,233Z"/>
+        <path d="M765.5,524.6c-1.1,45.6-13.8,118.2-40.1,188.1-32.7,86.9-95.1,140.7-185,163.2-62.6,15.7-124.8,13.5-186.3-4.9-86.6-25.9-142.4-83.5-173-168-28.4-78.5-40.2-159.3-38.3-242.2,1.6-70.1,12.6-138.9,41-203.6,23.5-53.7,59-97.9,112.4-124.8,36.6-18.4,74.4-25.4,114-7.2,27,12.4,55,16.1,83.3,2.3,52.6-25.6,100.5-11.4,144.6,20.1,49,35.1,79.7,83.9,97.9,141,21.4,67.3,31.6,136.3,29.4,235.9ZM165.9,461.6c-.6,85.4,11.4,165.8,41,243.4,20.1,52.7,52.5,94.9,102.5,121.7,75.8,40.7,155.9,45.1,237.5,22.8,67.7-18.5,118.9-59.2,147.6-124,12.7-28.7,22.8-59.1,30.1-89.6,25.4-106.8,24.4-213.5-4.5-319.8-15.7-57.7-42.5-108.5-90.9-145.2-35.8-27.2-75.8-44-120.4-23.6-37.3,17-73.1,15.9-109.3-.2-26.6-11.9-52.7-10-78.4.7-55.8,23.2-92.6,65.8-116,120.1-27,62.5-36.7,128.8-39.1,193.7Z"/>
+      </svg>`
     },
     "kanak": {
       label: "JAUHI KANAK²",
-      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI KANAK-KANAK.svg" alt="JAUHI KANAK²">`
+      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI KANAK-KANAK.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JAUHI KANAK²">`
     },
     "potong": {
       label: "JANGAN POTONG",
-      svg: `<img class="warning-icon-svg" src="icons/JANGAN POTONG.svg" alt="JANGAN POTONG">`
+      svg: `<img class="warning-icon-svg" src="icons/JANGAN POTONG.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JANGAN POTONG">`
     },
     "sejuk": {
       label: "SIMPAN SEJUK",
@@ -126,7 +138,7 @@ const ICONS = {
     },
     "kunyah": {
       label: "JANGAN KUNYAH",
-      svg: `<img class="warning-icon-svg" src="icons/JANGAN GIGIT.svg" alt="JANGAN KUNYAH">`
+      svg: `<img class="warning-icon-svg" src="icons/JANGAN GIGIT.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JANGAN KUNYAH">`
     }
   }
 };
@@ -1076,7 +1088,7 @@ function setupAuthFlow() {
   const btnGuest = document.getElementById("btn-guest-login");
   if (btnGuest) {
     btnGuest.addEventListener("click", () => {
-      state.userEmail = "demo@moh.gov.my";
+      state.userEmail = "sadiq@moh.gov";
       saveUserSession(state.userEmail);
       transitionToWorkspace(true);
     });

@@ -122,6 +122,16 @@
             <input type="password" id="login-password" placeholder="Sila masukkan kata laluan (cth: 123)" required>
           </div>
           <button type="submit" class="btn-primary">🔑 Log Masuk</button>
+          
+          <div style="margin-top:14px; padding:10px 14px; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; font-size:12.5px; color:#166534; text-align:center; line-height:1.6;">
+            <strong>💡 Akses Pantas Pegawai Farmasi:</strong><br>
+            Emel: <code style="font-weight:700; background:#DCFCE7; padding:2px 6px; border-radius:4px;">sadiq@moh.gov</code> &bull; Kata Laluan: <code style="font-weight:700; background:#DCFCE7; padding:2px 6px; border-radius:4px;">Password123!</code>
+          </div>
+
+          <button type="button" id="btn-guest-login" style="margin-top:10px; width:100%; justify-content:center; background:linear-gradient(135deg, #00ACC1 0%, #0288D1 100%); color:#FFFFFF; border:none; padding:12px; font-weight:700; font-size:14.5px; border-radius:10px; cursor:pointer; box-shadow:0 4px 14px rgba(0,172,193,0.3); transition:all 0.2s ease;">
+            🚀 Masuk Segera (1-Klik Tanpa Kata Laluan)
+          </button>
+
           <div style="text-align:center; margin-top:14px;">
             <a href="#" id="btn-forgot-pw" class="forgot-link">Lupa Kata Laluan?</a>
           </div>
@@ -557,9 +567,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <script src="firebase-config.js?v=2"></script>
   <!-- <script src="fukkm-data.js?v=1"></script> (FUKKM list disabled) -->
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=15"></script>
   <script>
     // Bypass service worker caching during localhost development
     if ('serviceWorker' in navigator) {
