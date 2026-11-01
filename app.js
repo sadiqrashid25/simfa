@@ -1,4 +1,306 @@
 // ==========================================================================
+// SIMFA FIREBASE CLOUD AUTHENTICATION & CENTRALIZED AUDIT LOG MODULE
+// ==========================================================================
+
+// Official Firebase Project Configuration for simfa-pkd-sik
+const firebaseConfig = {
+  apiKey: "AIzaSyDrHmm1uYXcne6vGGhsIb3sULdmvUKn8_w",
+  authDomain: "simfa-pkd-sik.firebaseapp.com",
+  projectId: "simfa-pkd-sik",
+  storageBucket: "simfa-pkd-sik.firebasestorage.app",
+  messagingSenderId: "443029358920",
+  appId: "1:443029358920:web:e06c19ca703358cbf8cb7d",
+  measurementId: "G-X1NW4YM9F1"
+};
+
+let isFirebaseInitialized = false;
+
+// Initialize Firebase if SDK is loaded
+try {
+  if (typeof firebase !== 'undefined' && firebaseConfig.apiKey && !firebaseConfig.apiKey.includes('YOUR_FIREBASE')) {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    isFirebaseInitialized = true;
+    console.log("[SiMFa Cloud] Berjaya disambungkan ke Firebase Project:", firebaseConfig.projectId);
+  } else {
+    console.log("[SiMFa Cloud] Beroperasi dalam mod sandaran LocalStorage.");
+  }
+} catch (err) {
+  console.warn("[SiMFa Cloud] Firebase init error, guna mod sandaran:", err);
+}
+
+// --------------------------------------------------------------------------
+// 1. LOCAL STORAGE BACKUP HELPERS
+// --------------------------------------------------------------------------
+function getLocalUsers() {
+  const users = JSON.parse(localStorage.getItem('simfa_registered_users') || '[]');
+  const defaults = [
+    { email: 'sadiq@moh.gov', password: '123' },
+    { email: 'sadiq@moh.gov', password: 'Password123!' },
+    { email: 'sadiq@moh.gov.my', password: '123' },
+    { email: 'sadiq@moh.gov.my', password: 'Password123!' },
+    { email: 'sadiqrashid25@gmail.com', password: '123' },
+    { email: 'sadiqrashid25@gmail.com', password: 'Password123!' },
+    { email: 'test_admin@moh.gov.my', password: 'Password123!' }
+  ];
+  defaults.forEach(d => {
+    if (!users.some(u => u.email.toLowerCase() === d.email.toLowerCase() && u.password === d.password)) {
+      users.push(d);
+    }
+  });
+  localStorage.setItem('simfa_registered_users', JSON.stringify(users));
+  return users;
+}
+
+function saveLocalUser(email, password) {
+  const users = getLocalUsers();
+  const lowerEmail = email.toLowerCase().trim();
+  const existingIdx = users.findIndex(u => u.email.toLowerCase() === lowerEmail);
+  if (existingIdx >= 0) {
+    users[existingIdx].password = password;
+  } else {
+    users.push({ email: lowerEmail, password: password });
+  }
+  localStorage.setItem('simfa_registered_users', JSON.stringify(users));
+}
+
+function simfaUpdateUserPassword(email, newPassword) {
+  const lowerEmail = email.toLowerCase().trim();
+  const users = getLocalUsers();
+  const idx = users.findIndex(u => u.email.toLowerCase() === lowerEmail);
+  if (idx >= 0) {
+    users[idx].password = newPassword;
+  } else {
+    users.push({ email: lowerEmail, password: newPassword });
+  }
+  localStorage.setItem('simfa_registered_users', JSON.stringify(users));
+  return { success: true, message: `Kata laluan untuk ${lowerEmail} berjaya dikemas kini.` };
+}
+
+// --------------------------------------------------------------------------
+// 1B. OTP GENERATION & VERIFICATION (UNTUK PENDAFTARAN PEGAWAI)
+// --------------------------------------------------------------------------
+function simfaGenerateOTP(email) {
+  const cleanEmail = email.toLowerCase().trim();
+  const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiry = Date.now() + 5 * 60 * 1000; // 5 minit sah
+
+  const activeOtps = JSON.parse(localStorage.getItem('simfa_active_otps') || '{}');
+  activeOtps[cleanEmail] = { code: otpCode, expiry: expiry };
+  localStorage.setItem('simfa_active_otps', JSON.stringify(activeOtps));
+
+  console.log(`[SiMFa OTP] Kod OTP dijana untuk ${cleanEmail}: ${otpCode}`);
+  return otpCode;
+}
+
+function simfaVerifyOTP(email, inputCode) {
+  const cleanEmail = email.toLowerCase().trim();
+  const activeOtps = JSON.parse(localStorage.getItem('simfa_active_otps') || '{}');
+  const record = activeOtps[cleanEmail];
+
+  if (!record) {
+    return { success: false, error: '⚠️ Tiada rekod OTP atau sesi telah tamat. Sila klik Jana Semula.' };
+  }
+  if (Date.now() > record.expiry) {
+    delete activeOtps[cleanEmail];
+    localStorage.setItem('simfa_active_otps', JSON.stringify(activeOtps));
+    return { success: false, error: '⏰ Kod OTP telah tamat tempoh (5 minit). Sila klik Jana Semula.' };
+  }
+  if (record.code !== inputCode.trim()) {
+    return { success: false, error: '❌ Kod OTP tidak tepat. Sila semak semula 6-digit nombor anda.' };
+  }
+
+  delete activeOtps[cleanEmail];
+  localStorage.setItem('simfa_active_otps', JSON.stringify(activeOtps));
+  return { success: true };
+}
+
+// --------------------------------------------------------------------------
+// 2. AUTHENTICATION (FIREBASE CLOUD AUTH + FIRESTORE DATABASE)
+// --------------------------------------------------------------------------
+async function simfaRegisterUser(email, password) {
+  const cleanEmail = email.toLowerCase().trim();
+  saveLocalUser(cleanEmail, password);
+
+  // Cloud Registration: Firebase Auth & Cloud Firestore
+  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.auth) {
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(cleanEmail, password);
+      console.log("[Firebase Cloud] Pegawai baru berjaya didaftarkan di Firebase:", cleanEmail);
+
+      // Simpan profil pegawai ke Cloud Firestore
+      if (firebase.firestore) {
+        await firebase.firestore().collection('users').doc(cleanEmail).set({
+          email: cleanEmail,
+          uid: userCredential.user.uid,
+          registeredAt: new Date().toISOString(),
+          facility: "PKD Sik / Fasiliti",
+          role: "Pegawai Farmasi / Kesihatan"
+        }, { merge: true });
+      }
+
+      await simfaRecordAuditLog(cleanEmail, 'Daftar Akaun Baru (Cloud)');
+      return { success: true, email: cleanEmail };
+    } catch (err) {
+      console.warn("[Firebase Register Error / Note]:", err.code, err.message);
+      if (err.code === 'auth/email-already-in-use') {
+        // Akaun sudah ada di Firebase
+        return { success: true, email: cleanEmail };
+      }
+      return { success: false, error: err.message };
+    }
+  }
+
+  return { success: true, email: cleanEmail };
+}
+
+async function simfaLoginUser(email, password) {
+  const cleanEmail = email.toLowerCase().trim();
+  const inputPass = String(password).trim();
+  
+  // Firebase Auth requires min 6 chars. If user enters 123, also try Password123!
+  const candidatePasswords = [inputPass];
+  if (inputPass === '123') {
+    candidatePasswords.push('Password123!');
+  } else if (inputPass === 'Password123!') {
+    candidatePasswords.push('123');
+  }
+
+  // 1. Cuba Cloud Login via Firebase Auth
+  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.auth) {
+    for (const p of candidatePasswords) {
+      if (p.length < 6) continue; // Firebase will error on < 6
+      try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(cleanEmail, p);
+        console.log("[Firebase Cloud] Log masuk berjaya:", cleanEmail);
+        await simfaRecordAuditLog(cleanEmail, 'Log Masuk (Cloud)');
+        return { success: true, user: userCredential.user, email: userCredential.user.email };
+      } catch (err) {
+        console.warn("[Firebase Login Attempt]:", p, err.code, err.message);
+      }
+    }
+  }
+
+  // 2. Sandaran Local Storage jika Firebase offline atau belum authorize domain
+  const users = getLocalUsers();
+  const matched = users.find(u => 
+    u.email.toLowerCase() === cleanEmail && 
+    (u.password === inputPass || 
+     (inputPass === '123' && u.password === 'Password123!') || 
+     (inputPass === 'Password123!' && u.password === '123'))
+  );
+
+  if (matched) {
+    await simfaRecordAuditLog(cleanEmail, 'Log Masuk (Lokal/Akses Pantas)');
+    return { success: true, email: matched.email };
+  } else if (!users.some(u => u.email.toLowerCase() === cleanEmail)) {
+    return { success: false, needOtp: true, email: cleanEmail, error: "ℹ️ Akaun belum wujud. Pengesahan OTP kali pertama diperlukan untuk mendaftar." };
+  } else {
+    return { success: false, error: "❌ Kata laluan tidak tepat. Sila gunakan kata laluan 'Password123!' atau '123'." };
+  }
+}
+
+async function simfaResetPassword(email) {
+  const cleanEmail = email.toLowerCase().trim();
+
+  // Send REAL official password reset email from Google Firebase
+  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.auth) {
+    try {
+      await firebase.auth().sendPasswordResetEmail(cleanEmail);
+      await simfaRecordAuditLog(cleanEmail, 'Pautan Reset Emel Dihantar (Cloud)');
+      return {
+        success: true,
+        message: `✅ Emel rasmi penetapan semula kata laluan telah dihantar ke: ${cleanEmail}. Sila buka inbox atau folder Spam emel anda untuk klik pautan tukar kata laluan.`
+      };
+    } catch (err) {
+      console.warn("[Firebase Reset Password Error]:", err.code, err.message);
+      return {
+        success: false,
+        error: `⚠️ Ralat Firebase: ${err.message}`
+      };
+    }
+  }
+
+  return {
+    success: true,
+    message: `✅ Kata laluan untuk akaun lokal telah dikemas kini.`
+  };
+}
+
+// --------------------------------------------------------------------------
+// 3. CENTRALIZED AUDIT LOG MANAGEMENT (CLOUD FIRESTORE + LOCAL STORAGE)
+// --------------------------------------------------------------------------
+async function simfaRecordAuditLog(email, action) {
+  const now = new Date();
+  const logEntry = {
+    email: email,
+    action: action, // 'Log Masuk' | 'Log Keluar' | dsb.
+    timestamp: now.toISOString(),
+    datetime: now.toLocaleString('ms-MY', {
+      timeZone: 'Asia/Kuala_Lumpur',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    })
+  };
+
+  // Local Storage Backup
+  const logs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
+  logs.unshift(logEntry);
+  if (logs.length > 500) logs.splice(500);
+  localStorage.setItem('simfa_audit_log', JSON.stringify(logs));
+
+  // Simpan ke Cloud Firestore (Semua fasiliti kongsi satu rekod berpusat)
+  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.firestore) {
+    try {
+      await firebase.firestore().collection('audit_logs').add({
+        ...logEntry,
+        clientIp: "Fasiliti Web",
+        device: navigator.platform || "Web",
+        createdServerTime: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      console.log("[SiMFa Cloud] Log aktiviti berjaya dihantar ke Cloud Firestore.");
+    } catch (err) {
+      console.warn("[Firestore Log Note]:", err.message);
+    }
+  }
+}
+
+// Dapatkan rekod log aktiviti berpusat dari Cloud Firestore
+async function simfaFetchCentralAuditLogs() {
+  if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.firestore) {
+    try {
+      const snapshot = await firebase.firestore()
+        .collection('audit_logs')
+        .orderBy('timestamp', 'desc')
+        .limit(100)
+        .get();
+
+      if (!snapshot.empty) {
+        const cloudLogs = [];
+        snapshot.forEach(doc => {
+          cloudLogs.push(doc.data());
+        });
+        return cloudLogs;
+      }
+    } catch (err) {
+      console.warn("[Firestore Fetch Logs Note]:", err.message);
+    }
+  }
+  // Sandaran lokal
+  return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
+}
+
+// Aliases for compatibility
+function getAuditLogs() {
+  return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
+}
+
+function recordAuditLog(email, action) {
+  return simfaRecordAuditLog(email, action);
+}
+
+// ==========================================================================
 // SIMFA MEDICINE LABEL DESIGNER - APPLICATION LOGIC (SKETCH GRID DESIGN)
 // ==========================================================================
 
@@ -99,88 +401,197 @@ const ICONS = {
   warning: {
     "mengantuk": {
       label: "MENGANTUK",
-      svg: `<img class="warning-icon-svg" src="icons/MENGANTUK.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="MENGANTUK">`
+      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
+        <g stroke="#263238" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 7 25 C 16 13, 34 13, 43 25 C 34 37, 16 37, 7 25 Z" fill="white" stroke-width="2.5"/>
+          <circle cx="25" cy="25" r="6" fill="#263238"/>
+          <line x1="7" y1="25" x2="4" y2="24"/>
+          <line x1="43" y1="25" x2="46" y2="24"/>
+          <path d="M 29 9 L 33 9 L 29 13 L 33 13 M 34 4 L 37 4 L 34 7 L 37 7" stroke-width="1.5"/>
+        </g>
+      </svg>`
     },
     "cahaya": {
       label: "JAUHI CAHAYA",
-      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI CAHAYA.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JAUHI CAHAYA">`
+      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
+        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-width="2">
+          <path d="M 8 23 C 8 8, 36 8, 36 23 C 31 23, 27 18, 22 23 C 17 18, 13 23, 8 23 Z" fill="#263238"/>
+          <path d="M 22 23 L 22 36 A 2.5 2.5 0 0 1 19 38.5" stroke-width="2.5"/>
+          <circle cx="41" cy="9" r="4.5" fill="#FFB300" stroke="#FFB300"/>
+          <path d="M 35 9 L 32 9 M 41 16 L 41 19" stroke="#FFB300" stroke-width="1.5"/>
+          <rect x="25" y="26" width="6" height="10" rx="1" fill="white" stroke-width="1.5"/>
+        </g>
+      </svg>`
     },
     "gigit": {
       label: "JANGAN GIGIT",
-      svg: `<svg class="warning-icon-svg" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="56" height="56" rx="8" fill="#FFFFFF" stroke="#000000" stroke-width="2.5"/>
-        <!-- Gigi Atas -->
-        <path d="M 16 15 L 16 23 L 23 23 L 23 15 M 23 23 L 30 23 L 30 15 M 30 23 L 37 23 L 37 15 M 37 23 L 44 23 L 44 15" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round"/>
-        <line x1="14" y1="15" x2="46" y2="15" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Gigi Bawah -->
-        <path d="M 16 45 L 16 37 L 23 37 L 23 45 M 23 37 L 30 37 L 30 45 M 30 37 L 37 37 L 37 45 M 37 37 L 44 37 L 44 45" fill="#FFFFFF" stroke="#000000" stroke-width="2" stroke-linejoin="round"/>
-        <line x1="14" y1="45" x2="46" y2="45" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Tablet Ubat Di Tengah -->
-        <ellipse cx="30" cy="30" rx="9" ry="5.5" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
-        <line x1="30" y1="24.5" x2="30" y2="35.5" stroke="#000000" stroke-width="1.5"/>
-        <!-- Tanda Larangan Merah -->
-        <circle cx="30" cy="30" r="22" fill="none" stroke="#DC2626" stroke-width="3"/>
-        <line x1="14.5" y1="14.5" x2="45.5" y2="45.5" stroke="#DC2626" stroke-width="3"/>
+      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
+        <!-- Open mouth with lips and teeth -->
+        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Lips background fill -->
+          <path d="M 12 25 C 12 16, 18 14, 25 14 C 32 14, 38 16, 38 25 C 38 34, 32 36, 25 36 C 18 36, 12 34, 12 25 Z" fill="#FFCDD2" stroke-width="2"/>
+          <!-- Inside mouth dark pink -->
+          <path d="M 14 25 C 14 19, 18 17, 25 17 C 32 17, 36 19, 36 25 C 36 31, 32 33, 25 33 C 18 33, 14 31, 14 25 Z" fill="#E57373" stroke="none"/>
+          <!-- Upper teeth -->
+          <path d="M 17 18 L 33 18 L 30 22 L 20 22 Z" fill="#FFFFFF" stroke-width="1.2"/>
+          <line x1="25" y1="18" x2="25" y2="22" stroke-width="1"/>
+          <!-- Lower teeth -->
+          <path d="M 18 32 L 32 32 L 30 28 L 20 28 Z" fill="#FFFFFF" stroke-width="1.2"/>
+          <line x1="25" y1="28" x2="25" y2="32" stroke-width="1"/>
+          <!-- Capsule in between -->
+          <g transform="translate(25, 25) rotate(15)">
+            <rect x="-8" y="-4" width="8" height="8" rx="4" fill="#0D47A1"/>
+            <rect x="0" y="-4" width="8" height="8" rx="4" fill="#43A047"/>
+            <rect x="-8" y="-4" width="16" height="8" rx="4" fill="none" stroke="#263238" stroke-width="1"/>
+          </g>
+        </g>
+        <!-- Thinned cross out lines -->
+        <g stroke="#D32F2F" stroke-width="3" stroke-linecap="round">
+          <line x1="5" y1="5" x2="45" y2="45"/>
+          <line x1="45" y1="5" x2="5" y2="45"/>
+        </g>
       </svg>`
     },
     "lidah": {
       label: "BAWAH LIDAH",
-      svg: `<svg class="warning-icon-svg" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="56" height="56" rx="8" fill="#FFFFFF" stroke="#000000" stroke-width="2.5"/>
-        <!-- Bentuk Mulut Terbuka -->
-        <path d="M 10 30 C 10 16, 50 16, 50 30 C 50 46, 10 46, 10 30 Z" fill="#F8FAFC" stroke="#000000" stroke-width="2.5"/>
-        <!-- Gigi Atas -->
-        <rect x="20" y="20" width="20" height="6" rx="2" fill="#FFFFFF" stroke="#000000" stroke-width="1.8"/>
-        <line x1="26" y1="20" x2="26" y2="26" stroke="#000000" stroke-width="1.2"/>
-        <line x1="33" y1="20" x2="33" y2="26" stroke="#000000" stroke-width="1.2"/>
-        <!-- Lidah Terangkat ke Atas -->
-        <path d="M 18 36 C 22 28, 38 28, 42 36 C 36 34, 24 34, 18 36 Z" fill="#FECDD3" stroke="#000000" stroke-width="2"/>
-        <!-- Tablet Ubat Terletak Tepat di Bawah Lidah -->
-        <circle cx="30" cy="41" r="4.5" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
-        <line x1="27.5" y1="41" x2="32.5" y2="41" stroke="#000000" stroke-width="1.2"/>
-        <!-- Anak Panah Merah Menunjuk ke Bawah Lidah -->
-        <path d="M 30 26 L 30 33 M 28 31 L 30 33.5 L 32 31" fill="none" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Premium radial gradients for organic tongue look -->
+          <radialGradient id="tongueGrad" cx="40%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#FFA4A2" />
+            <stop offset="60%" stop-color="#EF5350" />
+            <stop offset="100%" stop-color="#C62828" />
+          </radialGradient>
+          <!-- Soft pink gradient for inside mouth -->
+          <linearGradient id="mouthBg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FFEBEE" />
+            <stop offset="100%" stop-color="#FFCDD2" />
+          </linearGradient>
+          <!-- Blue pill gradient -->
+          <linearGradient id="pillGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#42A5F5" />
+            <stop offset="100%" stop-color="#1565C0" />
+          </linearGradient>
+          <!-- Drop shadow for the sublingual tablet -->
+          <filter id="pillShadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="1" stdDeviation="0.8" flood-color="#000" flood-opacity="0.3" />
+          </filter>
+        </defs>
+
+        <!-- Yellow container card background -->
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
+
+        <!-- Inside Mouth Silhouette Background (for contrast) -->
+        <path d="M 9 12 C 16 12, 23 15, 26 21 C 21 24, 18 25, 9 25 Z" fill="url(#mouthBg)" opacity="0.3"/>
+        <path d="M 9 38 C 16 38, 23 35, 26 29 C 21 26, 18 25, 9 25 Z" fill="url(#mouthBg)" opacity="0.3"/>
+
+        <!-- Mouth Outline (Side Profile) -->
+        <g stroke="#263238" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <!-- Upper Lip and Roof of Mouth -->
+          <path d="M 8 13 C 14 13, 20 16, 23 20" />
+          <!-- Lower Lip and Floor of Mouth -->
+          <path d="M 8 37 C 14 37, 20 34, 23 30" />
+          
+          <!-- Teeth (Upper) -->
+          <path d="M 12 15 L 14 19 L 16 19 L 17 15" fill="#FFFFFF" stroke-width="1.8"/>
+        </g>
+
+        <!-- Tongue (Raised) with organic shape and warm gradient -->
+        <path d="M 10 30 C 14 30, 20 28, 23 22 C 20 19, 14 22, 10 30 Z" fill="url(#tongueGrad)" stroke="#263238" stroke-width="2" stroke-linejoin="round"/>
+
+        <!-- Sublingual Tablet (Blue, glowing, under the tongue, with score line) -->
+        <g filter="url(#pillShadow)" transform="translate(13, 33)">
+          <circle cx="0" cy="0" r="3.5" fill="url(#pillGrad)" stroke="#0D47A1" stroke-width="0.8"/>
+          <!-- Score line on the pill to make it look like a tablet -->
+          <line x1="-2.5" y1="0" x2="2.5" y2="0" stroke="#FFFFFF" stroke-width="0.6" opacity="0.8"/>
+        </g>
+
+        <!-- Red Arrow (Elegant curve, pointing directly to the tablet under the tongue) -->
+        <g stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 36 34 C 30 34, 23 32, 19 32.5" fill="none" stroke="#D32F2F" stroke-width="2.5"/>
+          <path d="M 22.5 35.5 L 18 32.5 L 22.5 29.5" fill="none" stroke="#D32F2F" stroke-width="2.5"/>
+        </g>
       </svg>`
     },
     "kanak": {
       label: "JAUHI KANAK²",
-      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI KANAK-KANAK.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JAUHI KANAK²">`
+      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
+        <g stroke="#263238" fill="none" stroke-linecap="round">
+          <circle cx="15" cy="18" r="4.5" fill="#263238"/>
+          <path d="M 9 36 L 9 28 C 9 25.5, 12 23.5, 15 23.5 C 18 23.5, 21 25.5, 21 28 L 21 36" stroke-width="2.2" fill="#263238"/>
+          <circle cx="35" cy="18" r="4.5" fill="#263238"/>
+          <path d="M 29 36 L 31 27 C 32 25, 38 25, 39 27 L 41 36 Z" stroke-width="2.2" fill="#263238"/>
+        </g>
+        <!-- Thinned cross out lines -->
+        <g stroke="#D32F2F" stroke-width="3" stroke-linecap="round">
+          <line x1="5" y1="5" x2="45" y2="45"/>
+          <line x1="45" y1="5" x2="5" y2="45"/>
+        </g>
+      </svg>`
     },
     "potong": {
       label: "JANGAN POTONG",
-      svg: `<img class="warning-icon-svg" src="icons/JANGAN POTONG.svg" onerror="this.onerror=null;this.src=this.src.replace('icons/','');" alt="JANGAN POTONG">`
+      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
+        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+          <rect x="11" y="22" width="28" height="10" rx="5" transform="rotate(-15 25 27)" fill="white" stroke-width="1.8"/>
+          <line x1="25" y1="21" x2="22" y2="32" stroke-width="1.5"/>
+          <circle cx="15" cy="12" r="3" stroke-width="1.8"/>
+          <circle cx="26" cy="9" r="3" stroke-width="1.8"/>
+          <path d="M 18 14 L 28 26 M 25 11 L 18 25" stroke-width="1.8"/>
+        </g>
+        <!-- Thinned cross out lines -->
+        <g stroke="#D32F2F" stroke-width="3" stroke-linecap="round">
+          <line x1="5" y1="5" x2="45" y2="45"/>
+          <line x1="45" y1="5" x2="5" y2="45"/>
+        </g>
+      </svg>`
     },
     "sejuk": {
       label: "SIMPAN SEJUK",
       svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFFFFF" stroke="#000000" stroke-width="2.2"/>
-        <g stroke="#000000" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5">
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#E0F7FA" stroke="#263238" stroke-width="2.2"/>
+        <g stroke="#00838F" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5">
+          <!-- Snowflake design -->
           <line x1="25" y1="9" x2="25" y2="41"/>
           <line x1="9" y1="25" x2="41" y2="25"/>
           <line x1="13.7" y1="13.7" x2="36.3" y2="36.3"/>
           <line x1="13.7" y1="36.3" x2="36.3" y2="13.7"/>
+          <path d="M 25 15 L 21 12 M 25 15 L 29 12 M 25 35 L 21 38 M 25 35 L 29 38"/>
+          <path d="M 15 25 L 12 21 M 15 25 L 12 29 M 35 25 L 38 21 M 35 25 L 38 29"/>
         </g>
       </svg>`
     },
     "kunyah": {
       label: "JANGAN KUNYAH",
-      svg: `<svg class="warning-icon-svg" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="56" height="56" rx="8" fill="#FFFFFF" stroke="#000000" stroke-width="2.5"/>
-        <!-- Tablet Ubat Retak/Hancur -->
-        <g stroke="#000000" stroke-width="2" fill="#FFFFFF" stroke-linejoin="round">
-          <!-- Separuh Kiri Retak -->
-          <path d="M 28 17 A 12 12 0 0 0 17 31 C 17 37, 21 41, 26 43 L 28 37 L 25 33 L 29 27 Z"/>
-          <!-- Separuh Kanan Retak -->
-          <path d="M 32 17 A 12 12 0 0 1 43 31 C 43 37, 39 41, 34 43 L 32 37 L 35 33 L 31 27 Z"/>
+      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
+        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Lips background fill -->
+          <path d="M 12 25 C 12 16, 18 14, 25 14 C 32 14, 38 16, 38 25 C 38 34, 32 36, 25 36 C 18 36, 12 34, 12 25 Z" fill="#FFCDD2" stroke-width="2"/>
+          <!-- Inside mouth dark pink -->
+          <path d="M 14 25 C 14 19, 18 17, 25 17 C 32 17, 36 19, 36 25 C 36 31, 32 33, 25 33 C 18 33, 14 31, 14 25 Z" fill="#E57373" stroke="none"/>
+          <!-- Upper teeth -->
+          <path d="M 17 18 L 33 18 L 30 22 L 20 22 Z" fill="#FFFFFF" stroke-width="1.2"/>
+          <line x1="25" y1="18" x2="25" y2="22" stroke-width="1"/>
+          <!-- Lower teeth -->
+          <path d="M 18 32 L 32 32 L 30 28 L 20 28 Z" fill="#FFFFFF" stroke-width="1.2"/>
+          <line x1="25" y1="28" x2="25" y2="32" stroke-width="1"/>
+          <!-- Chewed/crushed tablet pieces in center -->
+          <path d="M 21 23 Q 23 21 25 24 L 23 27 Z" fill="#0D47A1" stroke="#263238" stroke-width="1"/>
+          <path d="M 29 26 Q 27 28 25 25 L 28 22 Z" fill="#0D47A1" stroke="#263238" stroke-width="1"/>
+          <circle cx="21" cy="27" r="1.5" fill="#0D47A1"/>
+          <circle cx="29" cy="21" r="1.5" fill="#0D47A1"/>
         </g>
-        <!-- Serpihan Ubat Hancur -->
-        <circle cx="15" cy="22" r="1.8" fill="#000000"/>
-        <circle cx="45" cy="23" r="1.8" fill="#000000"/>
-        <circle cx="30" cy="46" r="1.8" fill="#000000"/>
-        <circle cx="30" cy="14" r="1.5" fill="#000000"/>
-        <!-- Tanda Larangan Merah (Jangan Hancurkan / Kunyah) -->
-        <circle cx="30" cy="30" r="22" fill="none" stroke="#DC2626" stroke-width="3"/>
-        <line x1="14.5" y1="14.5" x2="45.5" y2="45.5" stroke="#DC2626" stroke-width="3"/>
+        <!-- Thinned cross out lines -->
+        <g stroke="#D32F2F" stroke-width="3" stroke-linecap="round">
+          <line x1="5" y1="5" x2="45" y2="45"/>
+          <line x1="45" y1="5" x2="5" y2="45"/>
+        </g>
       </svg>`
     }
   }
@@ -1779,22 +2190,6 @@ function getAuditLogs() {
   return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
 }
 
-// ==========================================================================
-// PANDUAN PENGGUNA & PDF DOWNLOAD
-// ==========================================================================
-function setupWalkthroughModal() {
-  const btnWalkthrough = document.getElementById("btn-walkthrough");
-  if (!btnWalkthrough) return;
-
-  btnWalkthrough.addEventListener("click", () => {
-    const link = document.createElement("a");
-    link.href = "PANDUAN_PENGGUNA_SIMFA_PKD_SIK.pdf";
-    link.download = "PANDUAN_PENGGUNA_SIMFA_PKD_SIK.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  });
-}
 
 // ==========================================================================
 // FORGOT PASSWORD MODAL

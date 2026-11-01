@@ -1,468 +1,594 @@
 <!DOCTYPE html>
 <html lang="ms">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIMED - Katalog Visual Ubat Pintar</title>
-    <!-- Google Fonts for premium typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom styling -->
-    <link rel="stylesheet" href="style.css?v=5.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SiMFa (Simbol Mudah Faham) - Aplikasi Pelabelan Ubat Profesional 90mm x 60mm">
+  <title>SiMFa - Sistem Pelabelan Ubat Profesional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0A1628">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
 </head>
+
 <body>
-    <div class="app-container">
-        <!-- Sidebar / Header Section -->
-        <header class="app-header">
-            <div class="logo-area">
-                <div class="icon-wrapper" style="background: none; padding: 0; box-shadow: none;">
-                    <img src="images/vimed_logo.png" alt="VIMED Logo" style="width: 42px; height: 42px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color);">
-                </div>
-                <div>
-                    <h1>VIMED</h1>
-                    <p class="tagline">Katalog Visual Ubat Pintar</p>
-                </div>
-            </div>
-            
-            <!-- User Status Widget (Login/Logout) -->
-            <div class="user-status-widget" id="userStatusWidget">
-                <!-- Guest Mode -->
-                <div id="guestUserArea">
-                    <span class="user-badge guest"><i class="fa-solid fa-user-secret"></i> Guest (Lihat Sahaja)</span>
-                    <button class="btn btn-sm btn-outline btn-full" id="openLoginModalBtn" style="margin-top: 10px;">
-                        <i class="fa-solid fa-right-to-bracket"></i> Log Masuk Admin
-                    </button>
-                </div>
-                <!-- Logged In Mode -->
-                <div id="adminUserArea" style="display: none;">
-                    <span class="user-badge admin"><i class="fa-solid fa-user-shield"></i> Admin: <span id="adminUsernameVal"></span></span>
-                    <button class="btn btn-sm btn-secondary btn-full" id="logoutBtn" style="margin-top: 10px;">
-                        <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
-                    </button>
-                    <button class="btn btn-sm btn-primary btn-full" id="openAddDrugModalBtn" style="margin-top: 10px; background: linear-gradient(135deg, var(--success), #059669); border-color: transparent;">
-                        <i class="fa-solid fa-plus-circle"></i> Tambah Ubat Baharu
-                    </button>
-                </div>
-            </div>
 
-            <!-- PDF Status Widget -->
-            <div class="pdf-status-widget" id="pdfStatusWidget">
-                <div class="status-indicator error" id="pdfStatusIndicator">
-                    <span class="pulse-dot"></span>
-                    <span class="status-text">PDF Belum Dimuat Naik</span>
-                </div>
-                <p class="status-desc" id="pdfStatusDesc">Sila muat naik 'Catalogue with Picture.pdf' untuk visual.</p>
-                <div class="btn-group-status">
-                    <button class="btn btn-sm btn-outline" id="loadPdfBtn">
-                        <i class="fa-solid fa-file-pdf"></i> Muat Naik PDF
-                    </button>
-                    <button class="btn btn-sm btn-icon" id="clearPdfBtn" title="Padam PDF dari storan" style="display: none;">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-                <button class="btn btn-sm btn-primary" id="exportAllImagesBtn" style="display: none; margin-top: 8px; width: 100%; justify-content: center; gap: 6px;">
-                    <i class="fa-solid fa-file-export"></i> Ekstrak Semua Halaman ke Desktop
-                </button>
-            </div>
+  <!-- ================= AUTH VIEW ================= -->
+  <div id="auth-container" class="auth-wrapper">
+    <div class="auth-card">
 
-            <!-- Quick Action & Stats -->
-            <div class="stats-panel" id="statsPanel" style="display: none;">
-                <div class="stat-item">
-                    <span class="stat-val" id="totalPagesVal">0</span>
-                    <span class="stat-lbl">Halaman PDF</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-val" id="mappedDrugsVal">0/14</span>
-                    <span class="stat-lbl">Ubat Dipetakan</span>
-                </div>
+      <!-- GOV Banner with Clear Logo -->
+      <div class="auth-card-banner" style="padding: 24px 32px 14px;">
+        <!-- CLEAR SIMFA LOGO: Capsule + Tablet + Text -->
+        <div class="logo-area" style="margin-top: 0;">
+          <svg class="simfa-logo-svg" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Blue gradient for capsule -->
+              <linearGradient id="capBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#42A5F5"/>
+                <stop offset="100%" stop-color="#1565C0"/>
+              </linearGradient>
+              <!-- Green gradient for capsule -->
+              <linearGradient id="capGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#66BB6A"/>
+                <stop offset="100%" stop-color="#2E7D32"/>
+              </linearGradient>
+              <!-- Cyan gradient for tablet -->
+              <linearGradient id="tabCyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#26C6DA"/>
+                <stop offset="100%" stop-color="#006064"/>
+              </linearGradient>
+              <filter id="premiumDropShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+              </filter>
+              <!-- Clip paths for rotated capsule -->
+              <clipPath id="leftClip">
+                <rect x="-80" y="-40" width="80" height="80" />
+              </clipPath>
+              <clipPath id="rightClip">
+                <rect x="0" y="-40" width="80" height="80" />
+              </clipPath>
+            </defs>
+
+            <!-- STYLISH ROTATED CAPSULE & TABLET GROUP -->
+            <g filter="url(#premiumDropShadow)" transform="translate(100, 75)">
+              
+              <!-- Capsule (Rotated -15 degrees) -->
+              <g transform="translate(-25, -20) rotate(-15)">
+                <!-- Capsule Left (Blue) -->
+                <rect x="-70" y="-30" width="140" height="60" rx="30" fill="url(#capBlueGrad)" clip-path="url(#leftClip)"/>
+                <!-- Capsule Right (Green) -->
+                <rect x="-70" y="-30" width="140" height="60" rx="30" fill="url(#capGreenGrad)" clip-path="url(#rightClip)"/>
+                <!-- Center Divider Band -->
+                <rect x="-1" y="-30" width="2" height="60" fill="rgba(255,255,255,0.85)"/>
+                <!-- Capsule Border -->
+                <rect x="-70" y="-30" width="140" height="60" rx="30" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"/>
+                <!-- Rx Text inside blue half -->
+                <text x="-35" y="8" font-family="'Outfit', sans-serif" font-weight="700" font-size="20" fill="rgba(255,255,255,0.7)" text-anchor="middle">Rx</text>
+                <!-- Gloss Shine overlay -->
+                <path d="M-55,-18 C-30,-26 30,-26 55,-18 C45,-23 -45,-23 -55,-18 Z" fill="rgba(255,255,255,0.25)"/>
+              </g>
+
+              <!-- Tablet (Rotated 15 degrees, overlapping bottom right) -->
+              <g transform="translate(25, 15) rotate(18)">
+                <!-- Tablet body -->
+                <circle cx="0" cy="0" r="28" fill="url(#tabCyanGrad)" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                <!-- Score lines -->
+                <line x1="-24" y1="0" x2="24" y2="0" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                <line x1="0" y1="-24" x2="0" y2="24" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+                <!-- Inner shadow effect -->
+                <circle cx="0" cy="0" r="28" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/>
+                <!-- Top Gloss Shine -->
+                <path d="M-18,-12 C-8,-20 8,-20 18,-12 C10,-16 -10,-16 -18,-12 Z" fill="rgba(255,255,255,0.2)"/>
+              </g>
+            </g>
+
+            <!-- SiMFa Brand Text -->
+            <g transform="translate(195, 95)" filter="url(#premiumDropShadow)">
+              <text font-family="'Outfit', sans-serif" font-weight="800" font-size="82" y="0">
+                <tspan fill="#FFFFFF">SiM</tspan><tspan fill="#00E676">Fa</tspan>
+              </text>
+              <text font-family="'Inter', sans-serif" font-weight="600" font-size="14" fill="rgba(255,255,255,0.6)" letter-spacing="5" x="5" y="32">SIMBOL MUDAH FAHAM</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="auth-card-body">
+        <!-- Error / Info message -->
+        <div id="auth-error-msg" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:10px 14px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:14px; line-height:1.5;"></div>
+
+        <!-- Tabs -->
+        <div class="auth-tabs">
+          <button id="tab-login" class="tab-btn active">Log Masuk</button>
+          <button id="tab-signup" class="tab-btn">Daftar Akaun</button>
+        </div>
+
+        <!-- Log In Form (Default Active) -->
+        <form id="login-form" class="auth-form active">
+          <div class="form-group">
+            <label for="login-email">Alamat E-mel Kerajaan (.gov / .gov.my)</label>
+            <input type="email" id="login-email" placeholder="sadiq@moh.gov" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Kata Laluan</label>
+            <input type="password" id="login-password" placeholder="Sila masukkan kata laluan (cth: 123)" required>
+          </div>
+          <button type="submit" class="btn-primary">🔑 Log Masuk</button>
+          
+          <div style="margin-top:14px; padding:10px 14px; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; font-size:12.5px; color:#166534; text-align:center; line-height:1.6;">
+            <strong>💡 Akses Pantas Pegawai Farmasi:</strong><br>
+            Emel: <code style="font-weight:700; background:#DCFCE7; padding:2px 6px; border-radius:4px;">sadiq@moh.gov</code> &bull; Kata Laluan: <code style="font-weight:700; background:#DCFCE7; padding:2px 6px; border-radius:4px;">Password123!</code>
+          </div>
+
+          <button type="button" id="btn-guest-login" style="margin-top:10px; width:100%; justify-content:center; background:linear-gradient(135deg, #00ACC1 0%, #0288D1 100%); color:#FFFFFF; border:none; padding:12px; font-weight:700; font-size:14.5px; border-radius:10px; cursor:pointer; box-shadow:0 4px 14px rgba(0,172,193,0.3); transition:all 0.2s ease;">
+            🚀 Masuk Segera (1-Klik Tanpa Kata Laluan)
+          </button>
+
+          <div style="text-align:center; margin-top:14px;">
+            <a href="#" id="btn-forgot-pw" class="forgot-link">Lupa Kata Laluan?</a>
+          </div>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="signup-form" class="auth-form">
+          <div class="form-group">
+            <label for="reg-email">Alamat E-mel Kerajaan (.gov / .gov.my)</label>
+            <input type="email" id="reg-email" placeholder="sadiq@moh.gov" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Kata Laluan</label>
+            <input type="password" id="reg-password" placeholder="Sila masukkan kata laluan" required>
+            <div class="password-strength-bar"><div class="strength-fill"></div></div>
+          </div>
+          <button type="submit" class="btn-primary">🔐 Daftar Sekarang</button>
+        </form>
+
+        <!-- GOV notice -->
+        <div class="auth-notice">
+          🔒 Terhad kepada e-mel domain kerajaan sahaja (<strong>.gov.my</strong> / <strong>.gov</strong>)
+        </div>
+
+        <!-- Copyright -->
+        <div class="auth-copyright">
+          &copy; 2026 Hakcipta PKD Sik. Semua Hak Terpelihara.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APP WORKSPACE VIEW ================= -->
+  <div id="app-container" class="app-workspace hidden">
+    <!-- Navbar -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="mini-logo">
+          <!-- Mini header logo: clear capsule icon -->
+          <svg viewBox="0 0 68 68" width="42" height="42" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="mCapBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#64B5F6"/><stop offset="100%" stop-color="#0D47A1"/>
+              </linearGradient>
+              <linearGradient id="mCapGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#81C784"/><stop offset="100%" stop-color="#1B5E20"/>
+              </linearGradient>
+              <linearGradient id="mTabCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#4DD0E1"/><stop offset="100%" stop-color="#006064"/>
+              </linearGradient>
+              <clipPath id="mClipL"><rect x="0" y="0" width="34" height="36"/></clipPath>
+              <clipPath id="mClipR"><rect x="34" y="0" width="34" height="36"/></clipPath>
+            </defs>
+            <!-- Mini capsule -->
+            <rect x="0" y="0" width="68" height="36" rx="18" fill="url(#mCapBlue)" clip-path="url(#mClipL)"/>
+            <rect x="0" y="0" width="68" height="36" rx="18" fill="url(#mCapGreen)" clip-path="url(#mClipR)"/>
+            <rect x="0" y="0" width="68" height="36" rx="18" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+            <line x1="34" y1="2" x2="34" y2="34" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+            <!-- Mini tablet -->
+            <circle cx="20" cy="54" r="14" fill="url(#mTabCyan)"/>
+            <line x1="7" y1="54" x2="33" y2="54" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="20" y1="41" x2="20" y2="67" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="app-title">SiMFa Designer</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button id="btn-activity-log" class="btn-secondary">📋 Log Aktiviti</button>
+        <button id="btn-walkthrough" class="btn-secondary">📖 Panduan</button>
+        <button id="btn-logout" class="btn-secondary btn-logout-red">⏏ Log Keluar</button>
+      </div>
+    </header>
+
+    <main class="workspace-main">
+      <!-- CONTROL PANEL (LEFT) -->
+      <section class="control-panel">
+
+        <!-- Block 1: Presets -->
+        <div class="config-card">
+          <div class="config-card-inner">
+            <h3 class="card-title"><span class="icon">💊</span>Pilih Ubat</h3>
+            <div class="form-group">
+              <select id="medication-preset" class="custom-select">
+                <option value="custom">-- Pilihan Custom --</option>
+              </select>
             </div>
-            
-            <!-- Print All Catalog Button (Always visible to guest & admin) -->
-            <button class="btn btn-primary btn-full" id="printAllCatalogBtn" style="margin-bottom: 10px; background: linear-gradient(135deg, var(--primary), #1d4ed8); border-color: transparent; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <i class="fa-solid fa-file-pdf"></i> Cetak Semua Bergambar
+          </div>
+        </div>
+
+        <!-- Block 2: Dynamic Schedule -->
+        <div class="config-card">
+          <div class="config-card-inner">
+            <h3 class="card-title"><span class="icon">📅</span>Jadual Pengambilan</h3>
+            <div class="form-group">
+              <label for="schedule-rows-count">Jumlah Waktu Pengambilan Sehari</label>
+              <select id="schedule-rows-count" class="custom-select">
+                <option value="1">1 Waktu Sehari</option>
+                <option value="2">2 Waktu Sehari</option>
+                <option value="3">3 Waktu Sehari</option>
+              </select>
+            </div>
+            <div id="dynamic-rows-container" class="schedule-rows"></div>
+          </div>
+        </div>
+
+        <!-- Block 3: Warnings -->
+        <div class="config-card">
+          <div class="config-card-inner">
+            <h3 class="card-title"><span class="icon">⚠️</span>Icon Amaran Khas</h3>
+            <div class="warnings-grid-selector" id="warnings-selector"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREVIEW PANEL (RIGHT) -->
+      <section class="preview-panel">
+        <div class="preview-sticky-container">
+          <div class="preview-header-flex">
+            <div>
+              <h2 class="preview-section-title" style="margin-bottom: 2px;">Paparan Cetakan Label</h2>
+              <p class="preview-desc" style="margin-bottom: 0;">Saiz fizikal standard label: <strong>90mm x 60mm</strong>.</p>
+            </div>
+            <button type="button" id="printer-status-badge" class="printer-status-pill" title="Klik untuk buka / tutup pelarasan alignment">
+              <span>🖨️</span>
+              <span id="printer-badge-text">PhIS / eHIS (0mm, 0mm)</span>
+              <span style="font-size: 10px; opacity: 0.7;">▼</span>
             </button>
-            
-            <!-- Settings & Mapping Toggle -->
-            <button class="btn btn-secondary btn-full" id="toggleSettingsBtn">
-                <i class="fa-solid fa-sliders"></i> Pengurusan Pemetaan Halaman
+          </div>
+
+          <div class="label-outer-border">
+            <div id="print-label" class="medicine-label">
+              <div class="label-top-drugname">
+                <span id="label-out-drugname">METFORMIN 500mg</span>
+              </div>
+              <div class="label-main-area">
+                <div class="label-mid-schedule">
+                  <table class="schedule-table" id="label-schedule-table"></table>
+                </div>
+                <div class="label-right-precaution" id="label-out-warnings"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alignment Panel (Right side next to print) -->
+          <div id="printer-alignment-panel" class="config-card printer-config-card" style="margin: 14px 0; display: none;">
+            <div class="config-card-inner">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 8px;">
+                <h4 style="margin: 0; font-size: 13.5px; font-weight: 700; color: #00838F; display: flex; align-items: center; gap: 6px;">
+                  <span>📐</span> Pelarasan Alignment Cetakan
+                </h4>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button type="button" id="btn-reset-offset" class="btn-micro-reset" title="Set semula kedudukan offset ke 0mm">↺ Reset</button>
+                  <button type="button" id="btn-close-alignment" class="close-btn" style="border: none; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+                </div>
+              </div>
+
+              <!-- PRINTER TYPE -->
+              <div class="setting-subgroup">
+                <label class="control-label-muted">PRINTER TYPE</label>
+                <div class="pill-btn-group" id="printer-type-group">
+                  <button type="button" class="pill-btn active" data-printer="phis">PhIS / eHIS</button>
+                  <button type="button" class="pill-btn" data-printer="fisicien_l">FiSiCien (L)</button>
+                  <button type="button" class="pill-btn" data-printer="fisicien_s">FiSiCien (S)</button>
+                </div>
+              </div>
+
+              <!-- ADJUST POSITION (MM) -->
+              <div class="setting-subgroup" style="margin-bottom: 0;">
+                <label class="control-label-muted" style="margin-bottom: 6px;">ADJUST POSITION (MM)</label>
+                
+                <!-- Slider X -->
+                <div class="slider-adjust-row">
+                  <span class="slider-axis-label">X:</span>
+                  <input type="range" id="adjust-x-slider" class="custom-slider-accent" min="-25" max="25" step="1" value="0">
+                  <div class="slider-val-box">
+                    <span id="adjust-x-val" class="slider-val-text">0mm</span>
+                  </div>
+                </div>
+
+                <!-- Slider Y -->
+                <div class="slider-adjust-row">
+                  <span class="slider-axis-label">Y:</span>
+                  <input type="range" id="adjust-y-slider" class="custom-slider-accent" min="-25" max="25" step="1" value="0">
+                  <div class="slider-val-box">
+                    <span id="adjust-y-val" class="slider-val-text">0mm</span>
+                  </div>
+                </div>
+
+                <div class="offset-hint-text">
+                  💡 <em>Laraskan nilai X/Y jika cetakan lari pada printer selain Zebra/Toshiba.</em>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-buttons-container">
+            <button id="btn-print" class="btn-action-primary">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+              </svg>
+              Cetak Label (90mm x 60mm)
             </button>
-        </header>
+            <button type="button" id="btn-toggle-alignment" class="btn-action-secondary" title="Buka / tutup pelarasan alignment printer">📐 Alignment Printer</button>
+            <button id="btn-save-template" class="btn-action-secondary">Simpan Template</button>
+            <button id="btn-export-templates" class="btn-action-secondary">Eksport Template</button>
+            <button id="btn-import-templates" class="btn-action-secondary">Import Template</button>
+            <input type="file" id="input-import-template" accept=".json" style="display: none;">
+            <button id="btn-reset" class="btn-action-secondary">Kosongkan</button>
+          </div>
 
-        <!-- Main Content Area -->
-        <main class="app-main">
-            <!-- Welcome Guest Banner (Visible only to guests) -->
-            <div class="guest-welcome-banner" id="guestWelcomeBanner" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; backdrop-filter: blur(10px);">
-                <!-- Animated Background Blob -->
-                <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0) 70%); pointer-events: none;"></div>
-                
-                <div class="banner-icon-wrapper" style="background: linear-gradient(135deg, var(--primary), #1d4ed8); width: 60px; height: 60px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 8px 16px rgba(59, 130, 246, 0.25);">
-                    <i class="fa-solid fa-graduation-cap" style="font-size: 28px; color: #ffffff;"></i>
-                </div>
-                <div style="flex: 1; text-align: left;">
-                    <h2 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; color: var(--text-primary); margin: 0 0 6px 0; letter-spacing: -0.02em;">Portal Carian Katalog Ubat Bergambar (VIMED)</h2>
-                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.5; max-width: 650px;">Anda sedang menggunakan portal rujukan sebagai pelawat (**Guest**). Sistem ini memudahkan ahli farmasi dan kakitangan perubatan untuk menyemak gambar visual kotak ubat, bentuk blister, dan biji ubat bagi melancarkan proses dispensing ubat harian.</p>
-                </div>
-            </div>
-            <!-- PDF Drag & Drop Zone (Visible when no PDF is cached) -->
-            <section class="upload-zone" id="uploadZone">
-                <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;">
-                <div class="upload-card" id="dropArea">
-                    <div class="upload-icon">
-                        <i class="fa-solid fa-file-import"></i>
-                    </div>
-                    <h3>Seret & Lepas PDF Rujukan Di Sini</h3>
-                    <p>atau klik untuk memilih fail dari peranti anda</p>
-                    <div class="file-recommendation">
-                        <i class="fa-solid fa-circle-info"></i>
-                        <span>Disyorkan: Gunakan fail <strong>Catalogue with Picture.pdf</strong> (~39 MB)</span>
-                    </div>
-                </div>
-            </section>
+          <div class="print-tip">
+            <strong>Tip Pencetakan:</strong> Pastikan <strong>Margin: Tiada (None)</strong> dan aktifkan <strong>Grafik Latar Belakang</strong>.
+          </div>
 
-            <!-- Search and Filter Bar -->
-            <section class="control-section">
-                <div class="search-wrapper">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="searchBar" placeholder="Cari nama ubat, bahan aktif, dos, atau halaman..." autocomplete="off">
-                    <button class="clear-search" id="clearSearchBtn" style="display: none;">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                
-                <div class="filter-tabs">
-                    <button class="filter-tab active" data-filter="all">Semua</button>
-                    <button class="filter-tab" data-filter="mapped">Mempunyai Visual</button>
-                    <button class="filter-tab" data-filter="unmapped">Belum Dipetakan</button>
-                </div>
-            </section>
-
-            <!-- Drug List Grid -->
-            <section class="catalog-section">
-                <div class="catalog-header">
-                    <h2>Senarai Katalog Ubat <span class="badge" id="drugCountBadge">14</span></h2>
-                    <span class="hint-text"><i class="fa-solid fa-mouse-pointer"></i> Klik pada kad ubat untuk melihat gambar visual</span>
-                </div>
-                
-                <div class="drug-grid" id="drugGrid">
-                    <!-- Dynamic drug cards loaded by JS -->
-                </div>
-                
-                <!-- No Results State -->
-                <div class="no-results" id="noResultsState" style="display: none;">
-                    <i class="fa-solid fa-capsules"></i>
-                    <h3>Tiada Ubat Dijumpai</h3>
-                    <p>Cuba kata kunci carian yang lain.</p>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Mapping / Settings Sidebar (Drawer Panel) -->
-    <div class="drawer" id="settingsDrawer">
-        <div class="drawer-content">
-            <div class="drawer-header">
-                <h3><i class="fa-solid fa-gears"></i> Urus Pemetaan Halaman PDF</h3>
-                <button class="btn-close-drawer" id="closeDrawerBtn">&times;</button>
-            </div>
-            <p class="drawer-desc">Suaikan nombor halaman PDF bagi setiap ubat berdasarkan fail PDF anda.</p>
-            
-            <div class="mapping-actions">
-                <button class="btn btn-sm btn-primary" id="autoIndexBtn" disabled>
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Indeks Automatik Teks PDF
-                </button>
-                <button class="btn btn-sm btn-secondary" id="resetMappingBtn">
-                    <i class="fa-solid fa-rotate-left"></i> Set Semula Default
-                </button>
-            </div>
-            
-            <!-- Global Offset Input -->
-            <div class="global-offset-setting" style="margin-bottom: 20px; padding: 12px; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-                <div style="flex: 1; text-align: left;">
-                    <label style="font-size: 13px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                        <i class="fa-solid fa-right-left"></i> Offset Muka Surat PDF
-                    </label>
-                    <span style="font-size: 11px; color: var(--text-secondary); display: block; margin-top: 2px;">Jumlah lari halaman (contoh: +2 jika ada 2 muka surat cover).</span>
-                </div>
-                <input type="number" id="globalPdfOffset" class="mapping-page-input" value="0" style="width: 70px;">
-            </div>
-            
-            <div class="mapping-list" id="mappingList">
-                <!-- Mappings will be populated here -->
-            </div>
-            
-            <!-- Log Aktiviti Section -->
-            <div class="logs-section" id="logsSection" style="display: none; border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 10px; flex-shrink: 0; max-height: 200px; display: flex; flex-direction: column;">
-                <h4 style="font-size: 13px; margin-bottom: 8px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-history"></i> Log Aktiviti Pengguna
-                </h4>
-                <div class="logs-container" id="logsContainer" style="flex: 1; overflow-y: auto; font-size: 11px; color: var(--text-secondary); background: var(--bg-main); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 6px;">
-                    <!-- Logs loaded dynamically -->
-                </div>
-            </div>
-
-            <!-- Backup & Sync Section (Export/Import) -->
-            <div class="backup-section" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px; margin-bottom: 10px;">
-                <h4 style="font-size: 13px; margin-bottom: 8px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Sandaran & Pindahan Data (Backup/Sync)
-                </h4>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.4; text-align: left;">Pindahkan data ubat, pemetaan, dan gambar yang telah anda sunting pada PC ini ke PC yang lain secara manual.</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="btn btn-sm btn-outline" id="exportDataBtn" style="justify-content: center; gap: 6px; font-size: 11px; display: flex; align-items: center; height: 32px;">
-                        <i class="fa-solid fa-download"></i> Eksport Data
-                    </button>
-                    <button class="btn btn-sm btn-outline" id="importDataBtn" style="justify-content: center; gap: 6px; font-size: 11px; display: flex; align-items: center; height: 32px;">
-                        <i class="fa-solid fa-upload"></i> Import Data
-                    </button>
-                    <input type="file" id="importDataFileInput" accept=".json" style="display: none;">
-                </div>
-            </div>
-
-            <!-- Supabase Cloud Sync Section -->
-            <div class="supabase-section" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px; margin-bottom: 10px; text-align: left;">
-                <h4 style="font-size: 13px; margin-bottom: 8px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-cloud"></i> Pangkalan Data Awan (Supabase Sync)
-                </h4>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.4;">Hubungkan ke database Supabase percuma untuk penyelarasan langsung secara automatik merentasi semua PC.</p>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div>
-                        <label style="font-size: 10px; color: var(--text-secondary); display: block; margin-bottom: 2px;">Supabase URL</label>
-                        <input type="text" id="supabaseUrlInput" style="background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); padding: 6px 10px; font-size: 11px; width: 100%;" placeholder="https://xxx.supabase.co">
-                    </div>
-                    <div>
-                        <label style="font-size: 10px; color: var(--text-secondary); display: block; margin-bottom: 2px;">Supabase Anon Key</label>
-                        <input type="password" id="supabaseKeyInput" style="background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); padding: 6px 10px; font-size: 11px; width: 100%;" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
-                    </div>
-                    <button class="btn btn-sm btn-primary" id="saveSupabaseConfigBtn" style="margin-top: 4px; justify-content: center; gap: 6px; font-size: 11px; display: flex; align-items: center; height: 32px;">
-                        <i class="fa-solid fa-link"></i> Sambung & Selaras
-                    </button>
-                </div>
-            </div>
-
-            <div class="drawer-footer" style="margin-top: 10px;">
-                <button class="btn btn-primary btn-full" id="saveMappingBtn">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Pemetaan
-                </button>
-            </div>
+          <!-- App footer copyright -->
+          <div class="app-footer-copyright">
+            &copy; 2026 Hakcipta <strong>PKD Sik</strong>. Semua Hak Terpelihara.
+          </div>
         </div>
-    </div>
+      </section>
+    </main>
+  </div>
 
-    <!-- Interactive PDF Viewer Modal -->
-    <div class="modal" id="drugModal">
-        <div class="modal-backdrop" id="modalBackdrop"></div>
-        <div class="modal-wrapper">
-            <div class="modal-header">
-                <div class="modal-title-area">
-                    <span class="drug-badge" id="modalDrugDosage">Dosage</span>
-                    <h3 id="modalTitle">Nama Ubat</h3>
-                    <p class="modal-subtitle" id="modalGenericName">Nama Generik / Bahan Aktif</p>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button class="btn btn-sm btn-icon" id="modalEditDrugBtn" title="Edit Maklumat Ubat" style="display: none; height: 32px; width: 32px; padding: 0; align-items: center; justify-content: center; border-radius: var(--radius-sm); color: var(--primary); background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3);">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="btn btn-sm btn-icon" id="modalDeleteDrugBtn" title="Padam Ubat dari Katalog" style="display: none; height: 32px; width: 32px; padding: 0; align-items: center; justify-content: center; border-radius: var(--radius-sm);">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                    <button class="modal-close" id="closeModalBtn">&times;</button>
-                </div>
-            </div>
-            
-            <div class="modal-body">
-                <!-- Viewer Canvas/Image Toolbar -->
-                <div class="viewer-toolbar">
-                    <div class="tool-group">
-                        <button class="tool-btn" id="zoomOutBtn" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-                        <span class="zoom-level" id="zoomLevelVal">100%</span>
-                        <button class="tool-btn" id="zoomInBtn" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                        <button class="tool-btn" id="zoomFitBtn" title="Fit to Screen"><i class="fa-solid fa-expand"></i></button>
-                        <button class="tool-btn" id="zoomResetBtn" title="Reset"><i class="fa-solid fa-rotate"></i></button>
-                    </div>
-                    
-                    <div class="tool-group">
-                        <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
-                        <button class="btn btn-sm btn-outline" id="uploadImageBtn" title="Muat naik gambar JPG/PNG">
-                            <i class="fa-solid fa-camera"></i> Gambar JPG/PNG
-                        </button>
-                        <button class="btn btn-sm btn-icon" id="deleteImageBtn" title="Padam Gambar Tempatan" style="display: none;">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="tool-group">
-                        <button class="btn btn-sm btn-primary" id="modalPrintBtn" title="Cetak Hardcopy / Simpan ke PDF" style="background: linear-gradient(135deg, var(--primary), #1d4ed8); border-color: transparent; gap: 6px; display: flex; align-items: center; height: 32px; padding: 0 12px; font-size: 12px; color: #ffffff;">
-                            <i class="fa-solid fa-print"></i> Cetak / Ekstrak PDF
-                        </button>
-                    </div>
-                    
-                    <div class="tool-group pdf-nav" id="pdfNavControls">
-                        <button class="tool-btn" id="prevPageBtn" title="Halaman Sebelumnya"><i class="fa-solid fa-chevron-left"></i></button>
-                        <span class="page-number">Hal. <span id="currentPageVal">1</span> / <span id="totalPageCountVal">1</span></span>
-                        <button class="tool-btn" id="nextPageBtn" title="Halaman Seterusnya"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-                </div>
-                
-                <!-- PDF Render / Image Container -->
-                <div class="viewer-container" id="viewerContainer">
-                    <div class="canvas-wrapper" id="canvasWrapper">
-                    </div>
-                    <!-- Loading Indicator within Canvas -->
-                    <div class="canvas-loader" id="canvasLoader" style="display: none;">
-                        <div class="spinner"></div>
-                        <p id="loaderText">Merender Halaman PDF...</p>
-                    </div>
-                    <!-- Empty state inside modal -->
-                    <div class="viewer-empty-state" id="viewerEmptyState" style="display: none; text-align: center; padding: 40px 20px; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%; height: 100%;">
-                        <i class="fa-solid fa-image" style="font-size: 48px; color: var(--text-muted); margin-bottom: 5px;"></i>
-                        <h4>Tiada Gambar Visual Ditemui</h4>
-                        <p style="font-size: 13px; color: var(--text-secondary); max-width: 350px; margin: 0 auto; line-height: 1.4;">Ubat ini belum dipetakan ke halaman PDF yang sah, dan tiada gambar foto tempatan dimuat naik.</p>
-                        <button class="btn btn-sm btn-primary" id="emptyStateUploadBtn"><i class="fa-solid fa-upload"></i> Muat Naik Gambar JPG/PNG</button>
-                    </div>
-                    <!-- Drag and drop image overlay -->
-                    <div class="drag-upload-overlay" id="dragUploadOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(11, 15, 25, 0.9); flex-direction: column; align-items: center; justify-content: center; gap: 15px; z-index: 20; pointer-events: none; border: 2px dashed var(--primary); border-radius: var(--radius-md);">
-                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 48px; color: var(--primary);"></i>
-                        <h4 style="color: var(--text-primary);">Lepaskan Gambar di Sini</h4>
-                        <p style="font-size: 13px; color: var(--text-secondary); max-width: 300px; text-align: center; line-height: 1.4;">Lepaskan fail gambar (PNG/JPG) untuk memuat naik ke ubat ini.</p>
-                    </div>
-                </div>
-                
-                <!-- Helpful visual guide -->
-                <div class="viewer-instruction">
-                    <i class="fa-solid fa-hand-pointer"></i> <span>Gunakan tetikus/sentuhan untuk <strong>menyeret (drag)</strong> dan <strong>mengezum (scroll wheel)</strong> gambar ubat.</span>
-                </div>
-            </div>
-            
-            <div class="modal-footer">
-                <div class="modal-info-footer">
-                    <i class="fa-solid fa-circle-question"></i> Halaman rujukan ini memaparkan Kotak, Blister & Biji ubat.
-                </div>
-                <div id="modalLastUpdatedInfo" style="font-size: 11px; color: var(--text-muted); display: none; align-items: center; gap: 4px; margin-left: auto; margin-right: 15px;"></div>
-                <button class="btn btn-secondary" id="closeModalFooterBtn">TUTUP</button>
-            </div>
+  <!-- ================= FORGOT PASSWORD MODAL ================= -->
+  <!-- ================= FORGOT PASSWORD MODAL ================= -->
+  <div id="forgot-pw-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="modal-header">
+        <h2>🔑 Set Semula Kata Laluan</h2>
+        <button id="close-forgot-pw" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align:center; padding:24px 28px;">
+        <div style="font-size:42px; margin-bottom:12px;">🔐</div>
+        <h3 style="font-size:16px; color:var(--color-text-main); margin-bottom:8px;">Tukar Kata Laluan Pegawai</h3>
+        <p style="font-size:13px; color:var(--color-text-muted); line-height:1.5; margin-bottom:16px;">
+          Sistem beroperasi dalam mod tempatan/offline (tiada pelayan emel luar). Sila masukkan e-mel anda dan tetapkan kata laluan baru secara terus di bawah:
+        </p>
+        
+        <!-- Alerts inside modal -->
+        <div id="forgot-pw-success" style="display:none; background:#D1FAE5; border:1px solid #A7F3D0; color:#065F46; padding:12px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; line-height:1.5; text-align:left;"></div>
+        <div id="forgot-pw-error" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:12px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; line-height:1.5; text-align:left;"></div>
+
+        <form id="forgot-pw-form" style="text-align:left; margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:14px;">
+            <label for="forgot-email" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Alamat E-mel</label>
+            <input type="email" id="forgot-email" placeholder="nama@moh.gov.my" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
+          </div>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label for="forgot-new-password" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Kata Laluan Baru</label>
+            <input type="password" id="forgot-new-password" placeholder="Masukkan kata laluan baru" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
+          </div>
+          <div class="form-group" style="margin-bottom:18px;">
+            <label for="forgot-confirm-password" style="font-size:12px; font-weight:600; color:var(--color-text-main); display:block; margin-bottom:6px;">Sahkan Kata Laluan Baru</label>
+            <input type="password" id="forgot-confirm-password" placeholder="Ulang kata laluan baru" required style="width:100%; padding:10px 14px; border:1px solid var(--color-border); border-radius:8px; font-size:14px; outline:none; transition:border var(--transition-fast);">
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%; margin-top:0; padding:12px; font-weight:700;">💾 Simpan &amp; Kemas Kini Kata Laluan</button>
+        </form>
+
+        <div style="border-top:1px solid var(--color-border); padding-top:14px; text-align:left;">
+          <p style="font-size:12px; color:var(--color-text-muted); line-height:1.5; margin:0;">
+            💡 Akaun demo sedia ada: <strong>sadiq@moh.gov</strong> (Kata laluan: <strong>123</strong>)
+          </p>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button id="close-forgot-pw-footer" class="btn-primary" style="margin-top:0; width:auto; padding:10px 28px;">Tutup</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="modal-backdrop" id="loginModalBackdrop"></div>
-        <div class="modal-wrapper" style="max-width: 400px; padding: 25px; border-radius: var(--radius-md); background-color: var(--bg-surface);">
-            <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="font-size: 18px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Log Masuk Admin
-                </h3>
-                <button class="modal-close" id="closeLoginModalBtn" style="background: none; border: none; font-size: 24px; color: var(--text-secondary); cursor: pointer;">&times;</button>
-            </div>
-            <form id="loginForm" style="display: flex; flex-direction: column; gap: 15px;">
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="usernameInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Nama / ID Pentadbir</label>
-                    <input type="text" id="usernameInput" class="mapping-page-input" placeholder="Masukkan nama (fkkg)" required style="width: 100%; text-align: left; padding: 10px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="passwordInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Kata Laluan</label>
-                    <input type="password" id="passwordInput" class="mapping-page-input" placeholder="Masukkan kata laluan (123)" required style="width: 100%; text-align: left; padding: 10px;">
-                </div>
-                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 10px;">
-                    <i class="fa-solid fa-right-to-bracket"></i> LOG MASUK
-                </button>
-            </form>
+  <!-- ================= OTP VERIFICATION MODAL ================= -->
+  <div id="otp-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 440px; text-align: center; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); background: #ffffff; overflow: hidden;">
+      <div class="modal-header" style="background: #FAFBFD; border-bottom: 1px solid var(--color-border); padding: 16px 20px;">
+        <h3 class="modal-title" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 700; color: var(--color-text-main); margin: 0;">
+          <span>🔐</span> Pengesahan Emel Pegawai (OTP)
+        </h3>
+        <button id="close-otp-modal" class="close-btn" style="font-size: 24px; color: var(--color-text-muted); cursor: pointer; border: none; background: none;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 24px 22px;">
+        <div style="font-size: 42px; margin-bottom: 8px;">📧</div>
+        <p style="font-size: 13px; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 12px;">
+          Pendaftaran untuk: <strong id="otp-target-email" style="color: var(--color-primary); font-size: 14.5px;">nama@moh.gov.my</strong>
+        </p>
+
+        <!-- Offline/Local OTP Notice -->
+        <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 12.5px; color: #1E40AF; text-align: left; line-height: 1.4;">
+          ℹ️ <strong>Mod Tempatan (Offline):</strong> Tiada sambungan gateway e-mel luar. Kod OTP dijana terus pada skrin ini:
         </div>
-    </div>
 
-    <!-- Add Drug Modal -->
-    <div class="modal" id="addDrugModal">
-        <div class="modal-backdrop" id="addDrugModalBackdrop"></div>
-        <div class="modal-wrapper" style="max-width: 480px; padding: 25px; border-radius: var(--radius-md); background-color: var(--bg-surface);">
-            <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="font-size: 18px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-plus-circle" style="color: var(--success);"></i> Tambah Ubat Baharu
-                </h3>
-                <button class="modal-close" id="closeAddDrugModalBtn" style="background: none; border: none; font-size: 24px; color: var(--text-secondary); cursor: pointer;">&times;</button>
-            </div>
-            <form id="addDrugForm" style="display: flex; flex-direction: column; gap: 12px;">
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="drugBrandInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Jenama Ubat (Brand)</label>
-                    <input type="text" id="drugBrandInput" class="mapping-page-input" placeholder="Masukkan jenama (contoh: Hovasc)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="drugNameInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Nama Ubat (Name)</label>
-                    <input type="text" id="drugNameInput" class="mapping-page-input" placeholder="Masukkan nama ubat (contoh: Amlodipine 5mg)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="drugGenericInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Bahan Aktif (Generic)</label>
-                    <input type="text" id="drugGenericInput" class="mapping-page-input" placeholder="Masukkan nama generik (contoh: Amlodipine Besylate)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="drugDosageInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Dos (Dosage)</label>
-                    <input type="text" id="drugDosageInput" class="mapping-page-input" placeholder="Masukkan dos ubat (contoh: 5mg)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="drugPageInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Muka Surat PDF (Page Number - Pilihan)</label>
-                    <input type="number" id="drugPageInput" class="mapping-page-input" placeholder="Contoh: 7 (Tinggalkan kosong jika tiada)" style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="drugImageInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Fail Gambar Visual (Pilihan)</label>
-                    <input type="file" id="drugImageInput" accept="image/*" style="background: none; border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); padding: 8px 12px; font-size: 13px; width: 100%;">
-                </div>
-                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 10px; background: linear-gradient(135deg, var(--success), #059669); border-color: transparent;">
-                    <i class="fa-solid fa-save"></i> SIMPAN UBAT BAHARU
-                </button>
-            </form>
+        <!-- Direct OTP Display Box -->
+        <div id="otp-demo-badge" style="background: #F0FDF4; border: 2px dashed #22C55E; border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: center;">
+          <div style="font-size: 11px; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;">KOD OTP KESELAMATAN ANDA</div>
+          <div id="demo-otp-code" style="font-size: 28px; font-weight: 800; letter-spacing: 6px; color: #15803D; font-family: 'Inter', monospace; margin-bottom: 8px;">123456</div>
+          <button type="button" id="btn-autofill-otp" style="background: #16A34A; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: background 0.2s;">⚡ Isi Kod Automatik</button>
         </div>
-    </div>
 
-    <!-- Edit Drug Modal -->
-    <div class="modal" id="editDrugModal">
-        <div class="modal-backdrop" id="editDrugModalBackdrop"></div>
-        <div class="modal-wrapper" style="max-width: 480px; padding: 25px; border-radius: var(--radius-md); background-color: var(--bg-surface);">
-            <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="font-size: 18px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i> Kemaskini Maklumat Ubat
-                </h3>
-                <button class="modal-close" id="closeEditDrugModalBtn" style="background: none; border: none; font-size: 24px; color: var(--text-secondary); cursor: pointer;">&times;</button>
-            </div>
-            <form id="editDrugForm" style="display: flex; flex-direction: column; gap: 12px;">
-                <input type="hidden" id="editDrugIdInput">
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="editDrugBrandInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Jenama Ubat (Brand)</label>
-                    <input type="text" id="editDrugBrandInput" class="mapping-page-input" placeholder="Masukkan jenama (contoh: Hovasc)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="editDrugNameInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Nama Ubat (Name)</label>
-                    <input type="text" id="editDrugNameInput" class="mapping-page-input" placeholder="Masukkan nama ubat (contoh: Amlodipine 5mg)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="editDrugGenericInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Bahan Aktif (Generic)</label>
-                    <input type="text" id="editDrugGenericInput" class="mapping-page-input" placeholder="Masukkan nama generik (contoh: Amlodipine Besylate)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="editDrugDosageInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Dos (Dosage)</label>
-                    <input type="text" id="editDrugDosageInput" class="mapping-page-input" placeholder="Masukkan dos ubat (contoh: 5mg)" required style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="editDrugPageInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Muka Surat PDF (Page Number - Pilihan)</label>
-                    <input type="number" id="editDrugPageInput" class="mapping-page-input" placeholder="Contoh: 7 (Tinggalkan kosong jika tiada)" style="width: 100%; text-align: left; padding: 8px 12px; height: 40px;">
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 6px; text-align: left;">
-                    <label for="editDrugImageInput" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Fail Gambar Visual Baharu (Pilihan - Gantikan yang lama)</label>
-                    <input type="file" id="editDrugImageInput" accept="image/*" style="background: none; border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); padding: 8px 12px; font-size: 13px; width: 100%;">
-                </div>
-                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 10px; background: linear-gradient(135deg, var(--primary), #2563eb); border-color: transparent;">
-                    <i class="fa-solid fa-save"></i> SIMPAN PERUBAHAN
-                </button>
-            </form>
+        <div id="otp-error-msg" style="display:none; background:#FEE2E2; border:1px solid #FECACA; color:#991B1B; padding:10px; border-radius:8px; font-size:12.5px; font-weight:600; margin-bottom:14px; text-align:center;"></div>
+        <div id="otp-success-msg" style="display:none; background:#D1FAE5; border:1px solid #A7F3D0; color:#065F46; padding:10px; border-radius:8px; font-size:12.5px; font-weight:600; margin-bottom:14px; text-align:center;"></div>
+
+        <form id="otp-form">
+          <div style="margin-bottom: 18px;">
+            <label for="otp-input" style="display:block; font-size: 11.5px; font-weight: 700; color: var(--color-text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px;">Masukkan 6-Digit Kod</label>
+            <input type="text" id="otp-input" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" placeholder="· · · · · ·" autocomplete="one-time-code" required style="width: 100%; max-width: 250px; height: 48px; font-size: 24px; font-family: 'Inter', monospace; text-align: center; letter-spacing: 8px; border: 2px solid var(--color-primary); border-radius: 10px; outline: none; margin: 0 auto; display: block; font-weight: 700; background: #FAFBFD;">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 700; border-radius: 8px;">✅ Sahkan &amp; Cipta Akaun</button>
+        </form>
+
+        <div style="margin-top: 14px; font-size: 12.5px; color: var(--color-text-muted);">
+          Tidak terima kod? <button type="button" id="btn-resend-otp" style="background: none; border: none; color: var(--color-primary); font-weight: 700; cursor: pointer; text-decoration: underline; padding: 0;">Jana Semula Kod</button> <span id="otp-timer" style="color: var(--color-text-muted);">(60s)</span>
         </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Notification Toast -->
-    <div class="toast-container" id="toastContainer"></div>
+  <!-- ================= ACTIVITY LOG MODAL ================= -->
+  <div id="activity-log-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:680px;">
+      <div class="modal-header">
+        <h2>📋 Log Aktiviti Pengguna</h2>
+        <button id="close-activity-log" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <p style="font-size:13.5px; color:var(--color-text-muted); margin:0;">Rekod masuk dan keluar semua pengguna sistem.</p>
+          <button id="btn-export-log" class="btn-action-secondary" style="flex:none; padding:8px 16px; font-size:13px;">⬇ Export CSV</button>
+        </div>
+        <div id="activity-log-table-wrapper" style="overflow-x:auto; max-height:55vh; overflow-y:auto; border:1px solid var(--color-border); border-radius:10px;">
+          <table class="activity-log-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tarikh &amp; Masa</th>
+                <th>Pengguna</th>
+                <th>Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="activity-log-tbody">
+              <tr><td colspan="4" style="text-align:center; color:var(--color-text-muted); padding:24px;">Tiada rekod aktiviti.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+          <button id="btn-clear-log" style="background:none; border:1.5px solid #FECACA; color:#C62828; font-family:'Outfit',sans-serif; font-weight:600; font-size:13px; padding:8px 16px; border-radius:8px; cursor:pointer;">🗑 Padam Semua Log</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="close-activity-log-footer" class="btn-primary" style="margin-top:0; width:auto; padding:10px 28px;">Tutup</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- PDFJS Library CDN (Using modern version with local worker fallback configuration) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <!-- Supabase JS Client library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- App Script -->
-    <script src="app.js?v=10.0"></script>
+  <!-- ================= WALKTHROUGH MODAL ================= -->
+  <div id="walkthrough-modal" class="modal-overlay hidden">
+    <div class="modal-card walkthrough-card">
+      <div class="modal-header">
+        <h2>📖 Panduan Penggunaan &amp; Walkthrough</h2>
+        <button id="close-walkthrough" class="close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="walkthrough-tabs">
+          <button class="wt-tab-btn active" data-tab="tab-grid">📐 Susun Atur Grid</button>
+          <button class="wt-tab-btn" data-tab="tab-symbols">⊕ Simbol &amp; Dos</button>
+          <button class="wt-tab-btn" data-tab="tab-presets">💊 Preset Ubat</button>
+          <button class="wt-tab-btn" data-tab="tab-print">🖨️ Tip Cetak</button>
+        </div>
+
+        <div class="walkthrough-content">
+          <div id="tab-grid" class="wt-pane active">
+            <h3>📐 Susun Atur Grid Label (90mm x 60mm)</h3>
+            <p>Label ubat direka khas mengikut lakaran grid 3 lajur:</p>
+            <div class="grid-spec-diagram">
+              <div class="spec-col">Lajur Kiri (22mm)<br><strong>Nama Ubat (Menegak)</strong></div>
+              <div class="spec-col">Lajur Tengah (46mm)<br><strong>Jadual (Dos / Masa / Makan)</strong></div>
+              <div class="spec-col">Lajur Kanan (22mm)<br><strong>Amaran Khas (Kotak Kuning)</strong></div>
+            </div>
+            <ul>
+              <li><strong>Lajur Kiri:</strong> Nama dan kekuatan ubat secara menegak (putar 90°).</li>
+              <li><strong>Lajur Tengah:</strong> Jadual ubat — bilangan biji (dos), waktu, dan kaitan makan.</li>
+              <li><strong>Lajur Kanan:</strong> Lambang amaran disusun menegak dalam kotak amaran kuning.</li>
+            </ul>
+          </div>
+
+          <div id="tab-symbols" class="wt-pane">
+            <h3>⊕ Simbol &amp; Pecahan Dos</h3>
+            <p>Simbol dos ubat menggunakan reka bentuk tablet terbelah (scored tablet):</p>
+            <div class="symbols-showcase">
+              <div class="sym-item"><div class="sym-icon-preview" id="preview-sym-1"></div><span>1 Biji</span></div>
+              <div class="sym-item"><div class="sym-icon-preview" id="preview-sym-half"></div><span>1/2 Biji</span></div>
+              <div class="sym-item"><div class="sym-icon-preview" id="preview-sym-2"></div><span>2 Biji</span></div>
+            </div>
+          </div>
+
+          <div id="tab-presets" class="wt-pane">
+            <h3>💊 Senarai Preset Ubat</h3>
+            <p>Sistem ini telah diprogramkan dengan 69 jenis ubat standard beserta jadual dos dan amaran khasnya.</p>
+            <div class="presets-table-container">
+              <table class="presets-info-table">
+                <thead><tr><th>Nama Ubat</th><th>Jadual</th><th>Amaran</th></tr></thead>
+                <tbody>
+                  <tr><td>Metformin 500mg</td><td>2x sehari (Pagi &amp; Malam) — Selepas Makan</td><td>Jangan Gigit</td></tr>
+                  <tr><td>Metformin XR 500mg</td><td>1x sehari (Malam) — Selepas Makan</td><td>Jangan Gigit</td></tr>
+                  <tr><td>Amlodipine 5mg / 10mg</td><td>1x sehari (Pagi) — Selepas Makan</td><td>Jauhi Kanak-kanak</td></tr>
+                  <tr><td>Bisoprolol 2.5mg / 5mg</td><td>1x sehari (Pagi) — Selepas Makan</td><td>Jauhi Kanak-kanak</td></tr>
+                  <tr><td>Gliclazide 80mg</td><td>2x sehari (Pagi &amp; Tengah Hari) — Sebelum Makan</td><td>Jauhi Kanak-kanak</td></tr>
+                  <tr><td>GTN 0.5mg</td><td>1x sehari (Pagi) — Sebelum Makan</td><td>Jauhi Cahaya, Bawah Lidah</td></tr>
+                  <tr><td>Insulin Novomix-30</td><td>2x sehari (Pagi &amp; Malam) — Sebelum Makan</td><td>Simpan Sejuk</td></tr>
+                  <tr><td>...dan 62 lagi preset</td><td colspan="2" style="color:var(--color-text-muted);">Pilih dari dropdown Pilih Ubat</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-print" class="wt-pane">
+            <h3>🖨️ Tip Pencetakan Label (90mm x 60mm)</h3>
+            <ol>
+              <li>Pilih pencetak label anda (cth: TSC, Zebra, Brother).</li>
+              <li>Tetapkan <strong>Saiz Kertas</strong> kepada <strong>90mm x 60mm</strong>.</li>
+              <li>Set <strong>Margin</strong> kepada <strong>Tiada (None)</strong>.</li>
+              <li>Aktifkan <strong>Grafik Latar Belakang (Background graphics)</strong>.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-walkthrough-footer" class="btn-primary" style="margin-top:0; width:auto; padding:10px 24px;">Faham &amp; Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Web App, Auth & Firestore Cloud SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="app.js?v=20"></script>
+  <script>
+    // Bypass service worker caching during localhost development
+    if ('serviceWorker' in navigator) {
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (let reg of regs) reg.unregister();
+        });
+        if ('caches' in window) {
+          caches.keys().then(keys => {
+            for (let k of keys) caches.delete(k);
+          });
+        }
+      } else {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((reg) => console.log('[PWA] Service Worker registered:', reg.scope))
+            .catch((err) => console.log('[PWA] SW registration failed:', err));
+        });
+      }
+    }
+  </script>
 </body>
+
 </html>
