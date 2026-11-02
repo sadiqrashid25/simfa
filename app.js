@@ -705,6 +705,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupWalkthroughModal();
   setupForgotPasswordModal();
   setupActivityLogModal();
+  setupFeedbackModal();
   renderDynamicRowCustomizer();
   updatePreview();
 });
@@ -1743,4 +1744,81 @@ function renderActivityLogTable() {
       </tr>`;
     }).join('');
   }
+}
+
+// ==========================================================================
+// FEEDBACK SYSTEM (MODAL & CLOUD FIRESTORE)
+// ==========================================================================
+function setupFeedbackModal() {
+  const btnFeedback = document.getElementById("btn-feedback");
+  const modal = document.getElementById("feedback-modal");
+  const fbText = document.getElementById("fb-text");
+  const fbDiscard = document.getElementById("fb-discard");
+  const fbDone = document.getElementById("fb-done");
+  const fbAlert = document.getElementById("fb-alert");
+
+  if (!btnFeedback || !modal) return;
+
+  btnFeedback.addEventListener("click", () => {
+    modal.classList.remove("hidden");
+    fbText.value = "";
+    if (fbAlert) fbAlert.style.display = "none";
+    setTimeout(() => fbText.focus(), 100);
+  });
+
+  const closeModal = () => {
+    modal.classList.add("hidden");
+    fbText.value = "";
+  };
+
+  fbDiscard.addEventListener("click", closeModal);
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  fbDone.addEventListener("click", async () => {
+    const content = fbText.value.trim();
+    if (!content) {
+      fbText.focus();
+      return;
+    }
+
+    fbDone.disabled = true;
+    fbDone.textContent = "Sending...";
+
+    const feedbackPayload = {
+      message: content,
+      userEmail: state.userEmail || "Anonymous",
+      timestamp: new Date().toISOString(),
+      submittedAt: new Date().toLocaleString('ms-MY', { timeZone: 'Asia/Kuala_Lumpur' })
+    };
+
+    // 1. Simpan ke Cloud Firestore (supaya pencipta aplikasi boleh baca di mana-mana)
+    if (typeof firebase !== 'undefined' && firebase.apps.length && firebase.firestore) {
+      try {
+        await firebase.firestore().collection('feedbacks').add(feedbackPayload);
+      } catch (err) {
+        console.warn("[Feedback] Firestore save error:", err);
+      }
+    }
+
+    // 2. Sandaran lokal
+    const localFeedbacks = JSON.parse(localStorage.getItem('simfa_feedbacks') || '[]');
+    localFeedbacks.unshift(feedbackPayload);
+    localStorage.setItem('simfa_feedbacks', JSON.stringify(localFeedbacks));
+
+    if (fbAlert) {
+      fbAlert.style.display = "block";
+      fbAlert.style.background = "#064E3B";
+      fbAlert.style.color = "#A7F3D0";
+      fbAlert.textContent = "Terima kasih atas maklum balas anda!";
+    }
+
+    setTimeout(() => {
+      fbDone.disabled = false;
+      fbDone.textContent = "Done";
+      closeModal();
+    }, 1200);
+  });
 }
