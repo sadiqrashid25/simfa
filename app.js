@@ -699,18 +699,14 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSavedUserSession();
   generateWarningsSelector();
   
-  // Load shared templates from templates.json first
-  loadSharedTemplatesFromFile().then(() => {
-    populatePresetsDropdown();
-    loadSharedTemplatesIntoDropdown();
-    loadCustomTemplatesIntoDropdown();
-    bindInputListeners();
-    setupWalkthroughModal();
-    setupForgotPasswordModal();
-    setupActivityLogModal();
-    renderDynamicRowCustomizer();
-    updatePreview();
-  });
+  populatePresetsDropdown();
+  loadCustomTemplatesIntoDropdown();
+  bindInputListeners();
+  setupWalkthroughModal();
+  setupForgotPasswordModal();
+  setupActivityLogModal();
+  renderDynamicRowCustomizer();
+  updatePreview();
 });
 
 // Mock Authentication Tab Switches and Submissions
