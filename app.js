@@ -1763,6 +1763,8 @@ function setupFeedbackModal() {
     modal.classList.remove("hidden");
     fbText.value = "";
     if (fbAlert) fbAlert.style.display = "none";
+    const senderSpan = document.getElementById("fb-sender-email");
+    if (senderSpan) senderSpan.textContent = state.userEmail || "Pegawai PKD";
     setTimeout(() => fbText.focus(), 100);
   });
 
