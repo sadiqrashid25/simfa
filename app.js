@@ -730,10 +730,19 @@ function setupAuthFlow() {
     return lower.endsWith('.gov.my') || lower.endsWith('.gov') || lower === 'sadiqrashid25@gmail.com';
   }
 
-  function showAuthError(msg) {
+  function showAuthError(msg, isSuccess = false) {
     errorMsg.textContent = msg;
     errorMsg.style.display = 'block';
-    setTimeout(() => { errorMsg.style.display = 'none'; }, 5000);
+    if (isSuccess) {
+      errorMsg.style.background = '#ECFDF5';
+      errorMsg.style.borderColor = '#A7F3D0';
+      errorMsg.style.color = '#065F46';
+    } else {
+      errorMsg.style.background = '#FEE2E2';
+      errorMsg.style.borderColor = '#FECACA';
+      errorMsg.style.color = '#991B1B';
+    }
+    setTimeout(() => { errorMsg.style.display = 'none'; }, 6000);
   }
 
   tabSignup.addEventListener("click", () => {
@@ -752,19 +761,51 @@ function setupAuthFlow() {
     errorMsg.style.display = 'none';
   });
 
-  signupForm.addEventListener("submit", (e) => {
+  signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const emailVal = document.getElementById("reg-email").value.trim();
+    const passVal = document.getElementById("reg-password").value;
+
     if (!isGovEmail(emailVal)) {
       showAuthError('⛔ E-mel mesti menggunakan domain kerajaan (.gov.my atau .gov). Contoh: nama@bahagian.gov.my');
       return;
     }
-    state.userEmail = emailVal;
-    saveUserSession(emailVal);
-    transitionToWorkspace();
+
+    if (passVal.length < 6) {
+      showAuthError('⚠️ Kata laluan mestilah sekurang-kurangnya 6 aksara.');
+      return;
+    }
+
+    const submitBtn = signupForm.querySelector("button[type='submit']");
+    const origText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "⏳ Mendaftar akaun...";
+
+    try {
+      if (typeof simfaRegisterUser === 'function') {
+        const res = await simfaRegisterUser(emailVal, passVal);
+        if (res.success) {
+          state.userEmail = emailVal;
+          saveUserSession(emailVal);
+          transitionToWorkspace();
+          return;
+        } else {
+          showAuthError(`❌ Gagal mendaftar: ${res.error || 'Sila cuba lagi'}`);
+        }
+      } else {
+        state.userEmail = emailVal;
+        saveUserSession(emailVal);
+        transitionToWorkspace();
+      }
+    } catch (err) {
+      showAuthError(`❌ Ralat: ${err.message}`);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = origText;
+    }
   });
 
-  loginForm.addEventListener("submit", (e) => {
+  loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const loginEmailVal = document.getElementById("login-email").value.trim();
     const loginPassVal = document.getElementById("login-password").value;
@@ -774,24 +815,45 @@ function setupAuthFlow() {
       return;
     }
 
-    // Hardcoded GOV credentials check
-    const VALID_USERS = [
-      { email: 'sadiq@moh.gov', password: '123' },
-      { email: 'sadiqrashid25@gmail.com', password: '123' }
-    ];
+    const submitBtn = loginForm.querySelector("button[type='submit']");
+    const origText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "⏳ Mengesahkan...";
 
-    const matched = VALID_USERS.find(u =>
-      u.email.toLowerCase() === loginEmailVal.toLowerCase() && u.password === loginPassVal
-    );
-
-    if (!matched) {
-      showAuthError('❌ E-mel atau kata laluan tidak tepat. Sila cuba semula.');
-      return;
+    try {
+      if (typeof simfaLoginUser === 'function') {
+        const res = await simfaLoginUser(loginEmailVal, loginPassVal);
+        if (res.success) {
+          state.userEmail = loginEmailVal;
+          saveUserSession(loginEmailVal);
+          transitionToWorkspace();
+          return;
+        } else {
+          showAuthError(res.error || '❌ E-mel atau kata laluan tidak tepat. Sila semak semula.');
+        }
+      } else {
+        // Fallback hardcoded
+        const VALID_USERS = [
+          { email: 'sadiq@moh.gov', password: '123' },
+          { email: 'sadiqrashid25@gmail.com', password: '123' }
+        ];
+        const matched = VALID_USERS.find(u =>
+          u.email.toLowerCase() === loginEmailVal.toLowerCase() && u.password === loginPassVal
+        );
+        if (!matched) {
+          showAuthError('❌ E-mel atau kata laluan tidak tepat. Sila cuba semula.');
+          return;
+        }
+        state.userEmail = loginEmailVal;
+        saveUserSession(loginEmailVal);
+        transitionToWorkspace();
+      }
+    } catch (err) {
+      showAuthError(`❌ Ralat semasa log masuk: ${err.message}`);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = origText;
     }
-
-    state.userEmail = loginEmailVal;
-    saveUserSession(loginEmailVal);
-    transitionToWorkspace();
   });
 
   btnLogout.addEventListener("click", () => {
@@ -1257,42 +1319,78 @@ function updatePreview() {
   });
 }
 
-// Save Custom Template to Local Storage
-function saveCustomTemplate() {
+// Save Custom Template to Local Storage & Cloud Firestore
+async function saveCustomTemplate() {
   const templateName = prompt("Sila masukkan nama template untuk disimpan:", state.medicineName);
-  if (!templateName) return;
+  if (!templateName || !templateName.trim()) return;
 
-  const savedTemplates = JSON.parse(localStorage.getItem("simfa_saved_templates") || "{}");
-  savedTemplates[templateName] = {
+  const cleanName = templateName.trim();
+  const templatePayload = {
     medicineName: state.medicineName,
     schedule: state.schedule.map(row => ({ ...row })),
-    warnings: [...state.warnings]
+    warnings: [...state.warnings],
+    updatedAt: new Date().toISOString(),
+    createdBy: state.userEmail || "Pegawai"
   };
 
+  // 1. Simpan ke Local Storage
+  const savedTemplates = JSON.parse(localStorage.getItem("simfa_saved_templates") || "{}");
+  savedTemplates[cleanName] = templatePayload;
   localStorage.setItem("simfa_saved_templates", JSON.stringify(savedTemplates));
-  alert(`Template "${templateName}" telah berjaya disimpan!`);
+
+  // 2. Simpan ke Cloud Firestore (Sync satu PKD Sik)
+  if (typeof firebase !== 'undefined' && firebase.apps.length && firebase.firestore) {
+    try {
+      await firebase.firestore().collection('templates').doc(cleanName).set(templatePayload, { merge: true });
+      console.log(`[SiMFa Cloud] Template "${cleanName}" berjaya diselaraskan ke Cloud Firestore.`);
+    } catch (err) {
+      console.warn("[SiMFa Cloud] Firestore template save error:", err);
+    }
+  }
+
+  alert(`✅ Template "${cleanName}" telah berjaya disimpan ke Cloud dan Storan Tempatan!`);
   loadCustomTemplatesIntoDropdown();
 }
 
-// Load Custom Saved Templates into Medication Presets dropdown
-function loadCustomTemplatesIntoDropdown() {
+// Load Custom Saved Templates into Medication Presets dropdown (From Local + Cloud Firestore)
+async function loadCustomTemplatesIntoDropdown() {
   const dropdown = document.getElementById("medication-preset");
-  const savedTemplates = JSON.parse(localStorage.getItem("simfa_saved_templates") || "{}");
+  let savedTemplates = JSON.parse(localStorage.getItem("simfa_saved_templates") || "{}");
 
-  const customDivider = dropdown.querySelector('optgroup[label="Template Disimpan"]');
+  // Sync dari Cloud Firestore jika online
+  if (typeof firebase !== 'undefined' && firebase.apps.length && firebase.firestore) {
+    try {
+      const snap = await firebase.firestore().collection('templates').get();
+      if (!snap.empty) {
+        snap.forEach(doc => {
+          savedTemplates[doc.id] = doc.data();
+        });
+        localStorage.setItem("simfa_saved_templates", JSON.stringify(savedTemplates));
+      }
+    } catch (err) {
+      console.warn("[SiMFa Cloud] Gagal memuat turun template Cloud:", err.message);
+    }
+  }
+
+  const customDivider = dropdown.querySelector('optgroup[label="Template Disimpan (Cloud & Lokal)"]');
   if (customDivider) {
     customDivider.remove();
+  }
+
+  const oldDivider = dropdown.querySelector('optgroup[label="Template Disimpan"]');
+  if (oldDivider) {
+    oldDivider.remove();
   }
 
   const keys = Object.keys(savedTemplates);
   if (keys.length > 0) {
     const optgroup = document.createElement("optgroup");
-    optgroup.label = "Template Disimpan";
+    optgroup.label = "Template Disimpan (Cloud & Lokal)";
 
     keys.forEach(key => {
       const opt = document.createElement("option");
       opt.value = `custom_tpl_${key}`;
-      opt.textContent = key;
+      opt.textContent = `☁️ ${key}`;
       optgroup.appendChild(opt);
       PRESETS[`custom_tpl_${key}`] = savedTemplates[key];
     });
@@ -1495,7 +1593,7 @@ function setupForgotPasswordModal() {
   modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
   if (forgotForm) {
-    forgotForm.addEventListener("submit", (e) => {
+    forgotForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const emailVal = forgotEmailInput.value.trim();
       
@@ -1510,10 +1608,24 @@ function setupForgotPasswordModal() {
         return;
       }
 
-      forgotError.style.display = "none";
-      forgotSuccess.textContent = `✅ Pautan set semula kata laluan telah dihantar ke e-mel: ${emailVal}`;
-      forgotSuccess.style.display = "block";
-      forgotEmailInput.value = "";
+      if (typeof simfaResetPassword === 'function') {
+        const res = await simfaResetPassword(emailVal);
+        if (res.success) {
+          forgotError.style.display = "none";
+          forgotSuccess.textContent = res.message || `✅ Pautan set semula kata laluan telah dihantar ke e-mel: ${emailVal}`;
+          forgotSuccess.style.display = "block";
+          forgotEmailInput.value = "";
+        } else {
+          forgotError.textContent = res.error || "Ralat menghantar emel reset kata laluan.";
+          forgotError.style.display = "block";
+          forgotSuccess.style.display = "none";
+        }
+      } else {
+        forgotError.style.display = "none";
+        forgotSuccess.textContent = `✅ Pautan set semula kata laluan telah dihantar ke e-mel: ${emailVal}`;
+        forgotSuccess.style.display = "block";
+        forgotEmailInput.value = "";
+      }
     });
   }
 }
@@ -1575,23 +1687,38 @@ function setupActivityLogModal() {
 
 function renderActivityLogTable() {
   const tbody = document.getElementById('activity-log-tbody');
-  const logs = getAuditLogs();
+  
+  // Render serta-merta daripada log lokal dahulu
+  let logs = getAuditLogs();
+  updateTableRows(logs);
 
-  if (logs.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--color-text-muted); padding:32px;">⚠️ Tiada rekod aktiviti ditemui.</td></tr>';
-    return;
+  // Kemudian tarik log berpusat daripada Firebase Firestore secara masa nyata (Cloud)
+  if (typeof simfaFetchCentralAuditLogs === 'function') {
+    simfaFetchCentralAuditLogs().then(centralLogs => {
+      if (centralLogs && centralLogs.length > 0) {
+        updateTableRows(centralLogs);
+      }
+    }).catch(e => console.warn(e));
   }
 
-  tbody.innerHTML = logs.map((log, idx) => {
-    const isLogin = log.action === 'login';
-    const badge = isLogin
-      ? `<span class="log-badge-login">▲ Log Masuk</span>`
-      : `<span class="log-badge-logout">▼ Log Keluar</span>`;
-    return `<tr>
-      <td style="font-weight:600; color:var(--color-text-muted); font-size:12px;">${idx + 1}</td>
-      <td style="font-family:'Inter',monospace; font-size:13px;">${log.datetime}</td>
-      <td style="font-weight:600; color:var(--color-primary);">${log.email}</td>
-      <td>${badge}</td>
-    </tr>`;
-  }).join('');
+  function updateTableRows(logList) {
+    if (!tbody) return;
+    if (!logList || logList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--color-text-muted); padding:32px;">⚠️ Tiada rekod aktiviti ditemui.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = logList.map((log, idx) => {
+      const isLogin = (log.action || '').toLowerCase().includes('masuk') || log.action === 'login';
+      const badge = isLogin
+        ? `<span class="log-badge-login">▲ ${log.action === 'login' ? 'Log Masuk' : log.action}</span>`
+        : `<span class="log-badge-logout">▼ ${log.action === 'logout' ? 'Log Keluar' : log.action}</span>`;
+      return `<tr>
+        <td style="font-weight:600; color:var(--color-text-muted); font-size:12px;">${idx + 1}</td>
+        <td style="font-family:'Inter',monospace; font-size:13px;">${log.datetime || log.timestamp}</td>
+        <td style="font-weight:600; color:var(--color-primary);">${log.email}</td>
+        <td>${badge}</td>
+      </tr>`;
+    }).join('');
+  }
 }

@@ -530,7 +530,13 @@
     </div>
   </div>
 
-  <script src="app.js?v=3"></script>
+  <!-- Firebase SDKs (Compat version for stable direct web usage) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script src="app.js?v=4"></script>
   <script>
     // Register Service Worker for PWA offline support
     if ('serviceWorker' in navigator) {
