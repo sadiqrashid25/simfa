@@ -7,140 +7,35 @@ const ICONS = {
   dosage: {
     "half": {
       label: "1/2 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke-linecap="round" stroke-linejoin="round">
-          <!-- Base pill outline -->
-          <circle cx="25" cy="25" r="17" fill="#FFFFFF" stroke="#0D47A1" stroke-width="3"/>
-          <!-- Active left half (blue fill) -->
-          <path d="M 25 25 L 25 8 A 17 17 0 0 0 25 42 Z" fill="#0D47A1"/>
-          <!-- Base blue score lines -->
-          <line x1="8" y1="25" x2="42" y2="25" stroke="#0D47A1" stroke-width="2"/>
-          <line x1="25" y1="8" x2="25" y2="42" stroke="#0D47A1" stroke-width="2"/>
-          <!-- White score lines on active left half -->
-          <line x1="9" y1="25" x2="25" y2="25" stroke="#FFFFFF" stroke-width="2"/>
-          <line x1="25" y1="9" x2="25" y2="41" stroke="#FFFFFF" stroke-width="2"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/SETENGAH BIJI.svg" alt="1/2 Biji">`
     },
     "1": {
       label: "1 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="25" cy="25" r="17" fill="#0D47A1" stroke="#0D47A1" stroke-width="3"/>
-        <line x1="9" y1="25" x2="41" y2="25" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-        <line x1="25" y1="9" x2="25" y2="41" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/SATU BIJI.svg" alt="1 Biji">`
     },
     "2": {
       label: "2 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g fill="#0D47A1" stroke="#0D47A1" stroke-width="2.5" stroke-linecap="round">
-          <!-- Pill 1 -->
-          <circle cx="16" cy="25" r="11"/>
-          <line x1="6" y1="25" x2="26" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
-          <line x1="16" y1="15" x2="16" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
-          <!-- Pill 2 -->
-          <circle cx="34" cy="25" r="11"/>
-          <line x1="24" y1="25" x2="44" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
-          <line x1="34" y1="15" x2="34" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/DUA BIJI.svg" alt="2 Biji">`
     },
     "3": {
       label: "3 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g fill="#0D47A1" stroke="#0D47A1" stroke-width="2.2" stroke-linecap="round">
-          <!-- Pill 1 (Top Centered) -->
-          <circle cx="25" cy="15" r="9"/>
-          <line x1="17" y1="15" x2="33" y2="15" stroke="#FFFFFF" stroke-width="1.5"/>
-          <line x1="25" y1="7" x2="25" y2="23" stroke="#FFFFFF" stroke-width="1.5"/>
-          <!-- Pill 2 (Bottom Left) -->
-          <circle cx="14" cy="33" r="9"/>
-          <line x1="6" y1="33" x2="22" y2="33" stroke="#FFFFFF" stroke-width="1.5"/>
-          <line x1="14" y1="25" x2="14" y2="41" stroke="#FFFFFF" stroke-width="1.5"/>
-          <!-- Pill 3 (Bottom Right) -->
-          <circle cx="36" cy="33" r="9"/>
-          <line x1="28" y1="33" x2="44" y2="33" stroke="#FFFFFF" stroke-width="1.5"/>
-          <line x1="36" y1="25" x2="36" y2="41" stroke="#FFFFFF" stroke-width="1.5"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/TIGA BIJI.svg" alt="3 Biji">`
     },
     "3/4": {
       label: "3/4 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke-linecap="round" stroke-linejoin="round">
-          <!-- Base pill outline -->
-          <circle cx="25" cy="25" r="17" fill="#FFFFFF" stroke="#0D47A1" stroke-width="3"/>
-          <!-- Active three quarters (blue fill) -->
-          <path d="M 25 25 L 25 8 A 17 17 0 1 0 42 25 Z" fill="#0D47A1"/>
-          <!-- Base blue score lines -->
-          <line x1="8" y1="25" x2="42" y2="25" stroke="#0D47A1" stroke-width="2"/>
-          <line x1="25" y1="8" x2="25" y2="42" stroke="#0D47A1" stroke-width="2"/>
-          <!-- White score lines on active quarters -->
-          <line x1="9" y1="25" x2="25" y2="25" stroke="#FFFFFF" stroke-width="2"/>
-          <line x1="25" y1="25" x2="25" y2="41" stroke="#FFFFFF" stroke-width="2"/>
-          <line x1="25" y1="25" x2="41" y2="25" stroke="#FFFFFF" stroke-width="2"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/TIGA PEREMPAT BIJI.svg" alt="3/4 Biji">`
     },
     "1/4": {
       label: "1/4 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke-linecap="round" stroke-linejoin="round">
-          <!-- Base pill outline -->
-          <circle cx="25" cy="25" r="17" fill="#FFFFFF" stroke="#0D47A1" stroke-width="3"/>
-          <!-- Active top-right quarter (blue fill) -->
-          <path d="M 25 25 L 42 25 A 17 17 0 0 0 25 8 Z" fill="#0D47A1"/>
-          <!-- Base blue score lines -->
-          <line x1="8" y1="25" x2="42" y2="25" stroke="#0D47A1" stroke-width="2"/>
-          <line x1="25" y1="8" x2="25" y2="42" stroke="#0D47A1" stroke-width="2"/>
-          <!-- White score lines on active quarter -->
-          <line x1="25" y1="25" x2="41" y2="25" stroke="#FFFFFF" stroke-width="2"/>
-          <line x1="25" y1="9" x2="25" y2="25" stroke="#FFFFFF" stroke-width="2"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/SUKU BIJI.svg" alt="1/4 Biji">`
     },
     "1_half": {
       label: "1 1/2 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke-linecap="round">
-          <!-- Pill 1 (Full, blue fill) -->
-          <circle cx="16" cy="25" r="11" fill="#0D47A1" stroke="#0D47A1" stroke-width="2.5"/>
-          <line x1="6" y1="25" x2="26" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
-          <line x1="16" y1="15" x2="16" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
-          <!-- Pill 2 (Half, active on right) -->
-          <circle cx="34" cy="25" r="11" fill="#FFFFFF" stroke="#0D47A1" stroke-width="2.5"/>
-          <path d="M 34 25 L 34 14 A 11 11 0 0 1 34 36 Z" fill="#0D47A1"/>
-          <!-- Base blue score lines for Pill 2 -->
-          <line x1="24" y1="25" x2="44" y2="25" stroke="#0D47A1" stroke-width="1.8"/>
-          <line x1="34" y1="14" x2="34" y2="36" stroke="#0D47A1" stroke-width="1.8"/>
-          <!-- White score lines on active right half of Pill 2 -->
-          <line x1="34" y1="25" x2="43" y2="25" stroke="#FFFFFF" stroke-width="1.8"/>
-          <line x1="34" y1="15" x2="34" y2="35" stroke="#FFFFFF" stroke-width="1.8"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/SATU BIJI SETENGAH.svg" alt="1 1/2 Biji">`
     },
     "4": {
       label: "4 Biji",
-      svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g fill="#0D47A1" stroke="#0D47A1" stroke-width="2.2" stroke-linecap="round">
-          <!-- Pill 1 -->
-          <circle cx="15" cy="15" r="8"/>
-          <line x1="8" y1="15" x2="22" y2="15" stroke="#FFFFFF" stroke-width="1.2"/>
-          <line x1="15" y1="8" x2="15" y2="22" stroke="#FFFFFF" stroke-width="1.2"/>
-          <!-- Pill 2 -->
-          <circle cx="35" cy="15" r="8"/>
-          <line x1="28" y1="15" x2="42" y2="15" stroke="#FFFFFF" stroke-width="1.2"/>
-          <line x1="35" y1="8" x2="35" y2="22" stroke="#FFFFFF" stroke-width="1.2"/>
-          <!-- Pill 3 -->
-          <circle cx="15" cy="35" r="8"/>
-          <line x1="8" y1="35" x2="22" y2="35" stroke="#FFFFFF" stroke-width="1.2"/>
-          <line x1="15" y1="28" x2="15" y2="42" stroke="#FFFFFF" stroke-width="1.2"/>
-          <!-- Pill 4 -->
-          <circle cx="35" cy="35" r="8"/>
-          <line x1="28" y1="35" x2="42" y2="35" stroke="#FFFFFF" stroke-width="1.2"/>
-          <line x1="35" y1="28" x2="35" y2="42" stroke="#FFFFFF" stroke-width="1.2"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-dose-svg" src="icons/EMPAT BIJI.svg" alt="4 Biji">`
     },
     "cucuk": {
       label: "Cucuk",
@@ -169,57 +64,19 @@ const ICONS = {
   timing: {
     "pagi": {
       label: "Pagi",
-      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#FFB300" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M 6 36 L 44 36" stroke="#263238" stroke-width="2.5"/>
-          <path d="M 16 36 A 9 9 0 0 1 34 36 Z" fill="#FFE082"/>
-          <line x1="25" y1="22" x2="25" y2="18"/>
-          <line x1="14" y1="27" x2="11" y2="24"/>
-          <line x1="36" y1="27" x2="39" y2="24"/>
-          <line x1="19" y1="22" x2="17" y2="19"/>
-          <line x1="31" y1="22" x2="33" y2="19"/>
-          <path d="M 25 12 L 25 3 M 21 7 L 25 3 L 29 7" stroke="#0D47A1" stroke-width="2.8"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-time-svg" src="icons/PAGI.svg" alt="Pagi">`
     },
     "tengah_hari": {
       label: "Tengah Hari",
-      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#FFB300" stroke-width="2.5" fill="none" stroke-linecap="round">
-          <circle cx="25" cy="25" r="9" fill="#FFB300"/>
-          <line x1="25" y1="11" x2="25" y2="6"/>
-          <line x1="25" y1="39" x2="25" y2="44"/>
-          <line x1="11" y1="25" x2="6" y2="25"/>
-          <line x1="39" y1="25" x2="44" y2="25"/>
-          <line x1="15" y1="15" x2="11" y2="11"/>
-          <line x1="35" y1="35" x2="39" y2="39"/>
-          <line x1="15" y1="35" x2="11" y2="39"/>
-          <line x1="35" y1="15" x2="39" y2="11"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-time-svg" src="icons/TENGAH HARI.svg" alt="Tengah Hari">`
     },
     "petang": {
       label: "Petang",
-      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#FFB300" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M 6 36 L 44 36" stroke="#263238" stroke-width="2.5"/>
-          <path d="M 16 36 A 9 9 0 0 1 34 36 Z" fill="#FFE082"/>
-          <line x1="25" y1="23" x2="25" y2="19"/>
-          <line x1="15" y1="27" x2="12" y2="24"/>
-          <line x1="35" y1="27" x2="38" y2="24"/>
-          <path d="M 25 3 L 25 12 M 21 8 L 25 12 L 29 8" stroke="#0D47A1" stroke-width="2.8"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-time-svg" src="icons/PETANG.svg" alt="Petang">`
     },
     "malam": {
       label: "Malam",
-      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M 16 11 A 14 14 0 0 0 31 31 A 12 12 0 1 1 16 11 Z" fill="#0D47A1" stroke="#0D47A1" stroke-width="1.8"/>
-          <path d="M 33 11 L 34.5 13.5 L 37 14.5 L 34.5 15.5 L 33 18 L 31.5 15.5 L 29 14.5 L 31.5 13.5 Z" fill="#FFB300"/>
-          <path d="M 11 31 L 12 32.5 L 14 33 L 12 33.5 L 11 35 L 10 33.5 L 8 33 L 10 32.5 Z" fill="#FFB300"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-time-svg" src="icons/MALAM VERSI 1.svg" alt="Malam">`
     },
     "bila_perlu": {
       label: "Bila Perlu",
@@ -232,67 +89,21 @@ const ICONS = {
     },
     "sebelum": {
       label: "Sebelum Makan – ambil sebelum makan",
-      svg: `<svg class="table-meal-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <!-- Plate with food cover -->
-          <path d="M 13 28 A 12 12 0 0 1 37 28 Z" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
-          <circle cx="25" cy="14" r="2" fill="#263238"/>
-          <path d="M 8 32 L 42 32" stroke="#263238" stroke-width="3"/>
-          <!-- Thick Fork on the Left -->
-          <path d="M 5 22 L 5 32" stroke="#263238" stroke-width="2.5"/>
-          <path d="M 3 14 L 3 22 C 3 24, 7 24, 7 22 L 7 14" stroke="#263238" stroke-width="2.5"/>
-          <line x1="5" y1="14" x2="5" y2="20" stroke="#263238" stroke-width="2.5"/>
-          <!-- Thick Spoon on the Right -->
-          <path d="M 45 22 L 45 32" stroke="#263238" stroke-width="2.5"/>
-          <ellipse cx="45" cy="18" rx="4" ry="5.5" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-meal-svg" src="icons/SEBELUM MAKAN VERSI 1.svg" alt="Sebelum Makan – ambil sebelum makan">`
     },
     "selepas": {
       label: "Selepas Makan – ambil selepas makan",
-      svg: `<svg class="table-meal-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <!-- Plate in the center -->
-          <circle cx="25" cy="25" r="11" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
-          <!-- Food item on plate -->
-          <path d="M 21 25 C 21 23, 29 23, 29 25 Z" fill="#B0BEC5" stroke="#263238" stroke-width="2"/>
-          <!-- Thick Fork on the Left -->
-          <path d="M 7 22 L 7 32" stroke="#263238" stroke-width="2.5"/>
-          <path d="M 5 14 L 5 22 C 5 24, 9 24, 9 22 L 9 14" stroke="#263238" stroke-width="2.5"/>
-          <line x1="7" y1="14" x2="7" y2="20" stroke="#263238" stroke-width="2.5"/>
-          <!-- Thick Spoon on the Right -->
-          <path d="M 43 22 L 43 32" stroke="#263238" stroke-width="2.5"/>
-          <ellipse cx="43" cy="18" rx="4" ry="5.5" fill="#ECEFF1" stroke="#263238" stroke-width="2.5"/>
-        </g>
-      </svg>`
+      svg: `<img class="table-meal-svg" src="icons/SELEPAS MAKAN VERSI 2.svg" alt="Selepas Makan – ambil selepas makan">`
     }
   },
   warning: {
     "mengantuk": {
       label: "MENGANTUK",
-      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
-        <g stroke="#263238" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M 7 25 C 16 13, 34 13, 43 25 C 34 37, 16 37, 7 25 Z" fill="white" stroke-width="2.5"/>
-          <circle cx="25" cy="25" r="6" fill="#263238"/>
-          <line x1="7" y1="25" x2="4" y2="24"/>
-          <line x1="43" y1="25" x2="46" y2="24"/>
-          <path d="M 29 9 L 33 9 L 29 13 L 33 13 M 34 4 L 37 4 L 34 7 L 37 7" stroke-width="1.5"/>
-        </g>
-      </svg>`
+      svg: `<img class="warning-icon-svg" src="icons/MENGANTUK.svg" alt="MENGANTUK">`
     },
     "cahaya": {
       label: "JAUHI CAHAYA",
-      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
-        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-width="2">
-          <path d="M 8 23 C 8 8, 36 8, 36 23 C 31 23, 27 18, 22 23 C 17 18, 13 23, 8 23 Z" fill="#263238"/>
-          <path d="M 22 23 L 22 36 A 2.5 2.5 0 0 1 19 38.5" stroke-width="2.5"/>
-          <circle cx="41" cy="9" r="4.5" fill="#FFB300" stroke="#FFB300"/>
-          <path d="M 35 9 L 32 9 M 41 16 L 41 19" stroke="#FFB300" stroke-width="1.5"/>
-          <rect x="25" y="26" width="6" height="10" rx="1" fill="white" stroke-width="1.5"/>
-        </g>
-      </svg>`
+      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI CAHAYA.svg" alt="JAUHI CAHAYA">`
     },
     "gigit": {
       label: "JANGAN GIGIT",
@@ -326,99 +137,15 @@ const ICONS = {
     },
     "lidah": {
       label: "BAWAH LIDAH",
-      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <!-- Premium radial gradients for organic tongue look -->
-          <radialGradient id="tongueGrad" cx="40%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="#FFA4A2" />
-            <stop offset="60%" stop-color="#EF5350" />
-            <stop offset="100%" stop-color="#C62828" />
-          </radialGradient>
-          <!-- Soft pink gradient for inside mouth -->
-          <linearGradient id="mouthBg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#FFEBEE" />
-            <stop offset="100%" stop-color="#FFCDD2" />
-          </linearGradient>
-          <!-- Blue pill gradient -->
-          <linearGradient id="pillGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#42A5F5" />
-            <stop offset="100%" stop-color="#1565C0" />
-          </linearGradient>
-          <!-- Drop shadow for the sublingual tablet -->
-          <filter id="pillShadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="1" stdDeviation="0.8" flood-color="#000" flood-opacity="0.3" />
-          </filter>
-        </defs>
-
-        <!-- Yellow container card background -->
-        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
-
-        <!-- Inside Mouth Silhouette Background (for contrast) -->
-        <path d="M 9 12 C 16 12, 23 15, 26 21 C 21 24, 18 25, 9 25 Z" fill="url(#mouthBg)" opacity="0.3"/>
-        <path d="M 9 38 C 16 38, 23 35, 26 29 C 21 26, 18 25, 9 25 Z" fill="url(#mouthBg)" opacity="0.3"/>
-
-        <!-- Mouth Outline (Side Profile) -->
-        <g stroke="#263238" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-          <!-- Upper Lip and Roof of Mouth -->
-          <path d="M 8 13 C 14 13, 20 16, 23 20" />
-          <!-- Lower Lip and Floor of Mouth -->
-          <path d="M 8 37 C 14 37, 20 34, 23 30" />
-          
-          <!-- Teeth (Upper) -->
-          <path d="M 12 15 L 14 19 L 16 19 L 17 15" fill="#FFFFFF" stroke-width="1.8"/>
-        </g>
-
-        <!-- Tongue (Raised) with organic shape and warm gradient -->
-        <path d="M 10 30 C 14 30, 20 28, 23 22 C 20 19, 14 22, 10 30 Z" fill="url(#tongueGrad)" stroke="#263238" stroke-width="2" stroke-linejoin="round"/>
-
-        <!-- Sublingual Tablet (Blue, glowing, under the tongue, with score line) -->
-        <g filter="url(#pillShadow)" transform="translate(13, 33)">
-          <circle cx="0" cy="0" r="3.5" fill="url(#pillGrad)" stroke="#0D47A1" stroke-width="0.8"/>
-          <!-- Score line on the pill to make it look like a tablet -->
-          <line x1="-2.5" y1="0" x2="2.5" y2="0" stroke="#FFFFFF" stroke-width="0.6" opacity="0.8"/>
-        </g>
-
-        <!-- Red Arrow (Elegant curve, pointing directly to the tablet under the tongue) -->
-        <g stroke-linecap="round" stroke-linejoin="round">
-          <path d="M 36 34 C 30 34, 23 32, 19 32.5" fill="none" stroke="#D32F2F" stroke-width="2.5"/>
-          <path d="M 22.5 35.5 L 18 32.5 L 22.5 29.5" fill="none" stroke="#D32F2F" stroke-width="2.5"/>
-        </g>
-      </svg>`
+      svg: `<img class="warning-icon-svg" src="icons/BAWAH LIDAH.svg" alt="BAWAH LIDAH">`
     },
     "kanak": {
       label: "JAUHI KANAK²",
-      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
-        <g stroke="#263238" fill="none" stroke-linecap="round">
-          <circle cx="15" cy="18" r="4.5" fill="#263238"/>
-          <path d="M 9 36 L 9 28 C 9 25.5, 12 23.5, 15 23.5 C 18 23.5, 21 25.5, 21 28 L 21 36" stroke-width="2.2" fill="#263238"/>
-          <circle cx="35" cy="18" r="4.5" fill="#263238"/>
-          <path d="M 29 36 L 31 27 C 32 25, 38 25, 39 27 L 41 36 Z" stroke-width="2.2" fill="#263238"/>
-        </g>
-        <!-- Thinned cross out lines -->
-        <g stroke="#D32F2F" stroke-width="3" stroke-linecap="round">
-          <line x1="5" y1="5" x2="45" y2="45"/>
-          <line x1="45" y1="5" x2="5" y2="45"/>
-        </g>
-      </svg>`
+      svg: `<img class="warning-icon-svg" src="icons/JAUHI DARI KANAK-KANAK.svg" alt="JAUHI KANAK²">`
     },
     "potong": {
       label: "JANGAN POTONG",
-      svg: `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="46" height="46" rx="6" fill="#FFF9C4" stroke="#263238" stroke-width="2.2"/>
-        <g stroke="#263238" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-          <rect x="11" y="22" width="28" height="10" rx="5" transform="rotate(-15 25 27)" fill="white" stroke-width="1.8"/>
-          <line x1="25" y1="21" x2="22" y2="32" stroke-width="1.5"/>
-          <circle cx="15" cy="12" r="3" stroke-width="1.8"/>
-          <circle cx="26" cy="9" r="3" stroke-width="1.8"/>
-          <path d="M 18 14 L 28 26 M 25 11 L 18 25" stroke-width="1.8"/>
-        </g>
-        <!-- Thinned cross out lines -->
-        <g stroke="#D32F2F" stroke-width="3" stroke-linecap="round">
-          <line x1="5" y1="5" x2="45" y2="45"/>
-          <line x1="45" y1="5" x2="5" y2="45"/>
-        </g>
-      </svg>`
+      svg: `<img class="warning-icon-svg" src="icons/JANGAN POTONG.svg" alt="JANGAN POTONG">`
     },
     "sejuk": {
       label: "SIMPAN SEJUK",
