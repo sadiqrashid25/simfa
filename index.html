@@ -117,28 +117,12 @@
 
         <!-- Tabs -->
         <div class="auth-tabs">
-          <button id="tab-signup" class="tab-btn active">Daftar Akaun</button>
-          <button id="tab-login" class="tab-btn">Log Masuk</button>
+          <button id="tab-login" class="tab-btn active">Log Masuk</button>
+          <button id="tab-signup" class="tab-btn">Daftar Akaun</button>
         </div>
 
-        <!-- Sign Up Form -->
-        <form id="signup-form" class="auth-form active">
-          <div class="form-group">
-            <label for="reg-email">Alamat E-mel Kerajaan</label>
-            <input type="email" id="reg-email" placeholder="nama@bahagian.gov.my" required>
-          </div>
-          <div class="form-group">
-            <label for="reg-password">Kata Laluan</label>
-            <input type="password" id="reg-password" placeholder="Sila masukkan kata laluan" required>
-            <div class="password-strength-bar">
-              <div class="strength-fill"></div>
-            </div>
-          </div>
-          <button type="submit" class="btn-primary">🔐 Daftar Sekarang</button>
-        </form>
-
         <!-- Log In Form -->
-        <form id="login-form" class="auth-form">
+        <form id="login-form" class="auth-form active">
           <div class="form-group">
             <label for="login-email">Alamat E-mel Kerajaan</label>
             <input type="email" id="login-email" placeholder="nama@bahagian.gov.my" required>
@@ -151,6 +135,22 @@
           <div style="text-align:center; margin-top:14px;">
             <a href="#" id="btn-forgot-pw" class="forgot-link">Lupa Kata Laluan?</a>
           </div>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="signup-form" class="auth-form">
+          <div class="form-group">
+            <label for="reg-email">Alamat E-mel Kerajaan</label>
+            <input type="email" id="reg-email" placeholder="nama@bahagian.gov.my" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Kata Laluan</label>
+            <input type="password" id="reg-password" placeholder="Sila masukkan kata laluan" required>
+            <div class="password-strength-bar">
+              <div class="strength-fill"></div>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">🔐 Daftar Sekarang</button>
         </form>
 
         <!-- GOV notice -->
