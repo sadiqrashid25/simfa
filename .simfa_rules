@@ -1,0 +1,16 @@
+# SiMFa Auto-Pilot Configuration & Rules
+
+## Trigger Phrase
+- "simfa bangun"
+
+## Workspace & Remote
+- Path: C:\Users\PhIS\.gemini\antigravity\scratch\simfa
+- Git: https://github.com/sadiqrashid25/simfa.git (main branch)
+- Firebase Project: simfa-pkd-sik
+- Web URL: https://sadiqrashid25.github.io/simfa/
+
+## Operational Rules
+1. Never touch or break existing 90mm x 60mm layout for tablet/capsule label.
+2. New device icons (Eye drops, Inhaler, etc.) must be isolated modularly.
+3. Automatically commit and push all approved changes to GitHub (origin/main) seamlessly.
+4. Keep Firebase Cloud Firestore sync intact.
