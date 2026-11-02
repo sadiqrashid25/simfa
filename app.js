@@ -856,11 +856,20 @@ function setupAuthFlow() {
     }
   });
 
-  btnLogout.addEventListener("click", () => {
+  btnLogout.addEventListener("click", async () => {
     recordAuditLog(state.userEmail, 'logout');
     appContainer.classList.add("hidden");
     authContainer.classList.remove("hidden");
     localStorage.removeItem("simfa_active_login");
+    
+    // Log keluar dari Firebase Auth jika aktif
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      try {
+        await firebase.auth().signOut();
+      } catch (err) {
+        console.warn("Firebase signout error:", err);
+      }
+    }
   });
 }
 
@@ -871,22 +880,39 @@ function saveUserSession(email) {
 function loadSavedUserSession() {
   const savedEmail = localStorage.getItem("simfa_user_email");
   const activeLogin = localStorage.getItem("simfa_active_login");
+  
   if (savedEmail) {
     state.userEmail = savedEmail;
-    document.getElementById("reg-email").value = savedEmail;
-    document.getElementById("login-email").value = savedEmail;
+    const regInp = document.getElementById("reg-email");
+    const logInp = document.getElementById("login-email");
+    if (regInp) regInp.value = savedEmail;
+    if (logInp) logInp.value = savedEmail;
   }
-  if (activeLogin === "true") {
-    transitionToWorkspace();
+
+  // Semak sesi Firebase Auth atau sesi aktif tersimpan
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user && user.email) {
+        state.userEmail = user.email;
+        saveUserSession(user.email);
+        transitionToWorkspace(false);
+      } else if (activeLogin === "true" && savedEmail) {
+        transitionToWorkspace(false);
+      }
+    });
+  } else if (activeLogin === "true" && savedEmail) {
+    transitionToWorkspace(false);
   }
 }
 
-function transitionToWorkspace() {
+function transitionToWorkspace(recordLog = true) {
   document.getElementById("auth-container").classList.add("hidden");
   document.getElementById("app-container").classList.remove("hidden");
   document.getElementById("user-email-display").textContent = state.userEmail;
   localStorage.setItem("simfa_active_login", "true");
-  recordAuditLog(state.userEmail, 'login');
+  if (recordLog && typeof recordAuditLog === 'function') {
+    recordAuditLog(state.userEmail, 'login');
+  }
   updatePreview();
 }
 
