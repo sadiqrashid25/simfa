@@ -724,10 +724,10 @@ function setupAuthFlow() {
   const btnLogout = document.getElementById("btn-logout");
   const errorMsg = document.getElementById("auth-error-msg");
 
-  // GOV Email validator
+  // GOV Email validator - Hanya domain rasmi kerajaan (.gov.my / .gov)
   function isGovEmail(email) {
     const lower = email.toLowerCase().trim();
-    return lower.endsWith('.gov.my') || lower.endsWith('.gov') || lower === 'sadiqrashid25@gmail.com';
+    return lower.endsWith('.gov.my') || lower.endsWith('.gov');
   }
 
   function showAuthError(msg, isSuccess = false) {
@@ -834,8 +834,8 @@ function setupAuthFlow() {
       } else {
         // Fallback hardcoded
         const VALID_USERS = [
-          { email: 'sadiq@moh.gov', password: '123' },
-          { email: 'sadiqrashid25@gmail.com', password: '123' }
+          { email: 'sadiq@moh.gov.my', password: '123' },
+          { email: 'admin@moh.gov.my', password: '123' }
         ];
         const matched = VALID_USERS.find(u =>
           u.email.toLowerCase() === loginEmailVal.toLowerCase() && u.password === loginPassVal
@@ -1623,9 +1623,9 @@ function setupForgotPasswordModal() {
       e.preventDefault();
       const emailVal = forgotEmailInput.value.trim();
       
-      // Validation helper check
+      // Validation helper check - Hanya domain kerajaan
       const lower = emailVal.toLowerCase();
-      const isValid = lower.endsWith('.gov.my') || lower.endsWith('.gov') || lower === 'sadiqrashid25@gmail.com';
+      const isValid = lower.endsWith('.gov.my') || lower.endsWith('.gov');
 
       if (!isValid) {
         forgotError.textContent = "⛔ E-mel mesti menggunakan domain kerajaan (.gov.my / .gov) atau e-mel berdaftar.";
