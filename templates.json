@@ -295,5 +295,100 @@
       "sedut",
       "kanak"
     ]
+  },
+  "budesonide_64_nasal": {
+    "medicineName": "BUDESONIDE 64mcg Nasal Spray",
+    "schedule": [
+      {
+        "dosage": "titis_hidung",
+        "timing": "pagi",
+        "customDoseText": "1-2 Semburan"
+      }
+    ],
+    "warnings": [
+      "titis_hidung",
+      "kanak"
+    ]
+  },
+  "nicotine_15_patch": {
+    "medicineName": "NICOTINE 15mg/16hr Transdermal Patch",
+    "schedule": [
+      {
+        "dosage": "plaster",
+        "timing": "pagi",
+        "customDoseText": "1 Keping"
+      }
+    ],
+    "warnings": [
+      "plaster",
+      "kanak"
+    ]
+  },
+  "nicotine_25_patch": {
+    "medicineName": "NICOTINE 25mg/16hr Transdermal Patch",
+    "schedule": [
+      {
+        "dosage": "plaster",
+        "timing": "pagi",
+        "customDoseText": "1 Keping"
+      }
+    ],
+    "warnings": [
+      "plaster",
+      "kanak"
+    ]
+  },
+  "chloramphenicol_0_5_eye": {
+    "medicineName": "CHLORAMPHENICOL 0.5% Eye Drops",
+    "schedule": [
+      {
+        "dosage": "titis_mata",
+        "timing": "pagi",
+        "customDoseText": "1-2 Titis"
+      },
+      {
+        "dosage": "titis_mata",
+        "timing": "tengah_hari",
+        "customDoseText": "1-2 Titis"
+      },
+      {
+        "dosage": "titis_mata",
+        "timing": "petang",
+        "customDoseText": "1-2 Titis"
+      },
+      {
+        "dosage": "titis_mata",
+        "timing": "malam",
+        "customDoseText": "1-2 Titis"
+      }
+    ],
+    "warnings": [
+      "titis_mata",
+      "kanak"
+    ]
+  },
+  "chloramphenicol_5_ear": {
+    "medicineName": "CHLORAMPHENICOL 5% Ear Drops",
+    "schedule": [
+      {
+        "dosage": "titis_telinga",
+        "timing": "pagi",
+        "customDoseText": "2-3 Titis"
+      },
+      {
+        "dosage": "titis_telinga",
+        "timing": "tengah_hari",
+        "customDoseText": "2-3 Titis"
+      },
+      {
+        "dosage": "titis_telinga",
+        "timing": "malam",
+        "customDoseText": "2-3 Titis"
+      }
+    ],
+    "warnings": [
+      "titis_telinga",
+      "kanak"
+    ]
   }
 }
