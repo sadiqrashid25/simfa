@@ -1011,8 +1011,9 @@ select.custom-select:focus {
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   max-width: 86mm;
+  width: 100%;
+  line-height: 1.15;
 }
 
 /* Bottom Main Container */
@@ -1367,10 +1368,9 @@ select.custom-select:focus {
 
   #label-out-drugname {
     display: block !important;
-    white-space: nowrap !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important;
     max-width: 86mm !important;
+    width: 100% !important;
   }
 
   .label-main-area {
@@ -1910,15 +1910,28 @@ select.custom-select:focus {
     margin: 0;
   }
 }
-/* Extra large icon styling for icons with built-in text (SEDUT, SAPU, SPRAY) */
+/* Extra large icon styling for icons with built-in text (SEDUT, SAPU, SPRAY, KUNYAH) */
 .table-cell-content-large-icon {
   gap: 0 !important;
 }
 
 .table-cell-content-large-icon .table-dose-svg {
-  width: 17mm !important;
-  height: 17mm !important;
-  max-width: 95% !important;
-  max-height: 95% !important;
+  width: 15mm !important;
+  height: 15mm !important;
+  max-width: 96% !important;
+  max-height: 96% !important;
   object-fit: contain !important;
+}
+
+/* Apabila tiada baris Makan (2 baris sahaja: Inhaler, Sapu, Spray, Gum), besarkan ikon supaya memenuhi ruang sel */
+.schedule-table-2rows .table-cell-content-large-icon .table-dose-svg {
+  width: 19.5mm !important;
+  height: 19.5mm !important;
+}
+
+/* Besarkan khas ikon Nasal Spray supaya jelas dan memenuhi sel */
+.schedule-table-2rows .table-cell-content-spray-icon .table-dose-svg,
+.table-cell-content-spray-icon .table-dose-svg {
+  width: 22.5mm !important;
+  height: 22.5mm !important;
 }

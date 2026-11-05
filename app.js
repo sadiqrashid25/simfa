@@ -113,6 +113,10 @@ const ICONS = {
       label: "1 Keping (Pelekat)",
       svg: `<img class="table-dose-svg" src="icons/PLASTER.svg" alt="1 Keping">`
     },
+    "kunyah": {
+      label: "Kunyah",
+      svg: `<img class="table-dose-svg" src="icons/KUNYAH.svg" alt="Kunyah">`
+    },
     "cucuk": {
       label: "Cucuk",
       svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -1651,23 +1655,22 @@ const PRESETS = {
     "medicineName": "MAGNESIUM TRISILICATE (MMT) Tablet",
     "schedule": [
       {
-        "dosage": "1",
+        "dosage": "kunyah",
         "timing": "pagi",
         "meal": "sebelum"
       },
       {
-        "dosage": "1",
+        "dosage": "kunyah",
         "timing": "tengah_hari",
         "meal": "sebelum"
       },
       {
-        "dosage": "1",
+        "dosage": "kunyah",
         "timing": "malam",
         "meal": "sebelum"
       }
     ],
     "warnings": [
-      "kunyah",
       "kanak"
     ]
   },
@@ -2165,7 +2168,33 @@ const PRESETS = {
       "kanak"
     ]
   },
-};;
+  nicotine_2_gum: {
+    "medicineName": "NICOTINE 2mg Chewing Gum",
+    "schedule": [
+      {
+        "dosage": "kunyah",
+        "timing": "bila_perlu",
+        "customDoseText": "Kunyah"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  nicotine_4_gum: {
+    "medicineName": "NICOTINE 4mg Chewing Gum",
+    "schedule": [
+      {
+        "dosage": "kunyah",
+        "timing": "bila_perlu",
+        "customDoseText": "Kunyah"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  }
+};
 
 // 3. APPLICATION STATE
 const state = {
@@ -2609,6 +2638,7 @@ function getMedicineCategory(medName, firstDose) {
   if (n.includes('INHAL') || n.includes('MDI') || n.includes('SEDUT') || n.includes('SALBUTAMOL') || n.includes('SYMBICORT') || n.includes('SERETIDE') || n.includes('IPRATROPIUM') || n.includes('AEROHALER') || n.includes('TURBUHALER') || d.includes('sedut')) return 'inhaler';
   if (n.includes('CREAM') || n.includes('KRIM') || n.includes('OINTMENT') || n.includes('SALAP') || n.includes('LOTION') || n.includes('GEL') || n.includes('EMULSION') || d === 'sapu') return 'topical';
   if (n.includes('PATCH') || n.includes('PLASTER') || n.includes('PELEKAT') || d === 'plaster') return 'patch';
+  if (n.includes('GUM')) return 'gum';
   if (n.includes('INSULIN') || n.includes('ACTRAPID') || n.includes('INSULATARD') || n.includes('MIXTARD') || n.includes('LANTUS') || n.includes('BASAGLAR') || n.includes('NOVORAPID') || d === 'cucuk') return 'insulin';
 
   return 'oral';
@@ -2654,13 +2684,18 @@ function getDosageOptionsHTML(category, currentDosage) {
       { val: 'plaster', label: '1 Keping Pelekat' },
       { val: 'free', label: 'Teks Bebas' }
     ];
+  } else if (category === 'gum') {
+    options = [
+      { val: 'kunyah', label: 'Kunyah (Gum / Kunyah)' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
   } else if (category === 'insulin') {
     options = [
       { val: 'cucuk', label: 'Unit (Cucuk)' },
       { val: 'free', label: 'Teks Bebas' }
     ];
   } else {
-    // Oral / Default (Biji)
+    // Oral / Default (Biji & Tablet Kunyah)
     options = [
       { val: 'half', label: '1/2 Biji' },
       { val: '1', label: '1 Biji' },
@@ -2670,6 +2705,7 @@ function getDosageOptionsHTML(category, currentDosage) {
       { val: '1/4', label: '1/4 Biji' },
       { val: '1_half', label: '1 1/2 Biji' },
       { val: '4', label: '4 Biji' },
+      { val: 'kunyah', label: 'Kunyah (Tablet Kunyah)' },
       { val: 'free', label: 'Teks Bebas' }
     ];
   }
@@ -2823,6 +2859,9 @@ function renderDynamicRowCustomizer() {
           } else if (newDose === 'plaster') {
             r.customDoseText = "1 Keping";
             r.useCucukIcon = false;
+          } else if (newDose === 'kunyah') {
+            r.customDoseText = "Kunyah";
+            r.useCucukIcon = false;
           } else if (newDose === 'cucuk') {
             r.customDoseText = r.customDoseText || "10";
             r.useCucukIcon = true;
@@ -2899,9 +2938,9 @@ function renderDynamicRowCustomizer() {
 // RENDER ENGINE (DYNAMIC PREVIEW WRITER - SKETCH GRID LAYOUT)
 // ==========================================================================
 function updatePreview() {
-  // Check if current drug is GTN or Inhaler (no meal row needed)
+  // Check if current drug is GTN or Inhaler/Non-Oral (no meal row needed)
   const isGTN = state.medicineName && (state.medicineName.toUpperCase().includes("GLYCERYL TRINITRATE") || state.medicineName.toUpperCase().includes("GTN"));
-  const isNonOral = state.schedule.some(r => ['sedut', 'dua_sedut', 'sapu', 'sembur_hidung', 'titis_hidung', 'titis_mata', 'titis_telinga', 'plaster'].includes(r.dosage)) ||
+  const isNonOral = state.schedule.some(r => ['sedut', 'dua_sedut', '1_sedut', '2_sedut', 'sapu', 'sembur_hidung', '1_sembur', '2_sembur', 'titis_hidung', '1_titis_hidung', '2_titis_hidung', 'titis_mata', '1_titis_mata', '2_titis_mata', 'titis_telinga', '1_titis_telinga', '2_titis_telinga', '3_titis_telinga', 'plaster', 'cucuk'].includes(r.dosage)) ||
     (state.medicineName && (
       state.medicineName.toUpperCase().includes("INHAL") ||
       state.medicineName.toUpperCase().includes("DROPS") ||
@@ -2913,16 +2952,51 @@ function updatePreview() {
       state.medicineName.toUpperCase().includes("OINTMENT") ||
       state.medicineName.toUpperCase().includes("KRIM") ||
       state.medicineName.toUpperCase().includes("SALAP") ||
-      state.medicineName.toUpperCase().includes("SALBUTAMOL")
+      state.medicineName.toUpperCase().includes("SALBUTAMOL") ||
+      state.medicineName.toUpperCase().includes("GUM")
     ));
   const hideMeal = isGTN || isNonOral;
 
-  // 1. Render Top Header: Drug Name
-  document.getElementById("label-out-drugname").textContent = state.medicineName || "-";
+  // 1. Render Top Header: Drug Name (Auto-fit supaya nama panjang nampak penuh & tidak terpotong)
+  const drugNameEl = document.getElementById("label-out-drugname");
+  const medText = state.medicineName || "-";
+  drugNameEl.textContent = medText;
+
+  const len = medText.length;
+  drugNameEl.style.whiteSpace = "nowrap";
+  drugNameEl.style.lineHeight = "1.15";
+  if (len <= 22) {
+    drugNameEl.style.fontSize = "4.6mm";
+    drugNameEl.style.letterSpacing = "0.6px";
+  } else if (len <= 28) {
+    drugNameEl.style.fontSize = "3.9mm";
+    drugNameEl.style.letterSpacing = "0.4px";
+  } else if (len <= 35) {
+    drugNameEl.style.fontSize = "3.3mm";
+    drugNameEl.style.letterSpacing = "0.2px";
+  } else if (len <= 43) {
+    drugNameEl.style.fontSize = "2.85mm";
+    drugNameEl.style.letterSpacing = "0px";
+  } else {
+    // Nama sangat panjang (>43 aksara): benarkan 2 baris supaya jelas & nampak semua
+    drugNameEl.style.whiteSpace = "normal";
+    drugNameEl.style.fontSize = len <= 55 ? "2.9mm" : "2.6mm";
+    drugNameEl.style.letterSpacing = "0px";
+    drugNameEl.style.lineHeight = "1.1";
+  }
+
+  // Semakan tambahan DOM: jika masih terlebih lebar pada 1 baris, kecilkan atau benarkan 2 baris
+  if (drugNameEl.style.whiteSpace === "nowrap" && drugNameEl.scrollWidth > drugNameEl.clientWidth && drugNameEl.clientWidth > 0) {
+    drugNameEl.style.whiteSpace = "normal";
+    drugNameEl.style.fontSize = "2.85mm";
+    drugNameEl.style.letterSpacing = "0px";
+    drugNameEl.style.lineHeight = "1.1";
+  }
 
   // 2. Render transposed schedule grid table (Dose | Time | Meal relation as rows, timings as columns)
   const table = document.getElementById("label-schedule-table");
   table.innerHTML = "";
+  table.classList.toggle("schedule-table-2rows", hideMeal);
 
   const trDose = document.createElement("tr");
   const trTime = document.createElement("tr");
@@ -2976,6 +3050,9 @@ function updatePreview() {
     } else if (activeEntry.dosage === 'plaster') {
       doseSvg = ICONS.dosage.plaster.svg;
       doseLabel = activeEntry.customDoseText || "1 Keping";
+    } else if (activeEntry.dosage === 'kunyah') {
+      doseSvg = ICONS.dosage.kunyah.svg;
+      doseLabel = activeEntry.customDoseText || "Kunyah";
     } else if (activeEntry.dosage === 'cucuk') {
       doseSvg = ICONS.dosage.cucuk.svg;
       const val = activeEntry.customDoseText || "";
@@ -2995,12 +3072,13 @@ function updatePreview() {
       }
     }
 
-    const noTextDoses = ['1_sedut', '2_sedut', 'sedut', 'dua_sedut', 'sapu', '1_sembur', '2_sembur', 'sembur_hidung'];
+    const noTextDoses = ['1_sedut', '2_sedut', 'sedut', 'dua_sedut', 'sapu', '1_sembur', '2_sembur', 'sembur_hidung', 'kunyah'];
     const hideDoseText = noTextDoses.includes(activeEntry.dosage);
+    const isSprayDose = ['1_sembur', '2_sembur', 'sembur_hidung'].includes(activeEntry.dosage);
 
     if (doseSvg) {
       tdDose.innerHTML = `
-        <div class="table-cell-content ${hideDoseText ? 'table-cell-content-large-icon' : ''}">
+        <div class="table-cell-content ${hideDoseText ? 'table-cell-content-large-icon' : ''} ${isSprayDose ? 'table-cell-content-spray-icon' : ''}">
           ${doseSvg}
           ${hideDoseText ? '' : `<span class="table-cell-label">${doseLabel}</span>`}
         </div>

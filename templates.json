@@ -1379,23 +1379,22 @@
     "medicineName": "MAGNESIUM TRISILICATE (MMT) Tablet",
     "schedule": [
       {
-        "dosage": "1",
+        "dosage": "kunyah",
         "timing": "pagi",
         "meal": "sebelum"
       },
       {
-        "dosage": "1",
+        "dosage": "kunyah",
         "timing": "tengah_hari",
         "meal": "sebelum"
       },
       {
-        "dosage": "1",
+        "dosage": "kunyah",
         "timing": "malam",
         "meal": "sebelum"
       }
     ],
     "warnings": [
-      "kunyah",
       "kanak"
     ]
   },
@@ -1887,6 +1886,32 @@
         "dosage": "plaster",
         "timing": "pagi",
         "customDoseText": "1 Keping"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  "nicotine_2_gum": {
+    "medicineName": "NICOTINE 2mg Chewing Gum",
+    "schedule": [
+      {
+        "dosage": "kunyah",
+        "timing": "bila_perlu",
+        "customDoseText": "Kunyah"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  "nicotine_4_gum": {
+    "medicineName": "NICOTINE 4mg Chewing Gum",
+    "schedule": [
+      {
+        "dosage": "kunyah",
+        "timing": "bila_perlu",
+        "customDoseText": "Kunyah"
       }
     ],
     "warnings": [
