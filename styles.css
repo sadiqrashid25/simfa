@@ -1910,3 +1910,15 @@ select.custom-select:focus {
     margin: 0;
   }
 }
+/* Extra large icon styling for icons with built-in text (SEDUT, SAPU, SPRAY) */
+.table-cell-content-large-icon {
+  gap: 0 !important;
+}
+
+.table-cell-content-large-icon .table-dose-svg {
+  width: 17mm !important;
+  height: 17mm !important;
+  max-width: 95% !important;
+  max-height: 95% !important;
+  object-fit: contain !important;
+}

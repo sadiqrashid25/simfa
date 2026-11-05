@@ -2616,65 +2616,9 @@ function renderDynamicRowCustomizer() {
     rowCard.style.border = "1.5px dashed var(--color-accent)";
     rowCard.style.backgroundColor = "rgba(0, 172, 193, 0.01)";
 
-    // Determine extra inputs HTML based on dosage
+    // Determine extra inputs HTML based on dosage (cucuk and free only, others have built-in icon labels)
     let extraInputsHTML = "";
-    if (row.dosage === 'sedut') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Sedutan (Contoh: 1-2 Sedutan)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '1-2 Sedutan'}" placeholder="Contoh: 1-2 Sedutan">
-        </div>
-      `;
-    } else if (row.dosage === 'dua_sedut') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Sedutan (Contoh: 2 Sedutan)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '2 Sedutan'}" placeholder="Contoh: 2 Sedutan">
-        </div>
-      `;
-    } else if (row.dosage === 'sapu') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Arahan Sapuan (Contoh: Sapu Nipis / 1 Calit)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || 'Sapu Nipis'}" placeholder="Contoh: Sapu Nipis">
-        </div>
-      `;
-    } else if (row.dosage === 'sembur_hidung') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Semburan Hidung (Contoh: 1-2 Semburan)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '1-2 Semburan'}" placeholder="Contoh: 1-2 Semburan">
-        </div>
-      `;
-    } else if (row.dosage === 'titis_hidung') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Titis Hidung (Contoh: 1-2 Titis)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '1-2 Titis'}" placeholder="Contoh: 1-2 Titis">
-        </div>
-      `;
-    } else if (row.dosage === 'titis_mata') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Titis Mata (Contoh: 1-2 Titis)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '1-2 Titis'}" placeholder="Contoh: 1-2 Titis">
-        </div>
-      `;
-    } else if (row.dosage === 'titis_telinga') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Titis Telinga (Contoh: 2-3 Titis)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '2-3 Titis'}" placeholder="Contoh: 2-3 Titis">
-        </div>
-      `;
-    } else if (row.dosage === 'plaster') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Tampalan (Contoh: 1 Keping)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '1 Keping'}" placeholder="Contoh: 1 Keping">
-        </div>
-      `;
-    } else if (row.dosage === 'cucuk') {
+    if (row.dosage === 'cucuk') {
       extraInputsHTML = `
         <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
           <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Unit (Contoh: 10)</label>
@@ -2950,11 +2894,14 @@ function updatePreview() {
       }
     }
 
+    const noTextDoses = ['1_sedut', '2_sedut', 'sedut', 'dua_sedut', 'sapu', '1_sembur', '2_sembur', 'sembur_hidung'];
+    const hideDoseText = noTextDoses.includes(activeEntry.dosage);
+
     if (doseSvg) {
       tdDose.innerHTML = `
-        <div class="table-cell-content">
+        <div class="table-cell-content ${hideDoseText ? 'table-cell-content-large-icon' : ''}">
           ${doseSvg}
-          <span class="table-cell-label">${doseLabel}</span>
+          ${hideDoseText ? '' : `<span class="table-cell-label">${doseLabel}</span>`}
         </div>
       `;
     } else {
