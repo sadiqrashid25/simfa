@@ -292,7 +292,6 @@
       }
     ],
     "warnings": [
-      "sedut",
       "kanak"
     ]
   },
@@ -306,7 +305,6 @@
       }
     ],
     "warnings": [
-      "sembur_hidung",
       "kanak"
     ]
   },
@@ -320,7 +318,6 @@
       }
     ],
     "warnings": [
-      "plaster",
       "kanak"
     ]
   },
@@ -334,7 +331,6 @@
       }
     ],
     "warnings": [
-      "plaster",
       "kanak"
     ]
   },
@@ -363,7 +359,6 @@
       }
     ],
     "warnings": [
-      "titis_mata",
       "kanak"
     ]
   },
@@ -387,7 +382,78 @@
       }
     ],
     "warnings": [
-      "titis_telinga",
+      "kanak"
+    ]
+  },
+  "betamethasone_0_1_cream": {
+    "medicineName": "BETAMETHASONE 17-VALERATE 0.1% Cream",
+    "schedule": [
+      {
+        "dosage": "sapu",
+        "timing": "pagi",
+        "customDoseText": "Sapu Nipis"
+      },
+      {
+        "dosage": "sapu",
+        "timing": "malam",
+        "customDoseText": "Sapu Nipis"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  "betamethasone_0_01_0_05_cream": {
+    "medicineName": "BETAMETHASONE 17-VALERATE 0.01-0.05% Cream",
+    "schedule": [
+      {
+        "dosage": "sapu",
+        "timing": "pagi",
+        "customDoseText": "Sapu Nipis"
+      },
+      {
+        "dosage": "sapu",
+        "timing": "malam",
+        "customDoseText": "Sapu Nipis"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  "fusidic_acid_2_cream": {
+    "medicineName": "FUSIDIC ACID 2% Cream",
+    "schedule": [
+      {
+        "dosage": "sapu",
+        "timing": "pagi",
+        "customDoseText": "Sapu"
+      },
+      {
+        "dosage": "sapu",
+        "timing": "petang",
+        "customDoseText": "Sapu"
+      },
+      {
+        "dosage": "sapu",
+        "timing": "malam",
+        "customDoseText": "Sapu"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  "chloramphenicol_1_eye_ointment": {
+    "medicineName": "CHLORAMPHENICOL 1% Eye Ointment",
+    "schedule": [
+      {
+        "dosage": "sapu",
+        "timing": "malam",
+        "customDoseText": "Sapu Mata"
+      }
+    ],
+    "warnings": [
       "kanak"
     ]
   }

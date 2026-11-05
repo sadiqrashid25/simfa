@@ -38,8 +38,16 @@ const ICONS = {
       svg: `<img class="table-dose-svg" src="icons/EMPAT BIJI.svg" alt="4 Biji">`
     },
     "sedut": {
-      label: "1-2 Sedutan",
-      svg: `<img class="table-dose-svg" src="icons/SEDUT.svg" alt="Sedut">`
+      label: "1 Sedutan (Inhaler)",
+      svg: `<img class="table-dose-svg" src="icons/SEDUT.svg" alt="1 Sedutan">`
+    },
+    "dua_sedut": {
+      label: "2 Sedutan (Inhaler)",
+      svg: `<img class="table-dose-svg" src="icons/DUA_SEDUT.svg" alt="2 Sedutan">`
+    },
+    "sapu": {
+      label: "Sapu (Krim / Salap)",
+      svg: `<img class="table-dose-svg" src="icons/SAPU.svg" alt="Sapu">`
     },
     "sembur_hidung": {
       label: "1-2 Semburan (Hidung)",
@@ -58,7 +66,7 @@ const ICONS = {
       svg: `<img class="table-dose-svg" src="icons/TITIS_TELINGA.svg" alt="Titis Telinga">`
     },
     "plaster": {
-      label: "1 Keping (Plaster/Pelekat)",
+      label: "1 Keping (Pelekat / Plaster)",
       svg: `<img class="table-dose-svg" src="icons/PLASTER.svg" alt="Plaster/Pelekat">`
     },
     "cucuk": {
@@ -121,30 +129,6 @@ const ICONS = {
     }
   },
   warning: {
-    "sedut": {
-      label: "SEDUT / INHALER",
-      svg: `<img class="warning-icon-svg" src="icons/SEDUT.svg" alt="SEDUT">`
-    },
-    "sembur_hidung": {
-      label: "SEMBUR HIDUNG",
-      svg: `<img class="warning-icon-svg" src="icons/SEMBUR_HIDUNG.svg" alt="SEMBUR HIDUNG">`
-    },
-    "titis_hidung": {
-      label: "TITIS HIDUNG",
-      svg: `<img class="warning-icon-svg" src="icons/TITIS_HIDUNG.svg" alt="TITIS HIDUNG">`
-    },
-    "titis_mata": {
-      label: "TITIS MATA",
-      svg: `<img class="warning-icon-svg" src="icons/TITIS_MATA.svg" alt="TITIS MATA">`
-    },
-    "titis_telinga": {
-      label: "TITIS TELINGA",
-      svg: `<img class="warning-icon-svg" src="icons/TITIS_TELINGA.svg" alt="TITIS TELINGA">`
-    },
-    "plaster": {
-      label: "PELEKAT / PLASTER",
-      svg: `<img class="warning-icon-svg" src="icons/PLASTER.svg" alt="PELEKAT / PLASTER">`
-    },
     "mengantuk": {
       label: "MENGANTUK",
       svg: `<img class="warning-icon-svg" src="icons/MENGANTUK.svg" alt="MENGANTUK">`
@@ -247,22 +231,22 @@ const PRESETS = {
   salbutamol_100: {
     medicineName: "SALBUTAMOL 100mcg/dose Inhalation",
     schedule: [{ dosage: "sedut", timing: "bila_perlu", customDoseText: "1-2 Sedutan" }],
-    warnings: ["sedut", "kanak"]
+    warnings: ["kanak"]
   },
   budesonide_64_nasal: {
     medicineName: "BUDESONIDE 64mcg Nasal Spray",
     schedule: [{ dosage: "sembur_hidung", timing: "pagi", customDoseText: "1-2 Semburan" }],
-    warnings: ["sembur_hidung", "kanak"]
+    warnings: ["kanak"]
   },
   nicotine_15_patch: {
     medicineName: "NICOTINE 15mg/16hr Transdermal Patch",
     schedule: [{ dosage: "plaster", timing: "pagi", customDoseText: "1 Keping" }],
-    warnings: ["plaster", "kanak"]
+    warnings: ["kanak"]
   },
   nicotine_25_patch: {
     medicineName: "NICOTINE 25mg/16hr Transdermal Patch",
     schedule: [{ dosage: "plaster", timing: "pagi", customDoseText: "1 Keping" }],
-    warnings: ["plaster", "kanak"]
+    warnings: ["kanak"]
   },
   chloramphenicol_0_5_eye: {
     medicineName: "CHLORAMPHENICOL 0.5% Eye Drops",
@@ -272,7 +256,7 @@ const PRESETS = {
       { dosage: "titis_mata", timing: "petang", customDoseText: "1-2 Titis" },
       { dosage: "titis_mata", timing: "malam", customDoseText: "1-2 Titis" }
     ],
-    warnings: ["titis_mata", "kanak"]
+    warnings: ["kanak"]
   },
   chloramphenicol_5_ear: {
     medicineName: "CHLORAMPHENICOL 5% Ear Drops",
@@ -281,7 +265,39 @@ const PRESETS = {
       { dosage: "titis_telinga", timing: "tengah_hari", customDoseText: "2-3 Titis" },
       { dosage: "titis_telinga", timing: "malam", customDoseText: "2-3 Titis" }
     ],
-    warnings: ["titis_telinga", "kanak"]
+    warnings: ["kanak"]
+  },
+  betamethasone_0_1_cream: {
+    medicineName: "BETAMETHASONE 17-VALERATE 0.1% Cream",
+    schedule: [
+      { dosage: "sapu", timing: "pagi", customDoseText: "Sapu Nipis" },
+      { dosage: "sapu", timing: "malam", customDoseText: "Sapu Nipis" }
+    ],
+    warnings: ["kanak"]
+  },
+  betamethasone_0_01_0_05_cream: {
+    medicineName: "BETAMETHASONE 17-VALERATE 0.01-0.05% Cream",
+    schedule: [
+      { dosage: "sapu", timing: "pagi", customDoseText: "Sapu Nipis" },
+      { dosage: "sapu", timing: "malam", customDoseText: "Sapu Nipis" }
+    ],
+    warnings: ["kanak"]
+  },
+  fusidic_acid_2_cream: {
+    medicineName: "FUSIDIC ACID 2% Cream",
+    schedule: [
+      { dosage: "sapu", timing: "pagi", customDoseText: "Sapu" },
+      { dosage: "sapu", timing: "petang", customDoseText: "Sapu" },
+      { dosage: "sapu", timing: "malam", customDoseText: "Sapu" }
+    ],
+    warnings: ["kanak"]
+  },
+  chloramphenicol_1_eye_ointment: {
+    medicineName: "CHLORAMPHENICOL 1% Eye Ointment",
+    schedule: [
+      { dosage: "sapu", timing: "malam", customDoseText: "Sapu Mata" }
+    ],
+    warnings: ["kanak"]
   },
   acetylsalicylic_300: {
     medicineName: "ACETYLSALICYLIC ACID 300mg Soluble Tablet",
@@ -1171,7 +1187,7 @@ function renderDynamicRowCustomizer() {
   container.innerHTML = "";
 
   const isGTN = state.medicineName && (state.medicineName.toUpperCase().includes("GLYCERYL TRINITRATE") || state.medicineName.toUpperCase().includes("GTN"));
-  const isNonOral = state.schedule.some(r => ['sedut', 'sembur_hidung', 'titis_hidung', 'titis_mata', 'titis_telinga', 'plaster'].includes(r.dosage)) ||
+  const isNonOral = state.schedule.some(r => ['sedut', 'dua_sedut', 'sapu', 'sembur_hidung', 'titis_hidung', 'titis_mata', 'titis_telinga', 'plaster'].includes(r.dosage)) ||
     (state.medicineName && (
       state.medicineName.toUpperCase().includes("INHAL") ||
       state.medicineName.toUpperCase().includes("DROPS") ||
@@ -1179,6 +1195,10 @@ function renderDynamicRowCustomizer() {
       state.medicineName.toUpperCase().includes("PATCH") ||
       state.medicineName.toUpperCase().includes("PLASTER") ||
       state.medicineName.toUpperCase().includes("TITIS") ||
+      state.medicineName.toUpperCase().includes("CREAM") ||
+      state.medicineName.toUpperCase().includes("OINTMENT") ||
+      state.medicineName.toUpperCase().includes("KRIM") ||
+      state.medicineName.toUpperCase().includes("SALAP") ||
       state.medicineName.toUpperCase().includes("SALBUTAMOL")
     ));
   const hideMeal = isGTN || isNonOral;
@@ -1198,6 +1218,20 @@ function renderDynamicRowCustomizer() {
         <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
           <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Sedutan (Contoh: 1-2 Sedutan)</label>
           <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '1-2 Sedutan'}" placeholder="Contoh: 1-2 Sedutan">
+        </div>
+      `;
+    } else if (row.dosage === 'dua_sedut') {
+      extraInputsHTML = `
+        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
+          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Sedutan (Contoh: 2 Sedutan)</label>
+          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '2 Sedutan'}" placeholder="Contoh: 2 Sedutan">
+        </div>
+      `;
+    } else if (row.dosage === 'sapu') {
+      extraInputsHTML = `
+        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
+          <label style="font-size: 11.5px; color: var(--color-accent);">Arahan Sapuan (Contoh: Sapu Nipis / 1 Calit)</label>
+          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || 'Sapu Nipis'}" placeholder="Contoh: Sapu Nipis">
         </div>
       `;
     } else if (row.dosage === 'sembur_hidung') {
@@ -1285,7 +1319,9 @@ function renderDynamicRowCustomizer() {
           <option value="1/4" ${row.dosage === '1/4' ? 'selected' : ''}>1/4 Biji</option>
           <option value="1_half" ${row.dosage === '1_half' ? 'selected' : ''}>1 1/2 Biji</option>
           <option value="4" ${row.dosage === '4' ? 'selected' : ''}>4 Biji</option>
-          <option value="sedut" ${row.dosage === 'sedut' ? 'selected' : ''}>Sedutan (Inhaler)</option>
+          <option value="sedut" ${row.dosage === 'sedut' ? 'selected' : ''}>1 Sedutan (Inhaler)</option>
+          <option value="dua_sedut" ${row.dosage === 'dua_sedut' ? 'selected' : ''}>2 Sedutan (Inhaler)</option>
+          <option value="sapu" ${row.dosage === 'sapu' ? 'selected' : ''}>Sapu (Krim / Salap)</option>
           <option value="sembur_hidung" ${row.dosage === 'sembur_hidung' ? 'selected' : ''}>Semburan Hidung (Nasal Spray)</option>
           <option value="titis_hidung" ${row.dosage === 'titis_hidung' ? 'selected' : ''}>Titis Hidung</option>
           <option value="titis_mata" ${row.dosage === 'titis_mata' ? 'selected' : ''}>Titis Mata</option>
@@ -1319,6 +1355,12 @@ function renderDynamicRowCustomizer() {
       state.schedule[index].dosage = newDose;
       if (newDose === 'sedut') {
         state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1-2 Sedutan";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === 'dua_sedut') {
+        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "2 Sedutan";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === 'sapu') {
+        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "Sapu Nipis";
         state.schedule[index].useCucukIcon = false;
       } else if (newDose === 'sembur_hidung') {
         state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1-2 Semburan";
@@ -1389,7 +1431,7 @@ function renderDynamicRowCustomizer() {
 function updatePreview() {
   // Check if current drug is GTN or Inhaler (no meal row needed)
   const isGTN = state.medicineName && (state.medicineName.toUpperCase().includes("GLYCERYL TRINITRATE") || state.medicineName.toUpperCase().includes("GTN"));
-  const isNonOral = state.schedule.some(r => ['sedut', 'sembur_hidung', 'titis_hidung', 'titis_mata', 'titis_telinga', 'plaster'].includes(r.dosage)) ||
+  const isNonOral = state.schedule.some(r => ['sedut', 'dua_sedut', 'sapu', 'sembur_hidung', 'titis_hidung', 'titis_mata', 'titis_telinga', 'plaster'].includes(r.dosage)) ||
     (state.medicineName && (
       state.medicineName.toUpperCase().includes("INHAL") ||
       state.medicineName.toUpperCase().includes("DROPS") ||
@@ -1397,6 +1439,10 @@ function updatePreview() {
       state.medicineName.toUpperCase().includes("PATCH") ||
       state.medicineName.toUpperCase().includes("PLASTER") ||
       state.medicineName.toUpperCase().includes("TITIS") ||
+      state.medicineName.toUpperCase().includes("CREAM") ||
+      state.medicineName.toUpperCase().includes("OINTMENT") ||
+      state.medicineName.toUpperCase().includes("KRIM") ||
+      state.medicineName.toUpperCase().includes("SALAP") ||
       state.medicineName.toUpperCase().includes("SALBUTAMOL")
     ));
   const hideMeal = isGTN || isNonOral;
@@ -1423,7 +1469,13 @@ function updatePreview() {
     
     if (activeEntry.dosage === 'sedut') {
       doseSvg = ICONS.dosage.sedut.svg;
-      doseLabel = activeEntry.customDoseText || "1-2 Sedutan";
+      doseLabel = activeEntry.customDoseText || "1 Sedutan";
+    } else if (activeEntry.dosage === 'dua_sedut') {
+      doseSvg = ICONS.dosage.dua_sedut.svg;
+      doseLabel = activeEntry.customDoseText || "2 Sedutan";
+    } else if (activeEntry.dosage === 'sapu') {
+      doseSvg = ICONS.dosage.sapu.svg;
+      doseLabel = activeEntry.customDoseText || "Sapu Nipis";
     } else if (activeEntry.dosage === 'sembur_hidung') {
       doseSvg = ICONS.dosage.sembur_hidung.svg;
       doseLabel = activeEntry.customDoseText || "1-2 Semburan";

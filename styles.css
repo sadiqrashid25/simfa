@@ -1060,11 +1060,14 @@ select.custom-select:focus {
 }
 
 /* Icons inside table cells */
-.table-dose-svg,
 .table-time-svg,
 .table-meal-svg {
   width: 10mm;
   height: 10mm;
+}
+.table-dose-svg {
+  width: 11.5mm;
+  height: 11.5mm;
   display: block;
   object-fit: contain;
 }
@@ -1410,11 +1413,14 @@ select.custom-select:focus {
     border-bottom: none !important;
   }
 
-  .table-dose-svg,
   .table-time-svg,
   .table-meal-svg {
     width: 10mm !important;
     height: 10mm !important;
+  }
+  .table-dose-svg {
+    width: 11.5mm !important;
+    height: 11.5mm !important;
     display: block !important;
     object-fit: contain !important;
   }
