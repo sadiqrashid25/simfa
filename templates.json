@@ -300,13 +300,13 @@
     "medicineName": "BUDESONIDE 64mcg Nasal Spray",
     "schedule": [
       {
-        "dosage": "titis_hidung",
+        "dosage": "sembur_hidung",
         "timing": "pagi",
         "customDoseText": "1-2 Semburan"
       }
     ],
     "warnings": [
-      "titis_hidung",
+      "sembur_hidung",
       "kanak"
     ]
   },
