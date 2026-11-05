@@ -1,116 +1,299 @@
 {
   "acetylsalicylic_300": {
     "medicineName": "ACETYLSALICYLIC ACID 300mg Soluble Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["kunyah"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kunyah"
+    ]
   },
   "amiloride_hctz": {
     "medicineName": "AMILORIDE 5mg / HCTZ 50mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["potong"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "potong"
+    ]
   },
   "amlodipine_10": {
     "medicineName": "AMLODIPINE 10mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "amlodipine_5": {
     "medicineName": "AMLODIPINE 5mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "alenolol_100": {
     "medicineName": "ALENOLOL 100mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "sebelum" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "atorvastatin_20": {
     "medicineName": "ATORVASTATIN 20mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "malam", "meal": "selepas" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "malam",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "calcitriol_0_25": {
     "medicineName": "CALCITRIOL 0.25mcg Capsule",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "calcium_lactate_300": {
     "medicineName": "CALCIUM LACTATE 300mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "captopril_25": {
     "medicineName": "CAPTOPRIL 25mg Tablet",
     "schedule": [
-      { "dosage": "1", "timing": "pagi", "meal": "sebelum" },
-      { "dosage": "1", "timing": "malam", "meal": "sebelum" }
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      },
+      {
+        "dosage": "1",
+        "timing": "malam",
+        "meal": "sebelum"
+      }
     ],
-    "warnings": ["kanak"]
+    "warnings": [
+      "kanak"
+    ]
   },
   "carbamazepine_200": {
     "medicineName": "CARBAMAZEPINE 200mg Tablet",
     "schedule": [
-      { "dosage": "1", "timing": "pagi", "meal": "selepas" },
-      { "dosage": "1", "timing": "malam", "meal": "selepas" }
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      },
+      {
+        "dosage": "1",
+        "timing": "malam",
+        "meal": "selepas"
+      }
     ],
-    "warnings": ["kanak"]
+    "warnings": [
+      "kanak"
+    ]
   },
   "carbimazole_5": {
     "medicineName": "CARBIMAZOLE 5mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "digoxin_0_25": {
     "medicineName": "DIGOXIN 0.25mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "selepas" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "diltiazem_30": {
     "medicineName": "DILTIAZEM HCl 30mg Tablet",
     "schedule": [
-      { "dosage": "1", "timing": "pagi", "meal": "selepas" },
-      { "dosage": "1", "timing": "tengah_hari", "meal": "selepas" },
-      { "dosage": "1", "timing": "malam", "meal": "selepas" }
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "selepas"
+      },
+      {
+        "dosage": "1",
+        "timing": "tengah_hari",
+        "meal": "selepas"
+      },
+      {
+        "dosage": "1",
+        "timing": "malam",
+        "meal": "selepas"
+      }
     ],
-    "warnings": ["kanak"]
+    "warnings": [
+      "kanak"
+    ]
   },
   "enalapril_10": {
     "medicineName": "ENALAPRIL 10mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "sebelum" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "enalapril_5": {
     "medicineName": "ENALAPRIL 5mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "sebelum" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "frusemide_40": {
     "medicineName": "FRUSEMIDE 40mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "sebelum" }],
-    "warnings": ["kanak"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
   },
   "gliclazide_30_mr": {
     "medicineName": "GLICLAZIDE 30mg MR Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "sebelum" }],
-    "warnings": ["potong"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      }
+    ],
+    "warnings": [
+      "potong"
+    ]
   },
   "gliclazide_80": {
     "medicineName": "GLICLAZIDE 80mg Tablet",
     "schedule": [
-      { "dosage": "1", "timing": "pagi", "meal": "sebelum" },
-      { "dosage": "1", "timing": "tengah_hari", "meal": "sebelum" }
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      },
+      {
+        "dosage": "1",
+        "timing": "tengah_hari",
+        "meal": "sebelum"
+      }
     ],
-    "warnings": ["kanak"]
+    "warnings": [
+      "kanak"
+    ]
   },
   "gtn_0_5": {
     "medicineName": "GLYCERYL TRINITRATE 0.5mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "bila_perlu" }],
-    "warnings": ["cahaya", "lidah"]
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "bila_perlu"
+      }
+    ],
+    "warnings": [
+      "cahaya",
+      "lidah"
+    ]
   },
   "hctz_25": {
     "medicineName": "HYDROCHLOROTHIAZIDE 25mg Tablet",
-    "schedule": [{ "dosage": "1", "timing": "pagi", "meal": "sebelum" }],
+    "schedule": [
+      {
+        "dosage": "1",
+        "timing": "pagi",
+        "meal": "sebelum"
+      }
+    ],
     "warnings": []
+  },
+  "salbutamol_100": {
+    "medicineName": "SALBUTAMOL 100mcg/dose Inhalation",
+    "schedule": [
+      {
+        "dosage": "sedut",
+        "timing": "bila_perlu",
+        "customDoseText": "1-2 Sedutan"
+      }
+    ],
+    "warnings": [
+      "sedut",
+      "kanak"
+    ]
   }
 }
-

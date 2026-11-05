@@ -37,6 +37,10 @@ const ICONS = {
       label: "4 Biji",
       svg: `<img class="table-dose-svg" src="icons/EMPAT BIJI.svg" alt="4 Biji">`
     },
+    "sedut": {
+      label: "1-2 Sedutan",
+      svg: `<img class="table-dose-svg" src="icons/SEDUT.svg" alt="Sedut">`
+    },
     "cucuk": {
       label: "Cucuk",
       svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -97,6 +101,10 @@ const ICONS = {
     }
   },
   warning: {
+    "sedut": {
+      label: "SEDUT / INHALER",
+      svg: `<img class="warning-icon-svg" src="icons/SEDUT.svg" alt="SEDUT">`
+    },
     "mengantuk": {
       label: "MENGANTUK",
       svg: `<img class="warning-icon-svg" src="icons/MENGANTUK.svg" alt="MENGANTUK">`
@@ -196,6 +204,11 @@ const ICONS = {
 // 2. 69 PREPROGRAMMED DRUG PRESETS WITH CORRESPONDING SCHEDULES
 const PRESETS = {
   // 1
+  salbutamol_100: {
+    medicineName: "SALBUTAMOL 100mcg/dose Inhalation",
+    schedule: [{ dosage: "sedut", timing: "bila_perlu", customDoseText: "1-2 Sedutan" }],
+    warnings: ["sedut", "kanak"]
+  },
   acetylsalicylic_300: {
     medicineName: "ACETYLSALICYLIC ACID 300mg Soluble Tablet",
     schedule: [{ dosage: "1", timing: "pagi", meal: "selepas" }],
@@ -1084,6 +1097,8 @@ function renderDynamicRowCustomizer() {
   container.innerHTML = "";
 
   const isGTN = state.medicineName && (state.medicineName.toUpperCase().includes("GLYCERYL TRINITRATE") || state.medicineName.toUpperCase().includes("GTN"));
+  const isInhaler = (state.medicineName && (state.medicineName.toUpperCase().includes("INHALATION") || state.medicineName.toUpperCase().includes("INHALER") || state.medicineName.toUpperCase().includes("SALBUTAMOL"))) || state.schedule.some(r => r.dosage === 'sedut');
+  const hideMeal = isGTN || isInhaler;
 
   state.schedule.forEach((row, index) => {
     const rowCard = document.createElement("div");
@@ -1095,7 +1110,14 @@ function renderDynamicRowCustomizer() {
 
     // Determine extra inputs HTML based on dosage
     let extraInputsHTML = "";
-    if (row.dosage === 'cucuk') {
+    if (row.dosage === 'sedut') {
+      extraInputsHTML = `
+        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
+          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Sedutan (Contoh: 1-2 Sedutan)</label>
+          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || '1-2 Sedutan'}" placeholder="Contoh: 1-2 Sedutan">
+        </div>
+      `;
+    } else if (row.dosage === 'cucuk') {
       extraInputsHTML = `
         <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
           <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Unit (Contoh: 10)</label>
@@ -1117,7 +1139,7 @@ function renderDynamicRowCustomizer() {
 
     // Hide meal instruction dropdown for GTN
     let mealSelectHTML = "";
-    if (!isGTN) {
+    if (!hideMeal) {
       mealSelectHTML = `
         <!-- Meal select -->
         <div class="form-group" style="margin-bottom: 0;">
@@ -1145,6 +1167,7 @@ function renderDynamicRowCustomizer() {
           <option value="1/4" ${row.dosage === '1/4' ? 'selected' : ''}>1/4 Biji</option>
           <option value="1_half" ${row.dosage === '1_half' ? 'selected' : ''}>1 1/2 Biji</option>
           <option value="4" ${row.dosage === '4' ? 'selected' : ''}>4 Biji</option>
+          <option value="sedut" ${row.dosage === 'sedut' ? 'selected' : ''}>1-2 Sedutan (Inhaler)</option>
           <option value="cucuk" ${row.dosage === 'cucuk' ? 'selected' : ''}>Unit (Cucuk)</option>
           <option value="free" ${row.dosage === 'free' ? 'selected' : ''}>Teks Bebas</option>
         </select>
@@ -1171,7 +1194,10 @@ function renderDynamicRowCustomizer() {
     rowCard.querySelector(".row-dose-select").addEventListener("change", (e) => {
       const newDose = e.target.value;
       state.schedule[index].dosage = newDose;
-      if (newDose === 'cucuk') {
+      if (newDose === 'sedut') {
+        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1-2 Sedutan";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === 'cucuk') {
         state.schedule[index].customDoseText = state.schedule[index].customDoseText || "10";
         state.schedule[index].useCucukIcon = true;
       } else if (newDose === 'free') {
@@ -1223,8 +1249,10 @@ function renderDynamicRowCustomizer() {
 // RENDER ENGINE (DYNAMIC PREVIEW WRITER - SKETCH GRID LAYOUT)
 // ==========================================================================
 function updatePreview() {
-  // Check if current drug is GTN (no meal row needed)
+  // Check if current drug is GTN or Inhaler (no meal row needed)
   const isGTN = state.medicineName && (state.medicineName.toUpperCase().includes("GLYCERYL TRINITRATE") || state.medicineName.toUpperCase().includes("GTN"));
+  const isInhaler = (state.medicineName && (state.medicineName.toUpperCase().includes("INHALATION") || state.medicineName.toUpperCase().includes("INHALER") || state.medicineName.toUpperCase().includes("SALBUTAMOL"))) || state.schedule.some(r => r.dosage === 'sedut');
+  const hideMeal = isGTN || isInhaler;
 
   // 1. Render Top Header: Drug Name
   document.getElementById("label-out-drugname").textContent = state.medicineName || "-";
@@ -1246,7 +1274,10 @@ function updatePreview() {
     let doseSvg = "";
     let doseLabel = "";
     
-    if (activeEntry.dosage === 'cucuk') {
+    if (activeEntry.dosage === 'sedut') {
+      doseSvg = ICONS.dosage.sedut.svg;
+      doseLabel = activeEntry.customDoseText || "1-2 Sedutan";
+    } else if (activeEntry.dosage === 'cucuk') {
       doseSvg = ICONS.dosage.cucuk.svg;
       const val = activeEntry.customDoseText || "";
       if (val.toLowerCase().includes("unit")) {
@@ -1308,7 +1339,7 @@ function updatePreview() {
 
   table.appendChild(trDose);
   table.appendChild(trTime);
-  if (!isGTN) {
+  if (!hideMeal) {
     table.appendChild(trMeal);
   }
 
@@ -1329,7 +1360,8 @@ function updatePreview() {
       "kanak": "Jauhkan dari kanak-kanak",
       "potong": "Jangan dipotong",
       "sejuk": "Simpan di peti sejuk",
-      "kunyah": "Jangan dikunyah"
+      "kunyah": "Jangan dikunyah",
+      "sedut": "Sedut melalui mulut (Inhaler)"
     };
     
     wItem.innerHTML = `
