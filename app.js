@@ -37,37 +37,81 @@ const ICONS = {
       label: "4 Biji",
       svg: `<img class="table-dose-svg" src="icons/EMPAT BIJI.svg" alt="4 Biji">`
     },
+    "1_sedut": {
+      label: "1 Sedutan",
+      svg: `<img class="table-dose-svg" src="icons/SEDUT.svg" alt="1 Sedutan">`
+    },
+    "2_sedut": {
+      label: "2 Sedutan",
+      svg: `<img class="table-dose-svg" src="icons/DUA_SEDUT.svg" alt="2 Sedutan">`
+    },
     "sedut": {
-      label: "1 Sedutan (Inhaler)",
+      label: "1 Sedutan",
       svg: `<img class="table-dose-svg" src="icons/SEDUT.svg" alt="1 Sedutan">`
     },
     "dua_sedut": {
-      label: "2 Sedutan (Inhaler)",
+      label: "2 Sedutan",
       svg: `<img class="table-dose-svg" src="icons/DUA_SEDUT.svg" alt="2 Sedutan">`
+    },
+    "1_sembur": {
+      label: "1 Semburan",
+      svg: `<img class="table-dose-svg" src="icons/SEMBUR_HIDUNG.svg" alt="1 Semburan">`
+    },
+    "2_sembur": {
+      label: "2 Semburan",
+      svg: `<img class="table-dose-svg" src="icons/SEMBUR_HIDUNG.svg" alt="2 Semburan">`
+    },
+    "sembur_hidung": {
+      label: "1 Semburan",
+      svg: `<img class="table-dose-svg" src="icons/SEMBUR_HIDUNG.svg" alt="1 Semburan">`
+    },
+    "1_titis_mata": {
+      label: "1 Titis Mata",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_MATA.svg" alt="1 Titis Mata">`
+    },
+    "2_titis_mata": {
+      label: "2 Titis Mata",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_MATA.svg" alt="2 Titis Mata">`
+    },
+    "titis_mata": {
+      label: "1 Titis Mata",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_MATA.svg" alt="1 Titis Mata">`
+    },
+    "1_titis_telinga": {
+      label: "1 Titis Telinga",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_TELINGA.svg" alt="1 Titis Telinga">`
+    },
+    "2_titis_telinga": {
+      label: "2 Titis Telinga",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_TELINGA.svg" alt="2 Titis Telinga">`
+    },
+    "3_titis_telinga": {
+      label: "3 Titis Telinga",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_TELINGA.svg" alt="3 Titis Telinga">`
+    },
+    "titis_telinga": {
+      label: "2 Titis Telinga",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_TELINGA.svg" alt="2 Titis Telinga">`
+    },
+    "1_titis_hidung": {
+      label: "1 Titis Hidung",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_HIDUNG.svg" alt="1 Titis Hidung">`
+    },
+    "2_titis_hidung": {
+      label: "2 Titis Hidung",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_HIDUNG.svg" alt="2 Titis Hidung">`
+    },
+    "titis_hidung": {
+      label: "1 Titis Hidung",
+      svg: `<img class="table-dose-svg" src="icons/TITIS_HIDUNG.svg" alt="1 Titis Hidung">`
     },
     "sapu": {
       label: "Sapu (Krim / Salap)",
       svg: `<img class="table-dose-svg" src="icons/SAPU.svg" alt="Sapu">`
     },
-    "sembur_hidung": {
-      label: "1-2 Semburan (Hidung)",
-      svg: `<img class="table-dose-svg" src="icons/SEMBUR_HIDUNG.svg" alt="Semburan Hidung">`
-    },
-    "titis_hidung": {
-      label: "1-2 Titis (Hidung)",
-      svg: `<img class="table-dose-svg" src="icons/TITIS_HIDUNG.svg" alt="Titis Hidung">`
-    },
-    "titis_mata": {
-      label: "1-2 Titis (Mata)",
-      svg: `<img class="table-dose-svg" src="icons/TITIS_MATA.svg" alt="Titis Mata">`
-    },
-    "titis_telinga": {
-      label: "2-3 Titis (Telinga)",
-      svg: `<img class="table-dose-svg" src="icons/TITIS_TELINGA.svg" alt="Titis Telinga">`
-    },
     "plaster": {
-      label: "1 Keping (Pelekat / Plaster)",
-      svg: `<img class="table-dose-svg" src="icons/PLASTER.svg" alt="Plaster/Pelekat">`
+      label: "1 Keping (Pelekat)",
+      svg: `<img class="table-dose-svg" src="icons/PLASTER.svg" alt="1 Keping">`
     },
     "cucuk": {
       label: "Cucuk",
@@ -230,12 +274,12 @@ const PRESETS = {
   // 1
   salbutamol_100: {
     medicineName: "SALBUTAMOL 100mcg/dose Inhalation",
-    schedule: [{ dosage: "sedut", timing: "bila_perlu", customDoseText: "1-2 Sedutan" }],
+    schedule: [{ dosage: "2_sedut", timing: "bila_perlu", customDoseText: "2 Sedutan" }],
     warnings: ["kanak"]
   },
   budesonide_64_nasal: {
     medicineName: "BUDESONIDE 64mcg Nasal Spray",
-    schedule: [{ dosage: "sembur_hidung", timing: "pagi", customDoseText: "1-2 Semburan" }],
+    schedule: [{ dosage: "1_sembur", timing: "pagi", customDoseText: "1 Semburan" }],
     warnings: ["kanak"]
   },
   nicotine_15_patch: {
@@ -251,19 +295,19 @@ const PRESETS = {
   chloramphenicol_0_5_eye: {
     medicineName: "CHLORAMPHENICOL 0.5% Eye Drops",
     schedule: [
-      { dosage: "titis_mata", timing: "pagi", customDoseText: "1-2 Titis" },
-      { dosage: "titis_mata", timing: "tengah_hari", customDoseText: "1-2 Titis" },
-      { dosage: "titis_mata", timing: "petang", customDoseText: "1-2 Titis" },
-      { dosage: "titis_mata", timing: "malam", customDoseText: "1-2 Titis" }
+      { dosage: "1_titis_mata", timing: "pagi", customDoseText: "1 Titis" },
+      { dosage: "1_titis_mata", timing: "tengah_hari", customDoseText: "1 Titis" },
+      { dosage: "1_titis_mata", timing: "petang", customDoseText: "1 Titis" },
+      { dosage: "1_titis_mata", timing: "malam", customDoseText: "1 Titis" }
     ],
     warnings: ["kanak"]
   },
   chloramphenicol_5_ear: {
     medicineName: "CHLORAMPHENICOL 5% Ear Drops",
     schedule: [
-      { dosage: "titis_telinga", timing: "pagi", customDoseText: "2-3 Titis" },
-      { dosage: "titis_telinga", timing: "tengah_hari", customDoseText: "2-3 Titis" },
-      { dosage: "titis_telinga", timing: "malam", customDoseText: "2-3 Titis" }
+      { dosage: "2_titis_telinga", timing: "pagi", customDoseText: "2 Titis" },
+      { dosage: "2_titis_telinga", timing: "tengah_hari", customDoseText: "2 Titis" },
+      { dosage: "2_titis_telinga", timing: "malam", customDoseText: "2 Titis" }
     ],
     warnings: ["kanak"]
   },
@@ -1319,14 +1363,19 @@ function renderDynamicRowCustomizer() {
           <option value="1/4" ${row.dosage === '1/4' ? 'selected' : ''}>1/4 Biji</option>
           <option value="1_half" ${row.dosage === '1_half' ? 'selected' : ''}>1 1/2 Biji</option>
           <option value="4" ${row.dosage === '4' ? 'selected' : ''}>4 Biji</option>
-          <option value="sedut" ${row.dosage === 'sedut' ? 'selected' : ''}>1 Sedutan (Inhaler)</option>
-          <option value="dua_sedut" ${row.dosage === 'dua_sedut' ? 'selected' : ''}>2 Sedutan (Inhaler)</option>
+          <option value="1_sedut" ${row.dosage === '1_sedut' || row.dosage === 'sedut' ? 'selected' : ''}>1 Sedutan</option>
+          <option value="2_sedut" ${row.dosage === '2_sedut' || row.dosage === 'dua_sedut' ? 'selected' : ''}>2 Sedutan</option>
+          <option value="1_sembur" ${row.dosage === '1_sembur' || row.dosage === 'sembur_hidung' ? 'selected' : ''}>1 Semburan Hidung</option>
+          <option value="2_sembur" ${row.dosage === '2_sembur' ? 'selected' : ''}>2 Semburan Hidung</option>
+          <option value="1_titis_mata" ${row.dosage === '1_titis_mata' || row.dosage === 'titis_mata' ? 'selected' : ''}>1 Titis Mata</option>
+          <option value="2_titis_mata" ${row.dosage === '2_titis_mata' ? 'selected' : ''}>2 Titis Mata</option>
+          <option value="1_titis_telinga" ${row.dosage === '1_titis_telinga' ? 'selected' : ''}>1 Titis Telinga</option>
+          <option value="2_titis_telinga" ${row.dosage === '2_titis_telinga' || row.dosage === 'titis_telinga' ? 'selected' : ''}>2 Titis Telinga</option>
+          <option value="3_titis_telinga" ${row.dosage === '3_titis_telinga' ? 'selected' : ''}>3 Titis Telinga</option>
+          <option value="1_titis_hidung" ${row.dosage === '1_titis_hidung' || row.dosage === 'titis_hidung' ? 'selected' : ''}>1 Titis Hidung</option>
+          <option value="2_titis_hidung" ${row.dosage === '2_titis_hidung' ? 'selected' : ''}>2 Titis Hidung</option>
           <option value="sapu" ${row.dosage === 'sapu' ? 'selected' : ''}>Sapu (Krim / Salap)</option>
-          <option value="sembur_hidung" ${row.dosage === 'sembur_hidung' ? 'selected' : ''}>Semburan Hidung (Nasal Spray)</option>
-          <option value="titis_hidung" ${row.dosage === 'titis_hidung' ? 'selected' : ''}>Titis Hidung</option>
-          <option value="titis_mata" ${row.dosage === 'titis_mata' ? 'selected' : ''}>Titis Mata</option>
-          <option value="titis_telinga" ${row.dosage === 'titis_telinga' ? 'selected' : ''}>Titis Telinga</option>
-          <option value="plaster" ${row.dosage === 'plaster' ? 'selected' : ''}>Pelekat / Plaster</option>
+          <option value="plaster" ${row.dosage === 'plaster' ? 'selected' : ''}>1 Keping Pelekat</option>
           <option value="cucuk" ${row.dosage === 'cucuk' ? 'selected' : ''}>Unit (Cucuk)</option>
           <option value="free" ${row.dosage === 'free' ? 'selected' : ''}>Teks Bebas</option>
         </select>
@@ -1353,29 +1402,44 @@ function renderDynamicRowCustomizer() {
     rowCard.querySelector(".row-dose-select").addEventListener("change", (e) => {
       const newDose = e.target.value;
       state.schedule[index].dosage = newDose;
-      if (newDose === 'sedut') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1-2 Sedutan";
+      if (newDose === '1_sedut' || newDose === 'sedut') {
+        state.schedule[index].customDoseText = "1 Sedutan";
         state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'dua_sedut') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "2 Sedutan";
+      } else if (newDose === '2_sedut' || newDose === 'dua_sedut') {
+        state.schedule[index].customDoseText = "2 Sedutan";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '1_sembur' || newDose === 'sembur_hidung') {
+        state.schedule[index].customDoseText = "1 Semburan";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '2_sembur') {
+        state.schedule[index].customDoseText = "2 Semburan";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '1_titis_mata' || newDose === 'titis_mata') {
+        state.schedule[index].customDoseText = "1 Titis";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '2_titis_mata') {
+        state.schedule[index].customDoseText = "2 Titis";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '1_titis_telinga') {
+        state.schedule[index].customDoseText = "1 Titis";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '2_titis_telinga' || newDose === 'titis_telinga') {
+        state.schedule[index].customDoseText = "2 Titis";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '3_titis_telinga') {
+        state.schedule[index].customDoseText = "3 Titis";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '1_titis_hidung' || newDose === 'titis_hidung') {
+        state.schedule[index].customDoseText = "1 Titis";
+        state.schedule[index].useCucukIcon = false;
+      } else if (newDose === '2_titis_hidung') {
+        state.schedule[index].customDoseText = "2 Titis";
         state.schedule[index].useCucukIcon = false;
       } else if (newDose === 'sapu') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "Sapu Nipis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'sembur_hidung') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1-2 Semburan";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'titis_hidung') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1-2 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'titis_mata') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1-2 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'titis_telinga') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "2-3 Titis";
+        state.schedule[index].customDoseText = "Sapu Nipis";
         state.schedule[index].useCucukIcon = false;
       } else if (newDose === 'plaster') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "1 Keping";
+        state.schedule[index].customDoseText = "1 Keping";
         state.schedule[index].useCucukIcon = false;
       } else if (newDose === 'cucuk') {
         state.schedule[index].customDoseText = state.schedule[index].customDoseText || "10";
@@ -1467,27 +1531,42 @@ function updatePreview() {
     let doseSvg = "";
     let doseLabel = "";
     
-    if (activeEntry.dosage === 'sedut') {
-      doseSvg = ICONS.dosage.sedut.svg;
+    if (activeEntry.dosage === '1_sedut' || activeEntry.dosage === 'sedut') {
+      doseSvg = ICONS.dosage["1_sedut"].svg;
       doseLabel = activeEntry.customDoseText || "1 Sedutan";
-    } else if (activeEntry.dosage === 'dua_sedut') {
-      doseSvg = ICONS.dosage.dua_sedut.svg;
+    } else if (activeEntry.dosage === '2_sedut' || activeEntry.dosage === 'dua_sedut') {
+      doseSvg = ICONS.dosage["2_sedut"].svg;
       doseLabel = activeEntry.customDoseText || "2 Sedutan";
+    } else if (activeEntry.dosage === '1_sembur' || activeEntry.dosage === 'sembur_hidung') {
+      doseSvg = ICONS.dosage["1_sembur"].svg;
+      doseLabel = activeEntry.customDoseText || "1 Semburan";
+    } else if (activeEntry.dosage === '2_sembur') {
+      doseSvg = ICONS.dosage["2_sembur"].svg;
+      doseLabel = activeEntry.customDoseText || "2 Semburan";
+    } else if (activeEntry.dosage === '1_titis_mata' || activeEntry.dosage === 'titis_mata') {
+      doseSvg = ICONS.dosage["1_titis_mata"].svg;
+      doseLabel = activeEntry.customDoseText || "1 Titis";
+    } else if (activeEntry.dosage === '2_titis_mata') {
+      doseSvg = ICONS.dosage["2_titis_mata"].svg;
+      doseLabel = activeEntry.customDoseText || "2 Titis";
+    } else if (activeEntry.dosage === '1_titis_telinga') {
+      doseSvg = ICONS.dosage["1_titis_telinga"].svg;
+      doseLabel = activeEntry.customDoseText || "1 Titis";
+    } else if (activeEntry.dosage === '2_titis_telinga' || activeEntry.dosage === 'titis_telinga') {
+      doseSvg = ICONS.dosage["2_titis_telinga"].svg;
+      doseLabel = activeEntry.customDoseText || "2 Titis";
+    } else if (activeEntry.dosage === '3_titis_telinga') {
+      doseSvg = ICONS.dosage["3_titis_telinga"].svg;
+      doseLabel = activeEntry.customDoseText || "3 Titis";
+    } else if (activeEntry.dosage === '1_titis_hidung' || activeEntry.dosage === 'titis_hidung') {
+      doseSvg = ICONS.dosage["1_titis_hidung"].svg;
+      doseLabel = activeEntry.customDoseText || "1 Titis";
+    } else if (activeEntry.dosage === '2_titis_hidung') {
+      doseSvg = ICONS.dosage["2_titis_hidung"].svg;
+      doseLabel = activeEntry.customDoseText || "2 Titis";
     } else if (activeEntry.dosage === 'sapu') {
       doseSvg = ICONS.dosage.sapu.svg;
       doseLabel = activeEntry.customDoseText || "Sapu Nipis";
-    } else if (activeEntry.dosage === 'sembur_hidung') {
-      doseSvg = ICONS.dosage.sembur_hidung.svg;
-      doseLabel = activeEntry.customDoseText || "1-2 Semburan";
-    } else if (activeEntry.dosage === 'titis_hidung') {
-      doseSvg = ICONS.dosage.titis_hidung.svg;
-      doseLabel = activeEntry.customDoseText || "1-2 Titis";
-    } else if (activeEntry.dosage === 'titis_mata') {
-      doseSvg = ICONS.dosage.titis_mata.svg;
-      doseLabel = activeEntry.customDoseText || "1-2 Titis";
-    } else if (activeEntry.dosage === 'titis_telinga') {
-      doseSvg = ICONS.dosage.titis_telinga.svg;
-      doseLabel = activeEntry.customDoseText || "2-3 Titis";
     } else if (activeEntry.dosage === 'plaster') {
       doseSvg = ICONS.dosage.plaster.svg;
       doseLabel = activeEntry.customDoseText || "1 Keping";

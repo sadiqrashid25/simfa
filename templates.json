@@ -286,9 +286,9 @@
     "medicineName": "SALBUTAMOL 100mcg/dose Inhalation",
     "schedule": [
       {
-        "dosage": "sedut",
+        "dosage": "2_sedut",
         "timing": "bila_perlu",
-        "customDoseText": "1-2 Sedutan"
+        "customDoseText": "2 Sedutan"
       }
     ],
     "warnings": [
@@ -299,9 +299,9 @@
     "medicineName": "BUDESONIDE 64mcg Nasal Spray",
     "schedule": [
       {
-        "dosage": "sembur_hidung",
+        "dosage": "1_sembur",
         "timing": "pagi",
-        "customDoseText": "1-2 Semburan"
+        "customDoseText": "1 Semburan"
       }
     ],
     "warnings": [
@@ -338,24 +338,24 @@
     "medicineName": "CHLORAMPHENICOL 0.5% Eye Drops",
     "schedule": [
       {
-        "dosage": "titis_mata",
+        "dosage": "1_titis_mata",
         "timing": "pagi",
-        "customDoseText": "1-2 Titis"
+        "customDoseText": "1 Titis"
       },
       {
-        "dosage": "titis_mata",
+        "dosage": "1_titis_mata",
         "timing": "tengah_hari",
-        "customDoseText": "1-2 Titis"
+        "customDoseText": "1 Titis"
       },
       {
-        "dosage": "titis_mata",
+        "dosage": "1_titis_mata",
         "timing": "petang",
-        "customDoseText": "1-2 Titis"
+        "customDoseText": "1 Titis"
       },
       {
-        "dosage": "titis_mata",
+        "dosage": "1_titis_mata",
         "timing": "malam",
-        "customDoseText": "1-2 Titis"
+        "customDoseText": "1 Titis"
       }
     ],
     "warnings": [
@@ -366,19 +366,19 @@
     "medicineName": "CHLORAMPHENICOL 5% Ear Drops",
     "schedule": [
       {
-        "dosage": "titis_telinga",
+        "dosage": "2_titis_telinga",
         "timing": "pagi",
-        "customDoseText": "2-3 Titis"
+        "customDoseText": "2 Titis"
       },
       {
-        "dosage": "titis_telinga",
+        "dosage": "2_titis_telinga",
         "timing": "tengah_hari",
-        "customDoseText": "2-3 Titis"
+        "customDoseText": "2 Titis"
       },
       {
-        "dosage": "titis_telinga",
+        "dosage": "2_titis_telinga",
         "timing": "malam",
-        "customDoseText": "2-3 Titis"
+        "customDoseText": "2 Titis"
       }
     ],
     "warnings": [
