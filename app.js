@@ -2464,6 +2464,11 @@ function bindInputListeners() {
       state.medicineName = e.target.value;
       updatePreview();
     });
+    medNameInput.addEventListener("change", (e) => {
+      state.medicineName = e.target.value;
+      renderDynamicRowCustomizer();
+      updatePreview();
+    });
   }
 
   rowsDropdown.addEventListener("change", (e) => {
@@ -2578,12 +2583,114 @@ function bindInputListeners() {
 function adjustScheduleRowsCount(count) {
   const currentCount = state.schedule.length;
   if (count > currentCount) {
+    const baseRow = state.schedule[0] || { dosage: "1", timing: "pagi", meal: "selepas" };
     for (let i = currentCount; i < count; i++) {
-      state.schedule.push({ dosage: "1", timing: "pagi", meal: "selepas" });
+      state.schedule.push({
+        dosage: baseRow.dosage,
+        timing: i === 1 ? "malam" : (i === 2 ? "petang" : "tengah_hari"),
+        meal: baseRow.meal || "selepas",
+        customDoseText: baseRow.customDoseText || "",
+        useCucukIcon: baseRow.useCucukIcon || false
+      });
     }
   } else if (count < currentCount) {
     state.schedule = state.schedule.slice(0, count);
   }
+}
+
+// Detect medicine category for dynamic customizer options
+function getMedicineCategory(medName, firstDose) {
+  const n = (medName || '').toUpperCase();
+  const d = (firstDose || '').toLowerCase();
+
+  if (n.includes('EYE') || n.includes('MATA') || d.includes('mata')) return 'eye';
+  if (n.includes('EAR') || n.includes('TELINGA') || n.includes('OTIC') || d.includes('telinga')) return 'ear';
+  if (n.includes('NASAL') || n.includes('HIDUNG') || n.includes('SPRAY') || d.includes('sembur') || d.includes('hidung')) return 'nasal';
+  if (n.includes('INHAL') || n.includes('MDI') || n.includes('SEDUT') || n.includes('SALBUTAMOL') || n.includes('SYMBICORT') || n.includes('SERETIDE') || n.includes('IPRATROPIUM') || n.includes('AEROHALER') || n.includes('TURBUHALER') || d.includes('sedut')) return 'inhaler';
+  if (n.includes('CREAM') || n.includes('KRIM') || n.includes('OINTMENT') || n.includes('SALAP') || n.includes('LOTION') || n.includes('GEL') || n.includes('EMULSION') || d === 'sapu') return 'topical';
+  if (n.includes('PATCH') || n.includes('PLASTER') || n.includes('PELEKAT') || d === 'plaster') return 'patch';
+  if (n.includes('INSULIN') || n.includes('ACTRAPID') || n.includes('INSULATARD') || n.includes('MIXTARD') || n.includes('LANTUS') || n.includes('BASAGLAR') || n.includes('NOVORAPID') || d === 'cucuk') return 'insulin';
+
+  return 'oral';
+}
+
+function getDosageOptionsHTML(category, currentDosage) {
+  let options = [];
+  if (category === 'eye') {
+    options = [
+      { val: '1_titis_mata', label: '1 Titis Mata' },
+      { val: '2_titis_mata', label: '2 Titis Mata' },
+      { val: 'sapu', label: 'Sapu (Salap Mata)' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  } else if (category === 'ear') {
+    options = [
+      { val: '1_titis_telinga', label: '1 Titis Telinga' },
+      { val: '2_titis_telinga', label: '2 Titis Telinga' },
+      { val: '3_titis_telinga', label: '3 Titis Telinga' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  } else if (category === 'nasal') {
+    options = [
+      { val: '1_sembur', label: '1 Semburan Hidung' },
+      { val: '2_sembur', label: '2 Semburan Hidung' },
+      { val: '1_titis_hidung', label: '1 Titis Hidung' },
+      { val: '2_titis_hidung', label: '2 Titis Hidung' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  } else if (category === 'inhaler') {
+    options = [
+      { val: '1_sedut', label: '1 Sedutan' },
+      { val: '2_sedut', label: '2 Sedutan' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  } else if (category === 'topical') {
+    options = [
+      { val: 'sapu', label: 'Sapu (Krim / Salap)' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  } else if (category === 'patch') {
+    options = [
+      { val: 'plaster', label: '1 Keping Pelekat' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  } else if (category === 'insulin') {
+    options = [
+      { val: 'cucuk', label: 'Unit (Cucuk)' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  } else {
+    // Oral / Default (Biji)
+    options = [
+      { val: 'half', label: '1/2 Biji' },
+      { val: '1', label: '1 Biji' },
+      { val: '2', label: '2 Biji' },
+      { val: '3', label: '3 Biji' },
+      { val: '3/4', label: '3/4 Biji' },
+      { val: '1/4', label: '1/4 Biji' },
+      { val: '1_half', label: '1 1/2 Biji' },
+      { val: '4', label: '4 Biji' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
+  }
+
+  function isSelected(val) {
+    if (val === currentDosage) return true;
+    if (val === '1_sedut' && currentDosage === 'sedut') return true;
+    if (val === '2_sedut' && currentDosage === 'dua_sedut') return true;
+    if (val === '1_sembur' && currentDosage === 'sembur_hidung') return true;
+    if (val === '1_titis_mata' && currentDosage === 'titis_mata') return true;
+    if (val === '2_titis_telinga' && currentDosage === 'titis_telinga') return true;
+    if (val === '1_titis_hidung' && currentDosage === 'titis_hidung') return true;
+    return false;
+  }
+
+  const hasCurrent = options.some(opt => isSelected(opt.val));
+  if (!hasCurrent && currentDosage) {
+    options.unshift({ val: currentDosage, label: currentDosage });
+  }
+
+  return options.map(opt => `<option value="${opt.val}" ${isSelected(opt.val) ? 'selected' : ''}>${opt.label}</option>`).join('');
 }
 
 // Generate inputs for each active schedule row inside left customizer
@@ -2591,21 +2698,10 @@ function renderDynamicRowCustomizer() {
   const container = document.getElementById("dynamic-rows-container");
   container.innerHTML = "";
 
+  const firstDose = state.schedule[0] ? state.schedule[0].dosage : '';
+  const category = getMedicineCategory(state.medicineName, firstDose);
   const isGTN = state.medicineName && (state.medicineName.toUpperCase().includes("GLYCERYL TRINITRATE") || state.medicineName.toUpperCase().includes("GTN"));
-  const isNonOral = state.schedule.some(r => ['sedut', 'dua_sedut', 'sapu', 'sembur_hidung', 'titis_hidung', 'titis_mata', 'titis_telinga', 'plaster'].includes(r.dosage)) ||
-    (state.medicineName && (
-      state.medicineName.toUpperCase().includes("INHAL") ||
-      state.medicineName.toUpperCase().includes("DROPS") ||
-      state.medicineName.toUpperCase().includes("SPRAY") ||
-      state.medicineName.toUpperCase().includes("PATCH") ||
-      state.medicineName.toUpperCase().includes("PLASTER") ||
-      state.medicineName.toUpperCase().includes("TITIS") ||
-      state.medicineName.toUpperCase().includes("CREAM") ||
-      state.medicineName.toUpperCase().includes("OINTMENT") ||
-      state.medicineName.toUpperCase().includes("KRIM") ||
-      state.medicineName.toUpperCase().includes("SALAP") ||
-      state.medicineName.toUpperCase().includes("SALBUTAMOL")
-    ));
+  const isNonOral = category !== 'oral' || state.schedule.some(r => ['sedut', 'dua_sedut', '1_sedut', '2_sedut', 'sapu', 'sembur_hidung', '1_sembur', '2_sembur', 'titis_hidung', '1_titis_hidung', '2_titis_hidung', 'titis_mata', '1_titis_mata', '2_titis_mata', 'titis_telinga', '1_titis_telinga', '2_titis_telinga', '3_titis_telinga', 'plaster', 'cucuk'].includes(r.dosage));
   const hideMeal = isGTN || isNonOral;
 
   state.schedule.forEach((row, index) => {
@@ -2613,36 +2709,13 @@ function renderDynamicRowCustomizer() {
     rowCard.className = "config-card row-customizer-card";
     rowCard.style.marginTop = "15px";
     rowCard.style.padding = "15px";
-    rowCard.style.border = "1.5px dashed var(--color-accent)";
-    rowCard.style.backgroundColor = "rgba(0, 172, 193, 0.01)";
+    rowCard.style.border = index === 0 ? "1.5px solid var(--color-primary)" : "1.5px dashed var(--color-accent)";
+    rowCard.style.backgroundColor = index === 0 ? "rgba(13, 71, 161, 0.02)" : "rgba(0, 172, 193, 0.01)";
 
-    // Determine extra inputs HTML based on dosage (cucuk and free only, others have built-in icon labels)
-    let extraInputsHTML = "";
-    if (row.dosage === 'cucuk') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Unit (Contoh: 10)</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || ''}" placeholder="Masukkan unit ubat">
-        </div>
-      `;
-    } else if (row.dosage === 'free') {
-      extraInputsHTML = `
-        <div class="form-group row-dose-text-group-${index}" style="margin-top: 10px; margin-bottom: 12px;">
-          <label style="font-size: 11.5px; color: var(--color-accent);">Teks Bebas / Custom</label>
-          <input type="text" class="custom-select row-dose-text-input" data-row-idx="${index}" value="${row.customDoseText || ''}" placeholder="Contoh: Sapu tipis">
-        </div>
-        <div class="form-group row-dose-icon-group-${index}" style="margin-bottom: 12px; display: flex; flex-direction: row; align-items: center; gap: 8px; padding-left: 6px;">
-          <input type="checkbox" class="row-dose-icon-checkbox" data-row-idx="${index}" ${row.useCucukIcon ? 'checked' : ''} style="width: auto; height: 16px; margin: 0;">
-          <label style="font-size: 12.5px; text-transform: none; margin-bottom: 0; cursor: pointer; color: var(--color-text-body);">Guna Simbol Cucuk (Syringe)?</label>
-        </div>
-      `;
-    }
-
-    // Hide meal instruction dropdown for GTN
+    // Meal select dropdown HTML (only for oral medicines)
     let mealSelectHTML = "";
     if (!hideMeal) {
       mealSelectHTML = `
-        <!-- Meal select -->
         <div class="form-group" style="margin-bottom: 0;">
           <label style="font-size: 11.5px;">Makan</label>
           <select class="custom-select row-meal-select" data-row-idx="${index}">
@@ -2653,138 +2726,166 @@ function renderDynamicRowCustomizer() {
       `;
     }
 
-    rowCard.innerHTML = `
-      <h4 style="font-size: 14px; margin-bottom: 12px; color: var(--color-primary);">📅 Waktu Pengambilan ${index + 1}</h4>
-      
-      <!-- Dose Pill Select -->
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label style="font-size: 11.5px;">Jumlah Ubat (Dos)</label>
-        <select class="custom-select row-dose-select" data-row-idx="${index}">
-          <option value="half" ${row.dosage === 'half' ? 'selected' : ''}>1/2 Biji</option>
-          <option value="1" ${row.dosage === '1' ? 'selected' : ''}>1 Biji</option>
-          <option value="2" ${row.dosage === '2' ? 'selected' : ''}>2 Biji</option>
-          <option value="3" ${row.dosage === '3' ? 'selected' : ''}>3 Biji</option>
-          <option value="3/4" ${row.dosage === '3/4' ? 'selected' : ''}>3/4 Biji</option>
-          <option value="1/4" ${row.dosage === '1/4' ? 'selected' : ''}>1/4 Biji</option>
-          <option value="1_half" ${row.dosage === '1_half' ? 'selected' : ''}>1 1/2 Biji</option>
-          <option value="4" ${row.dosage === '4' ? 'selected' : ''}>4 Biji</option>
-          <option value="1_sedut" ${row.dosage === '1_sedut' || row.dosage === 'sedut' ? 'selected' : ''}>1 Sedutan</option>
-          <option value="2_sedut" ${row.dosage === '2_sedut' || row.dosage === 'dua_sedut' ? 'selected' : ''}>2 Sedutan</option>
-          <option value="1_sembur" ${row.dosage === '1_sembur' || row.dosage === 'sembur_hidung' ? 'selected' : ''}>1 Semburan Hidung</option>
-          <option value="2_sembur" ${row.dosage === '2_sembur' ? 'selected' : ''}>2 Semburan Hidung</option>
-          <option value="1_titis_mata" ${row.dosage === '1_titis_mata' || row.dosage === 'titis_mata' ? 'selected' : ''}>1 Titis Mata</option>
-          <option value="2_titis_mata" ${row.dosage === '2_titis_mata' ? 'selected' : ''}>2 Titis Mata</option>
-          <option value="1_titis_telinga" ${row.dosage === '1_titis_telinga' ? 'selected' : ''}>1 Titis Telinga</option>
-          <option value="2_titis_telinga" ${row.dosage === '2_titis_telinga' || row.dosage === 'titis_telinga' ? 'selected' : ''}>2 Titis Telinga</option>
-          <option value="3_titis_telinga" ${row.dosage === '3_titis_telinga' ? 'selected' : ''}>3 Titis Telinga</option>
-          <option value="1_titis_hidung" ${row.dosage === '1_titis_hidung' || row.dosage === 'titis_hidung' ? 'selected' : ''}>1 Titis Hidung</option>
-          <option value="2_titis_hidung" ${row.dosage === '2_titis_hidung' ? 'selected' : ''}>2 Titis Hidung</option>
-          <option value="sapu" ${row.dosage === 'sapu' ? 'selected' : ''}>Sapu (Krim / Salap)</option>
-          <option value="plaster" ${row.dosage === 'plaster' ? 'selected' : ''}>1 Keping Pelekat</option>
-          <option value="cucuk" ${row.dosage === 'cucuk' ? 'selected' : ''}>Unit (Cucuk)</option>
-          <option value="free" ${row.dosage === 'free' ? 'selected' : ''}>Teks Bebas</option>
-        </select>
-      </div>
-
-      ${extraInputsHTML}
-
-      <!-- Time select -->
-      <div class="form-group" style="margin-bottom: 12px;">
-        <label style="font-size: 11.5px;">Waktu</label>
-        <select class="custom-select row-time-select" data-row-idx="${index}">
-          <option value="pagi" ${row.timing === 'pagi' ? 'selected' : ''}>Pagi</option>
-          <option value="tengah_hari" ${row.timing === 'tengah_hari' ? 'selected' : ''}>Tengah Hari</option>
-          <option value="petang" ${row.timing === 'petang' ? 'selected' : ''}>Petang</option>
-          <option value="malam" ${row.timing === 'malam' ? 'selected' : ''}>Malam</option>
-          <option value="bila_perlu" ${row.timing === 'bila_perlu' ? 'selected' : ''}>Bila Perlu</option>
-        </select>
-      </div>
-
-      ${mealSelectHTML}
-    `;
-
-    // Bind listeners
-    rowCard.querySelector(".row-dose-select").addEventListener("change", (e) => {
-      const newDose = e.target.value;
-      state.schedule[index].dosage = newDose;
-      if (newDose === '1_sedut' || newDose === 'sedut') {
-        state.schedule[index].customDoseText = "1 Sedutan";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '2_sedut' || newDose === 'dua_sedut') {
-        state.schedule[index].customDoseText = "2 Sedutan";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '1_sembur' || newDose === 'sembur_hidung') {
-        state.schedule[index].customDoseText = "1 Semburan";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '2_sembur') {
-        state.schedule[index].customDoseText = "2 Semburan";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '1_titis_mata' || newDose === 'titis_mata') {
-        state.schedule[index].customDoseText = "1 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '2_titis_mata') {
-        state.schedule[index].customDoseText = "2 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '1_titis_telinga') {
-        state.schedule[index].customDoseText = "1 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '2_titis_telinga' || newDose === 'titis_telinga') {
-        state.schedule[index].customDoseText = "2 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '3_titis_telinga') {
-        state.schedule[index].customDoseText = "3 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '1_titis_hidung' || newDose === 'titis_hidung') {
-        state.schedule[index].customDoseText = "1 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === '2_titis_hidung') {
-        state.schedule[index].customDoseText = "2 Titis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'sapu') {
-        state.schedule[index].customDoseText = "Sapu Nipis";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'plaster') {
-        state.schedule[index].customDoseText = "1 Keping";
-        state.schedule[index].useCucukIcon = false;
-      } else if (newDose === 'cucuk') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "10";
-        state.schedule[index].useCucukIcon = true;
-      } else if (newDose === 'free') {
-        state.schedule[index].customDoseText = state.schedule[index].customDoseText || "";
-        state.schedule[index].useCucukIcon = false;
-      } else {
-        state.schedule[index].customDoseText = "";
-        state.schedule[index].useCucukIcon = false;
+    if (index === 0) {
+      // CARD 1: Cara Pengambilan & Waktu 1 (Dos dikawal di sini sahaja)
+      let extraInputsHTML = "";
+      if (row.dosage === 'cucuk') {
+        extraInputsHTML = `
+          <div class="form-group row-dose-text-group-0" style="margin-top: 10px; margin-bottom: 12px;">
+            <label style="font-size: 11.5px; color: var(--color-accent);">Bilangan Unit (Contoh: 10)</label>
+            <input type="text" class="custom-select row-dose-text-input" data-row-idx="0" value="${row.customDoseText || ''}" placeholder="Masukkan unit ubat">
+          </div>
+        `;
+      } else if (row.dosage === 'free') {
+        extraInputsHTML = `
+          <div class="form-group row-dose-text-group-0" style="margin-top: 10px; margin-bottom: 12px;">
+            <label style="font-size: 11.5px; color: var(--color-accent);">Teks Bebas / Custom</label>
+            <input type="text" class="custom-select row-dose-text-input" data-row-idx="0" value="${row.customDoseText || ''}" placeholder="Contoh: Sapu tipis">
+          </div>
+          <div class="form-group row-dose-icon-group-0" style="margin-bottom: 12px; display: flex; flex-direction: row; align-items: center; gap: 8px; padding-left: 6px;">
+            <input type="checkbox" class="row-dose-icon-checkbox" data-row-idx="0" ${row.useCucukIcon ? 'checked' : ''} style="width: auto; height: 16px; margin: 0;">
+            <label style="font-size: 12.5px; text-transform: none; margin-bottom: 0; cursor: pointer; color: var(--color-text-body);">Guna Simbol Cucuk (Syringe)?</label>
+          </div>
+        `;
       }
-      renderDynamicRowCustomizer();
-      updatePreview();
-    });
 
+      const doseOptions = getDosageOptionsHTML(category, row.dosage);
+
+      rowCard.innerHTML = `
+        <h4 style="font-size: 14px; margin-bottom: 12px; color: var(--color-primary); font-weight: 700;">📋 Cara Pengambilan & Waktu 1</h4>
+        
+        <!-- Dose Pill Select (HANYA PADA KAD 1) -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 11.5px; font-weight: 600;">Jumlah Ubat (Dos / Cara Pengambilan)</label>
+          <select class="custom-select row-dose-select" data-row-idx="0">
+            ${doseOptions}
+          </select>
+        </div>
+
+        ${extraInputsHTML}
+
+        <!-- Time select -->
+        <div class="form-group" style="margin-bottom: ${mealSelectHTML ? '12px' : '0'};">
+          <label style="font-size: 11.5px;">Waktu 1</label>
+          <select class="custom-select row-time-select" data-row-idx="0">
+            <option value="pagi" ${row.timing === 'pagi' ? 'selected' : ''}>Pagi</option>
+            <option value="tengah_hari" ${row.timing === 'tengah_hari' ? 'selected' : ''}>Tengah Hari</option>
+            <option value="petang" ${row.timing === 'petang' ? 'selected' : ''}>Petang</option>
+            <option value="malam" ${row.timing === 'malam' ? 'selected' : ''}>Malam</option>
+            <option value="bila_perlu" ${row.timing === 'bila_perlu' ? 'selected' : ''}>Bila Perlu</option>
+          </select>
+        </div>
+
+        ${mealSelectHTML}
+      `;
+
+      // Dose select listener on Card 1
+      rowCard.querySelector(".row-dose-select").addEventListener("change", (e) => {
+        const newDose = e.target.value;
+        state.schedule.forEach(r => {
+          r.dosage = newDose;
+          if (newDose === '1_sedut' || newDose === 'sedut') {
+            r.customDoseText = "1 Sedutan";
+            r.useCucukIcon = false;
+          } else if (newDose === '2_sedut' || newDose === 'dua_sedut') {
+            r.customDoseText = "2 Sedutan";
+            r.useCucukIcon = false;
+          } else if (newDose === '1_sembur' || newDose === 'sembur_hidung') {
+            r.customDoseText = "1 Semburan";
+            r.useCucukIcon = false;
+          } else if (newDose === '2_sembur') {
+            r.customDoseText = "2 Semburan";
+            r.useCucukIcon = false;
+          } else if (newDose === '1_titis_mata' || newDose === 'titis_mata') {
+            r.customDoseText = "1 Titis";
+            r.useCucukIcon = false;
+          } else if (newDose === '2_titis_mata') {
+            r.customDoseText = "2 Titis";
+            r.useCucukIcon = false;
+          } else if (newDose === '1_titis_telinga') {
+            r.customDoseText = "1 Titis";
+            r.useCucukIcon = false;
+          } else if (newDose === '2_titis_telinga' || newDose === 'titis_telinga') {
+            r.customDoseText = "2 Titis";
+            r.useCucukIcon = false;
+          } else if (newDose === '3_titis_telinga') {
+            r.customDoseText = "3 Titis";
+            r.useCucukIcon = false;
+          } else if (newDose === '1_titis_hidung' || newDose === 'titis_hidung') {
+            r.customDoseText = "1 Titis";
+            r.useCucukIcon = false;
+          } else if (newDose === '2_titis_hidung') {
+            r.customDoseText = "2 Titis";
+            r.useCucukIcon = false;
+          } else if (newDose === 'sapu') {
+            r.customDoseText = "Sapu Nipis";
+            r.useCucukIcon = false;
+          } else if (newDose === 'plaster') {
+            r.customDoseText = "1 Keping";
+            r.useCucukIcon = false;
+          } else if (newDose === 'cucuk') {
+            r.customDoseText = r.customDoseText || "10";
+            r.useCucukIcon = true;
+          } else if (newDose === 'free') {
+            r.customDoseText = r.customDoseText || "";
+            r.useCucukIcon = false;
+          } else {
+            r.customDoseText = "";
+            r.useCucukIcon = false;
+          }
+        });
+        renderDynamicRowCustomizer();
+        updatePreview();
+      });
+
+      const textInput = rowCard.querySelector(".row-dose-text-input");
+      if (textInput) {
+        textInput.addEventListener("input", (e) => {
+          state.schedule.forEach(r => r.customDoseText = e.target.value);
+          updatePreview();
+        });
+      }
+
+      const iconCheckbox = rowCard.querySelector(".row-dose-icon-checkbox");
+      if (iconCheckbox) {
+        iconCheckbox.addEventListener("change", (e) => {
+          state.schedule.forEach(r => r.useCucukIcon = e.target.checked);
+          updatePreview();
+        });
+      }
+
+    } else {
+      // CARDS 2+: HANYA PILIH WAKTU (DAN MAKAN JIKA ORAL) - TIADA ARAHAN DOS / SAPUAN BERULANG
+      rowCard.innerHTML = `
+        <h4 style="font-size: 14px; margin-bottom: 12px; color: var(--color-primary); font-weight: 700;">📅 Waktu Pengambilan ${index + 1}</h4>
+        
+        <!-- Time select -->
+        <div class="form-group" style="margin-bottom: ${mealSelectHTML ? '12px' : '0'};">
+          <label style="font-size: 11.5px;">Waktu ${index + 1}</label>
+          <select class="custom-select row-time-select" data-row-idx="${index}">
+            <option value="pagi" ${row.timing === 'pagi' ? 'selected' : ''}>Pagi</option>
+            <option value="tengah_hari" ${row.timing === 'tengah_hari' ? 'selected' : ''}>Tengah Hari</option>
+            <option value="petang" ${row.timing === 'petang' ? 'selected' : ''}>Petang</option>
+            <option value="malam" ${row.timing === 'malam' ? 'selected' : ''}>Malam</option>
+            <option value="bila_perlu" ${row.timing === 'bila_perlu' ? 'selected' : ''}>Bila Perlu</option>
+          </select>
+        </div>
+
+        ${mealSelectHTML}
+      `;
+    }
+
+    // Time select listener
     rowCard.querySelector(".row-time-select").addEventListener("change", (e) => {
       state.schedule[index].timing = e.target.value;
       updatePreview();
     });
 
+    // Meal select listener (if present)
     const mealSelect = rowCard.querySelector(".row-meal-select");
     if (mealSelect) {
       mealSelect.addEventListener("change", (e) => {
         state.schedule[index].meal = e.target.value;
-        updatePreview();
-      });
-    }
-
-    const textInput = rowCard.querySelector(".row-dose-text-input");
-    if (textInput) {
-      textInput.addEventListener("input", (e) => {
-        state.schedule[index].customDoseText = e.target.value;
-        updatePreview();
-      });
-    }
-
-    const iconCheckbox = rowCard.querySelector(".row-dose-icon-checkbox");
-    if (iconCheckbox) {
-      iconCheckbox.addEventListener("change", (e) => {
-        state.schedule[index].useCucukIcon = e.target.checked;
         updatePreview();
       });
     }
