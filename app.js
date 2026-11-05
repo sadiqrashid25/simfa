@@ -2542,6 +2542,123 @@ function bindInputListeners() {
     }
   });
 
+  // Carian Pantas Ubat (Taip 2-3 huruf terus cari)
+  const searchInput = document.getElementById("preset-search-input");
+  const searchResults = document.getElementById("preset-search-results");
+  const clearSearchBtn = document.getElementById("btn-clear-search");
+  let activeSearchIdx = -1;
+
+  if (searchInput && searchResults) {
+    function renderSearchMatches(query) {
+      const q = query.trim().toLowerCase();
+      if (clearSearchBtn) {
+        clearSearchBtn.style.display = q.length > 0 ? "block" : "none";
+      }
+      if (q.length < 1) {
+        searchResults.classList.add("hidden");
+        searchResults.innerHTML = "";
+        activeSearchIdx = -1;
+        return;
+      }
+
+      const allKeys = Object.keys(PRESETS).filter(k => PRESETS[k] && PRESETS[k].medicineName);
+      // Susun: yang bermula dengan huruf carian diutamakan, diikuti yang mengandungi huruf carian
+      const startsWithMatches = [];
+      const containsMatches = [];
+
+      allKeys.forEach(k => {
+        const name = PRESETS[k].medicineName;
+        const lower = name.toLowerCase();
+        if (lower.startsWith(q)) {
+          startsWithMatches.push({ key: k, name });
+        } else if (lower.includes(q)) {
+          containsMatches.push({ key: k, name });
+        }
+      });
+
+      startsWithMatches.sort((a, b) => a.name.localeCompare(b.name));
+      containsMatches.sort((a, b) => a.name.localeCompare(b.name));
+      const matches = [...startsWithMatches, ...containsMatches];
+
+      if (matches.length === 0) {
+        searchResults.innerHTML = `<div class="preset-search-empty">Tiada ubat dijumpai untuk "${query}"</div>`;
+        searchResults.classList.remove("hidden");
+        activeSearchIdx = -1;
+        return;
+      }
+
+      const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedQ})`, 'ig');
+
+      searchResults.innerHTML = matches.map((m, idx) => {
+        const highlighted = m.name.replace(regex, '<mark>$1</mark>');
+        return `<div class="preset-search-item ${idx === 0 ? 'active' : ''}" data-preset-key="${m.key}" data-idx="${idx}">${highlighted}</div>`;
+      }).join("");
+
+      activeSearchIdx = 0;
+      searchResults.classList.remove("hidden");
+
+      searchResults.querySelectorAll(".preset-search-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const key = item.dataset.presetKey;
+          presetDropdown.value = key;
+          presetDropdown.dispatchEvent(new Event("change"));
+          searchInput.value = PRESETS[key].medicineName;
+          searchResults.classList.add("hidden");
+        });
+      });
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      renderSearchMatches(e.target.value);
+    });
+
+    searchInput.addEventListener("focus", (e) => {
+      if (e.target.value.trim().length >= 1) {
+        renderSearchMatches(e.target.value);
+      }
+    });
+
+    searchInput.addEventListener("keydown", (e) => {
+      const items = searchResults.querySelectorAll(".preset-search-item");
+      if (searchResults.classList.contains("hidden") || items.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeSearchIdx = (activeSearchIdx + 1) % items.length;
+        items.forEach((el, i) => el.classList.toggle("active", i === activeSearchIdx));
+        items[activeSearchIdx].scrollIntoView({ block: "nearest" });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeSearchIdx = (activeSearchIdx - 1 + items.length) % items.length;
+        items.forEach((el, i) => el.classList.toggle("active", i === activeSearchIdx));
+        items[activeSearchIdx].scrollIntoView({ block: "nearest" });
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeSearchIdx >= 0 && items[activeSearchIdx]) {
+          items[activeSearchIdx].click();
+        }
+      } else if (e.key === "Escape") {
+        searchResults.classList.add("hidden");
+      }
+    });
+
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        clearSearchBtn.style.display = "none";
+        searchResults.classList.add("hidden");
+        searchInput.focus();
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target) && e.target !== clearSearchBtn) {
+        searchResults.classList.add("hidden");
+      }
+    });
+  }
+
   // Action buttons
   document.getElementById("btn-print").addEventListener("click", () => {
     window.print();
@@ -3324,6 +3441,13 @@ function resetForm() {
   if (medNameInput) {
     medNameInput.value = "";
   }
+  const searchInput = document.getElementById("preset-search-input");
+  const clearSearchBtn = document.getElementById("btn-clear-search");
+  const searchResults = document.getElementById("preset-search-results");
+  if (searchInput) searchInput.value = "";
+  if (clearSearchBtn) clearSearchBtn.style.display = "none";
+  if (searchResults) searchResults.classList.add("hidden");
+
   document.getElementById("medication-preset").value = "custom";
   document.getElementById("schedule-rows-count").value = "1";
 

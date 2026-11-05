@@ -230,7 +230,16 @@
         <div class="config-card">
           <div class="config-card-inner">
             <h3 class="card-title"><span class="icon">💊</span>Pilih Ubat (Preset)</h3>
-            <div class="form-group">
+            <div class="form-group preset-search-wrapper" style="position: relative; margin-bottom: 10px;">
+              <label for="preset-search-input" style="font-size: 11.5px; color: var(--color-primary); font-weight: 600;">🔍 Carian Pantas (Taip 2–3 huruf)</label>
+              <div style="position: relative; display: flex; align-items: center;">
+                <input type="text" id="preset-search-input" class="custom-select" placeholder="Contoh: par, aml, met, sal, bet..." autocomplete="off" style="padding-right: 32px; background-image: none; cursor: text;">
+                <button type="button" id="btn-clear-search" title="Kosongkan carian" style="display: none; position: absolute; right: 8px; background: none; border: none; font-size: 14px; color: #64748b; cursor: pointer; padding: 4px;">✕</button>
+              </div>
+              <div id="preset-search-results" class="preset-search-results hidden"></div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="medication-preset" style="font-size: 11.5px;">Senarai Penuh Ubat</label>
               <select id="medication-preset" class="custom-select">
                 <option value="custom">-- Pilihan Custom --</option>
               </select>
