@@ -210,11 +210,12 @@ async function simfaResetPassword(email) {
 // --------------------------------------------------------------------------
 // 3. CENTRALIZED AUDIT LOG MANAGEMENT (CLOUD FIRESTORE + LOCAL STORAGE)
 // --------------------------------------------------------------------------
-async function simfaRecordAuditLog(email, action) {
+async function simfaRecordAuditLog(email, action, details = "") {
   const now = new Date();
   const logEntry = {
-    email: email,
-    action: action, // 'Log Masuk' | 'Log Keluar' | dsb.
+    email: email || "Anonymous",
+    action: action, // 'Log Masuk' | 'Log Keluar' | 'Cetak Label' | 'Pilih Ubat' | 'Daftar Akaun'
+    details: details || "-",
     timestamp: now.toISOString(),
     datetime: now.toLocaleString('ms-MY', {
       timeZone: 'Asia/Kuala_Lumpur',
@@ -224,35 +225,37 @@ async function simfaRecordAuditLog(email, action) {
   };
 
   // Local Storage Backup
-  const logs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
-  logs.unshift(logEntry);
-  if (logs.length > 500) logs.splice(500);
-  localStorage.setItem('simfa_audit_log', JSON.stringify(logs));
+  try {
+    const logs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
+    logs.unshift(logEntry);
+    if (logs.length > 500) logs.splice(500);
+    localStorage.setItem('simfa_audit_log', JSON.stringify(logs));
+  } catch (e) {}
 
-  // Simpan ke Cloud Firestore (Semua fasiliti kongsi satu rekod berpusat)
+  // Simpan terus ke Cloud Firestore (Semua fasiliti berkongsi pangkalan data berpusat yang sama)
   if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.firestore) {
     try {
       await firebase.firestore().collection('audit_logs').add({
         ...logEntry,
         clientIp: "Fasiliti Web",
-        device: navigator.platform || "Web",
+        device: navigator.userAgent || "Web",
         createdServerTime: firebase.firestore.FieldValue.serverTimestamp()
       });
-      console.log("[SiMFa Cloud] Log aktiviti berjaya dihantar ke Cloud Firestore.");
+      console.log("[SiMFa Cloud] Log aktiviti berjaya dihantar ke Cloud Firestore:", action, details);
     } catch (err) {
       console.warn("[Firestore Log Note]:", err.message);
     }
   }
 }
 
-// Dapatkan rekod log aktiviti berpusat dari Cloud Firestore
+// Dapatkan rekod log aktiviti berpusat dari Cloud Firestore (merentas semua pengguna & fasiliti)
 async function simfaFetchCentralAuditLogs() {
   if (isFirebaseInitialized && typeof firebase !== 'undefined' && firebase.firestore) {
     try {
       const snapshot = await firebase.firestore()
         .collection('audit_logs')
         .orderBy('timestamp', 'desc')
-        .limit(100)
+        .limit(500)
         .get();
 
       if (!snapshot.empty) {
@@ -266,15 +269,15 @@ async function simfaFetchCentralAuditLogs() {
       console.warn("[Firestore Fetch Logs Note]:", err.message);
     }
   }
-  // Sandaran lokal
+  // Sandaran lokal jika luar talian
   return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
 }
 
 // Aliases for compatibility
 function getAuditLogs() {
-  return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
+  return simfaFetchCentralAuditLogs();
 }
 
-function recordAuditLog(email, action) {
-  return simfaRecordAuditLog(email, action);
+function recordAuditLog(email, action, details = "") {
+  return simfaRecordAuditLog(email, action, details);
 }

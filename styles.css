@@ -1049,6 +1049,15 @@ select.custom-select:focus {
   height: 100%;
   border-collapse: collapse;
   border: none;
+  table-layout: fixed; /* Kunci lajur supaya lebar setiap waktu sama rata & selaras */
+}
+
+.schedule-table tr {
+  height: 33.333%; /* Bahagikan 3 baris (Dos, Waktu, Makan) dengan ketinggian seragam */
+}
+
+.schedule-table.schedule-table-2rows tr {
+  height: 50%;
 }
 
 .schedule-table td {
@@ -1056,7 +1065,7 @@ select.custom-select:focus {
   border-right: 1.5px solid #000000;
   text-align: center;
   vertical-align: middle;
-  padding: 1mm;
+  padding: 0.6mm 0.5mm;
   box-sizing: border-box;
 }
 
@@ -1092,6 +1101,7 @@ select.custom-select:focus {
   justify-content: center;
   gap: 0.8mm;
   height: 100%;
+  width: 100%;
 }
 
 .table-cell-label {
@@ -1100,9 +1110,13 @@ select.custom-select:focus {
   font-weight: 700;
   color: #000000;
   text-transform: uppercase;
-  letter-spacing: 0.1mm;
+  letter-spacing: 0.05mm;
   margin-top: 0.2mm;
   line-height: 1;
+  white-space: nowrap; /* Elak teks pecah 2 baris yang boleh tolak ikon lari jajaran */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* Crossed out cells */
@@ -1402,10 +1416,16 @@ select.custom-select:focus {
     display: table !important;
     width: 100% !important;
     height: 100% !important;
+    table-layout: fixed !important;
   }
 
   .schedule-table tr {
     display: table-row !important;
+    height: 33.333% !important;
+  }
+
+  .schedule-table.schedule-table-2rows tr {
+    height: 50% !important;
   }
 
   .schedule-table td {
@@ -1414,6 +1434,8 @@ select.custom-select:focus {
     border-right: 1.5px solid #000000 !important;
     text-align: center !important;
     vertical-align: middle !important;
+    padding: 0.6mm 0.5mm !important;
+    box-sizing: border-box !important;
   }
 
   .schedule-table td:last-child {
@@ -1487,9 +1509,13 @@ select.custom-select:focus {
     font-weight: 700 !important;
     color: #000000 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.1mm !important;
+    letter-spacing: 0.05mm !important;
     margin-top: 0.2mm !important;
     line-height: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
   }
 
   .schedule-table td.crossed-out::before,

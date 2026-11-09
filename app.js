@@ -2357,7 +2357,7 @@ function setupAuthFlow() {
   });
 
   btnLogout.addEventListener("click", async () => {
-    recordAuditLog(state.userEmail, 'logout');
+    recordAuditLog(state.userEmail, 'Log Keluar', 'Pengguna log keluar');
     appContainer.classList.add("hidden");
     authContainer.classList.remove("hidden");
     localStorage.removeItem("simfa_active_login");
@@ -2411,7 +2411,7 @@ function transitionToWorkspace(recordLog = true) {
   document.getElementById("user-email-display").textContent = state.userEmail;
   localStorage.setItem("simfa_active_login", "true");
   if (recordLog && typeof recordAuditLog === 'function') {
-    recordAuditLog(state.userEmail, 'login');
+    recordAuditLog(state.userEmail, 'Log Masuk', 'Berjaya log masuk');
   }
   updatePreview();
 }
@@ -2492,6 +2492,9 @@ function bindInputListeners() {
     const presetData = PRESETS[selected];
     if (presetData) {
       state.medicineName = presetData.medicineName;
+      if (typeof recordAuditLog === 'function') {
+        recordAuditLog(state.userEmail, 'Pilih Ubat', presetData.medicineName);
+      }
       state.schedule = presetData.schedule.map(row => ({
         dosage: row.dosage,
         timing: row.timing,
@@ -2668,6 +2671,7 @@ function bindInputListeners() {
 
   // Action buttons
   document.getElementById("btn-print").addEventListener("click", () => {
+    recordAuditLog(state.userEmail, 'Cetak Label', `${state.medicineName || 'Ubat'} (${state.schedule.length} waktu)`);
     window.print();
   });
 
@@ -3627,12 +3631,16 @@ function setupWalkthroughModal() {
 // ==========================================================================
 // AUDIT LOG SYSTEM
 // ==========================================================================
-function recordAuditLog(email, action) {
+function recordAuditLog(email, action, details = "") {
+  if (typeof simfaRecordAuditLog === 'function') {
+    return simfaRecordAuditLog(email, action, details);
+  }
   const logs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
   const now = new Date();
   logs.unshift({
-    email: email,
-    action: action, // 'login' | 'logout'
+    email: email || "Anonymous",
+    action: action,
+    details: details || "-",
     timestamp: now.toISOString(),
     datetime: now.toLocaleString('ms-MY', {
       timeZone: 'Asia/Kuala_Lumpur',
@@ -3640,12 +3648,14 @@ function recordAuditLog(email, action) {
       hour: '2-digit', minute: '2-digit', second: '2-digit'
     })
   });
-  // Keep max 500 records
   if (logs.length > 500) logs.splice(500);
   localStorage.setItem('simfa_audit_log', JSON.stringify(logs));
 }
 
-function getAuditLogs() {
+async function getAuditLogs() {
+  if (typeof simfaFetchCentralAuditLogs === 'function') {
+    return await simfaFetchCentralAuditLogs();
+  }
   return JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
 }
 
@@ -3738,27 +3748,42 @@ function setupActivityLogModal() {
   closeBtnFooter.addEventListener("click", closeModal);
   modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-  // Export CSV
-  btnExport.addEventListener("click", () => {
-    const logs = getAuditLogs();
-    if (logs.length === 0) { alert('Tiada rekod untuk dieksport.'); return; }
-    const header = ['Bil', 'Tarikh & Masa', 'Pengguna', 'Tindakan'];
-    const rows = logs.map((l, i) => [
-      i + 1,
-      l.datetime,
-      l.email,
-      l.action === 'login' ? 'Log Masuk' : 'Log Keluar'
-    ]);
-    const csvContent = [header, ...rows]
-      .map(r => r.map(c => `"${c}"`).join(','))
-      .join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `simfa_log_aktiviti_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  // Export CSV (Tarik semua rekod berpusat dari Cloud Firestore merentas semua peranti)
+  btnExport.addEventListener("click", async () => {
+    const origText = btnExport.textContent;
+    btnExport.textContent = "⏳ Memuat Turun Dari Cloud...";
+    btnExport.disabled = true;
+
+    try {
+      const logs = await getAuditLogs();
+      if (!logs || logs.length === 0) {
+        alert('Tiada rekod aktiviti untuk dieksport.');
+        return;
+      }
+      const header = ['Bil', 'Tarikh & Masa', 'Pengguna (E-mel)', 'Tindakan / Aktiviti', 'Perincian Ubat'];
+      const rows = logs.map((l, i) => [
+        i + 1,
+        l.datetime || l.timestamp || '-',
+        l.email || '-',
+        l.action || '-',
+        l.details || '-'
+      ]);
+      const csvContent = "\uFEFF" + [header, ...rows]
+        .map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
+        .join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `simfa_log_aktiviti_pusat_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("Ralat semasa mengeksport CSV: " + err.message);
+    } finally {
+      btnExport.textContent = origText;
+      btnExport.disabled = false;
+    }
   });
 
   // Clear all logs
@@ -3774,8 +3799,8 @@ function renderActivityLogTable() {
   const tbody = document.getElementById('activity-log-tbody');
   
   // Render serta-merta daripada log lokal dahulu
-  let logs = getAuditLogs();
-  updateTableRows(logs);
+  let localLogs = JSON.parse(localStorage.getItem('simfa_audit_log') || '[]');
+  updateTableRows(localLogs);
 
   // Kemudian tarik log berpusat daripada Firebase Firestore secara masa nyata (Cloud)
   if (typeof simfaFetchCentralAuditLogs === 'function') {
@@ -3789,20 +3814,38 @@ function renderActivityLogTable() {
   function updateTableRows(logList) {
     if (!tbody) return;
     if (!logList || logList.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--color-text-muted); padding:32px;">⚠️ Tiada rekod aktiviti ditemui.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--color-text-muted); padding:32px;">⚠️ Tiada rekod aktiviti ditemui.</td></tr>';
       return;
     }
 
     tbody.innerHTML = logList.map((log, idx) => {
-      const isLogin = (log.action || '').toLowerCase().includes('masuk') || log.action === 'login';
-      const badge = isLogin
-        ? `<span class="log-badge-login">▲ ${log.action === 'login' ? 'Log Masuk' : log.action}</span>`
-        : `<span class="log-badge-logout">▼ ${log.action === 'logout' ? 'Log Keluar' : log.action}</span>`;
+      const act = (log.action || '').toLowerCase();
+      let badgeStyle = "background:#E2E8F0; color:#334155;";
+      let badgeText = log.action || '-';
+
+      if (act.includes('cetak') || act.includes('print')) {
+        badgeStyle = "background:#DBEAFE; color:#1D4ED8; font-weight:700;";
+        badgeText = `🖨️ ${log.action}`;
+      } else if (act.includes('masuk') || act === 'login') {
+        badgeStyle = "background:#DCFCE7; color:#15803D; font-weight:700;";
+        badgeText = `▲ ${log.action === 'login' ? 'Log Masuk' : log.action}`;
+      } else if (act.includes('keluar') || act === 'logout') {
+        badgeStyle = "background:#FEE2E2; color:#B91C1C;";
+        badgeText = `▼ ${log.action === 'logout' ? 'Log Keluar' : log.action}`;
+      } else if (act.includes('pilih') || act.includes('preset')) {
+        badgeStyle = "background:#E0F2FE; color:#0369A1;";
+        badgeText = `📋 ${log.action}`;
+      } else if (act.includes('daftar')) {
+        badgeStyle = "background:#F3E8FF; color:#7E22CE; font-weight:700;";
+        badgeText = `✨ ${log.action}`;
+      }
+
       return `<tr>
         <td style="font-weight:600; color:var(--color-text-muted); font-size:12px;">${idx + 1}</td>
-        <td style="font-family:'Inter',monospace; font-size:13px;">${log.datetime || log.timestamp}</td>
-        <td style="font-weight:600; color:var(--color-primary);">${log.email}</td>
-        <td>${badge}</td>
+        <td style="font-family:'Inter',monospace; font-size:12.5px; white-space:nowrap;">${log.datetime || log.timestamp || '-'}</td>
+        <td style="font-weight:600; color:var(--color-primary); font-size:13px;">${log.email || '-'}</td>
+        <td><span style="display:inline-block; padding:3px 8px; border-radius:6px; font-size:11.5px; ${badgeStyle}">${badgeText}</span></td>
+        <td style="font-size:12px; color:var(--color-text-main); max-width:220px; word-break:break-word;">${log.details || '-'}</td>
       </tr>`;
     }).join('');
   }
