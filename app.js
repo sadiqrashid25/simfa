@@ -165,7 +165,8 @@ const ICONS = {
           <path d="M 25 12 C 25 12, 16 18, 16 26 C 16 31, 20 35, 25 35 C 30 35, 34 31, 34 26 C 34 18, 25 12, 25 12 Z" fill="#FFE082" opacity="0.4" stroke="#263238" stroke-width="2" />
           <path d="M 10 26 L 18 26 L 21 17 L 25 33 L 28 23 L 31 26 L 40 26" stroke="#D32F2F" stroke-width="2.5" />
         </g>
-      </svg>`
+      </svg>`,
+      inhalerSvg: `<img class="table-time-svg" src="icons/PENAT.svg" alt="Bila Perlu">`
     },
     "sebelum": {
       label: "Sebelum Makan – ambil sebelum makan",
@@ -859,7 +860,20 @@ const PRESETS = {
     ]
   },
   salbutamol_100: {
-    "medicineName": "SALBUTAMOL 100mcg/dose Inhalation",
+    "medicineName": "SALBUTAMOL 100mcg/dose MDI Inhalation",
+    "schedule": [
+      {
+        "dosage": "2_sedut",
+        "timing": "bila_perlu",
+        "customDoseText": "2 Sedutan"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  berodual_mdi: {
+    "medicineName": "FENOTEROL / IPRATROPIUM (Berodual) MDI Inhaler",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -895,6 +909,24 @@ const PRESETS = {
       {
         "dosage": "1_sedut",
         "timing": "malam",
+        "customDoseText": "1 Sedutan"
+      },
+      {
+        "dosage": "1_sedut",
+        "timing": "bila_perlu",
+        "customDoseText": "1 Sedutan"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  symbicort_prn: {
+    "medicineName": "BUDESONIDE / FORMOTEROL (Symbicort) Inhaler (Bila Perlu)",
+    "schedule": [
+      {
+        "dosage": "1_sedut",
+        "timing": "bila_perlu",
         "customDoseText": "1 Sedutan"
       }
     ],
@@ -2752,7 +2784,7 @@ function getMedicineCategory(medName, firstDose) {
   if (n.includes('EYE') || n.includes('MATA') || d.includes('mata')) return 'eye';
   if (n.includes('EAR') || n.includes('TELINGA') || n.includes('OTIC') || d.includes('telinga')) return 'ear';
   if (n.includes('NASAL') || n.includes('HIDUNG') || n.includes('SPRAY') || d.includes('sembur') || d.includes('hidung')) return 'nasal';
-  if (n.includes('INHAL') || n.includes('MDI') || n.includes('SEDUT') || n.includes('SALBUTAMOL') || n.includes('SYMBICORT') || n.includes('SERETIDE') || n.includes('IPRATROPIUM') || n.includes('AEROHALER') || n.includes('TURBUHALER') || d.includes('sedut')) return 'inhaler';
+  if (n.includes('INHAL') || n.includes('MDI') || n.includes('SEDUT') || (n.includes('SALBUTAMOL') && !n.includes('TABLET')) || n.includes('BERODUAL') || n.includes('FENOTEROL') || n.includes('SYMBICORT') || n.includes('SERETIDE') || n.includes('IPRATROPIUM') || n.includes('AEROHALER') || n.includes('TURBUHALER') || d.includes('sedut')) return 'inhaler';
   if (n.includes('CREAM') || n.includes('KRIM') || n.includes('OINTMENT') || n.includes('SALAP') || n.includes('LOTION') || n.includes('GEL') || n.includes('EMULSION') || d === 'sapu') return 'topical';
   if (n.includes('PATCH') || n.includes('PLASTER') || n.includes('PELEKAT') || d === 'plaster') return 'patch';
   if (n.includes('GUM')) return 'gum';
@@ -3069,7 +3101,11 @@ function updatePreview() {
       state.medicineName.toUpperCase().includes("OINTMENT") ||
       state.medicineName.toUpperCase().includes("KRIM") ||
       state.medicineName.toUpperCase().includes("SALAP") ||
-      state.medicineName.toUpperCase().includes("SALBUTAMOL") ||
+      (state.medicineName.toUpperCase().includes("SALBUTAMOL") && !state.medicineName.toUpperCase().includes("TABLET")) ||
+      state.medicineName.toUpperCase().includes("BERODUAL") ||
+      state.medicineName.toUpperCase().includes("SYMBICORT") ||
+      state.medicineName.toUpperCase().includes("SERETIDE") ||
+      state.medicineName.toUpperCase().includes("MDI") ||
       state.medicineName.toUpperCase().includes("GUM")
     ));
   const hideMeal = isGTN || isNonOral;
@@ -3206,9 +3242,25 @@ function updatePreview() {
     
     const timeObj = ICONS.timing[activeEntry.timing];
     if (timeObj) {
+      const medUpper = (state.medicineName || "").toUpperCase();
+      const isInhalerDose = ['1_sedut', '2_sedut', 'sedut', 'dua_sedut'].includes(activeEntry.dosage);
+      const isPenatInhaler = (
+        isInhalerDose ||
+        medUpper.includes("INHAL") ||
+        medUpper.includes("MDI") ||
+        medUpper.includes("BERODUAL") ||
+        medUpper.includes("FENOTEROL") ||
+        medUpper.includes("SYMBICORT") ||
+        medUpper.includes("FORMOTEROL") ||
+        medUpper.includes("SALBUTAMOL")
+      ) && !medUpper.includes("TABLET");
+      const timeSvgHtml = (activeEntry.timing === "bila_perlu" && isPenatInhaler && timeObj.inhalerSvg)
+        ? timeObj.inhalerSvg
+        : timeObj.svg;
+
       tdTime.innerHTML = `
         <div class="table-cell-content">
-          ${timeObj.svg}
+          ${timeSvgHtml}
           <span class="table-cell-label">${timeObj.label}</span>
         </div>
       `;

@@ -583,7 +583,20 @@
     ]
   },
   "salbutamol_100": {
-    "medicineName": "SALBUTAMOL 100mcg/dose Inhalation",
+    "medicineName": "SALBUTAMOL 100mcg/dose MDI Inhalation",
+    "schedule": [
+      {
+        "dosage": "2_sedut",
+        "timing": "bila_perlu",
+        "customDoseText": "2 Sedutan"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  "berodual_mdi": {
+    "medicineName": "FENOTEROL / IPRATROPIUM (Berodual) MDI Inhaler",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -619,6 +632,24 @@
       {
         "dosage": "1_sedut",
         "timing": "malam",
+        "customDoseText": "1 Sedutan"
+      },
+      {
+        "dosage": "1_sedut",
+        "timing": "bila_perlu",
+        "customDoseText": "1 Sedutan"
+      }
+    ],
+    "warnings": [
+      "kanak"
+    ]
+  },
+  "symbicort_prn": {
+    "medicineName": "BUDESONIDE / FORMOTEROL (Symbicort) Inhaler (Bila Perlu)",
+    "schedule": [
+      {
+        "dosage": "1_sedut",
+        "timing": "bila_perlu",
         "customDoseText": "1 Sedutan"
       }
     ],
