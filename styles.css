@@ -1099,7 +1099,7 @@ select.custom-select:focus {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.8mm;
+  gap: 0.4mm;
   height: 100%;
   width: 100%;
 }
@@ -1480,18 +1480,23 @@ select.custom-select:focus {
   .schedule-table-1col:not(.schedule-table-2rows) .table-time-svg,
   .schedule-table-1col:not(.schedule-table-2rows) .table-bila-perlu-svg,
   .schedule-table-1col:not(.schedule-table-2rows) .table-meal-svg {
-    width: 13.5mm !important;
-    height: 13.5mm !important;
+    width: 11mm !important;
+    height: 11mm !important;
     max-width: 95% !important;
     max-height: 95% !important;
     object-fit: contain !important;
   }
 
-  .schedule-table-2rows .table-cell-label,
-  .schedule-table-1col .table-cell-label {
+  .schedule-table-2rows .table-cell-label {
     font-size: 8.5px !important;
     font-weight: 800 !important;
     letter-spacing: 0.2mm !important;
+  }
+
+  .schedule-table:not(.schedule-table-2rows) .table-cell-label {
+    font-size: 7.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05mm !important;
   }
 
   .table-cell-content {
@@ -1499,7 +1504,7 @@ select.custom-select:focus {
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 0.8mm !important;
+    gap: 0.4mm !important;
     height: 100% !important;
   }
 
@@ -2022,23 +2027,28 @@ select.custom-select:focus {
   object-fit: contain !important;
 }
 
-/* Jadual 1 lajur biasa (3 baris: ada Makan): besarkan sedikit ikon masa & makan */
+/* Jadual 1 lajur biasa (3 baris: ada Makan): saiz 11mm supaya label Makan tidak terkeluar/terpotong */
 .schedule-table-1col:not(.schedule-table-2rows) .table-time-svg,
 .schedule-table-1col:not(.schedule-table-2rows) .table-bila-perlu-svg,
 .schedule-table-1col:not(.schedule-table-2rows) .table-meal-svg {
-  width: 13.5mm !important;
-  height: 13.5mm !important;
+  width: 11mm !important;
+  height: 11mm !important;
   max-width: 95% !important;
   max-height: 95% !important;
   object-fit: contain !important;
 }
 
-/* Besarkan teks label BILA PERLU pada jadual 1 lajur / 2 baris */
-.schedule-table-2rows .table-cell-label,
-.schedule-table-1col .table-cell-label {
+/* Besarkan teks label BILA PERLU pada jadual 2 baris sahaja */
+.schedule-table-2rows .table-cell-label {
   font-size: 8.5px !important;
   font-weight: 800 !important;
   letter-spacing: 0.2mm !important;
+}
+
+.schedule-table:not(.schedule-table-2rows) .table-cell-label {
+  font-size: 7.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05mm !important;
 }
 
 /* Besarkan khas ikon Nasal Spray supaya jelas dan memenuhi sel */
