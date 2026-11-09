@@ -1,5 +1,5 @@
 // SiMFa Designer - Service Worker for Offline PWA
-const CACHE_NAME = 'simfa-designer-v12';
+const CACHE_NAME = 'simfa-designer-v13';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -8,7 +8,8 @@ const ASSETS_TO_CACHE = [
   '/templates.json',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  '/simfa_logo_circle.png'
 ];
 
 // Install: Cache all critical assets
