@@ -171,7 +171,8 @@ const ICONS = {
         </g>
       </svg>`,
       inhalerSvg: `<img class="table-time-svg" src="icons/PENAT.svg" alt="Bila Perlu">`,
-      eyeDropSvg: `<img class="table-time-svg" src="icons/MATA_MERAH.svg" alt="Bila Perlu">`
+      eyeDropSvg: `<img class="table-time-svg" src="icons/MATA_MERAH.svg" alt="Bila Perlu">`,
+      painSvg: `<img class="table-time-svg" src="icons/BACK_PAIN.svg" alt="Bila Perlu">`
     },
     "sebelum": {
       label: "Sebelum Makan – ambil sebelum makan",
@@ -2504,8 +2505,19 @@ function bindInputListeners() {
   }
 
   rowsDropdown.addEventListener("change", (e) => {
-    const rowCount = parseInt(e.target.value);
-    adjustScheduleRowsCount(rowCount);
+    const val = e.target.value;
+    if (val === "bila_perlu") {
+      adjustScheduleRowsCount(1);
+      if (state.schedule[0]) {
+        state.schedule[0].timing = "bila_perlu";
+      }
+    } else {
+      const rowCount = parseInt(val);
+      adjustScheduleRowsCount(rowCount);
+      if (state.schedule[0] && state.schedule[0].timing === "bila_perlu") {
+        state.schedule[0].timing = "pagi";
+      }
+    }
     renderDynamicRowCustomizer();
     updatePreview();
   });
@@ -2533,7 +2545,11 @@ function bindInputListeners() {
       }
 
       // Update Row count dropdown
-      rowsDropdown.value = state.schedule.length;
+      if (state.schedule.length === 1 && state.schedule[0].timing === "bila_perlu") {
+        rowsDropdown.value = "bila_perlu";
+      } else {
+        rowsDropdown.value = state.schedule.length.toString();
+      }
 
       // Update warnings highlights
       document.querySelectorAll("#warnings-selector .selector-item").forEach(c => {
@@ -3074,6 +3090,14 @@ function renderDynamicRowCustomizer() {
     // Time select listener
     rowCard.querySelector(".row-time-select").addEventListener("change", (e) => {
       state.schedule[index].timing = e.target.value;
+      const rowsDropdown = document.getElementById("schedule-rows-count");
+      if (rowsDropdown && state.schedule.length === 1) {
+        if (e.target.value === 'bila_perlu') {
+          rowsDropdown.value = 'bila_perlu';
+        } else {
+          rowsDropdown.value = '1';
+        }
+      }
       updatePreview();
     });
 
@@ -3088,6 +3112,15 @@ function renderDynamicRowCustomizer() {
 
     container.appendChild(rowCard);
   });
+
+  const rowsDropdown = document.getElementById("schedule-rows-count");
+  if (rowsDropdown) {
+    if (state.schedule.length === 1 && state.schedule[0] && state.schedule[0].timing === "bila_perlu") {
+      rowsDropdown.value = "bila_perlu";
+    } else {
+      rowsDropdown.value = state.schedule.length.toString();
+    }
+  }
 }
 
 
@@ -3270,12 +3303,35 @@ function updatePreview() {
         medUpper.includes("MATA") ||
         medUpper.includes("OPHTH");
 
+      const isPainkiller = 
+        medUpper.includes("PARACETAMOL") ||
+        medUpper.includes("PCM") ||
+        medUpper.includes("MEFENAMIC") ||
+        medUpper.includes("PONSTAN") ||
+        medUpper.includes("IBUPROFEN") ||
+        medUpper.includes("MELOXICAM") ||
+        medUpper.includes("CELECOXIB") ||
+        medUpper.includes("CELEBREX") ||
+        medUpper.includes("TRAMADOL") ||
+        medUpper.includes("DICLOFENAC") ||
+        medUpper.includes("VOLTAREN") ||
+        medUpper.includes("NAPROXEN") ||
+        medUpper.includes("ETORICOXIB") ||
+        medUpper.includes("ARCOXIA") ||
+        medUpper.includes("KETOPROFEN") ||
+        medUpper.includes("INDOMETHACIN") ||
+        medUpper.includes("TAHAN SAKIT") ||
+        medUpper.includes("PAINKILLER") ||
+        medUpper.includes("ANALGESIC");
+
       let timeSvgHtml = timeObj.svg;
       if (activeEntry.timing === "bila_perlu") {
         if (isPenatInhaler && timeObj.inhalerSvg) {
           timeSvgHtml = timeObj.inhalerSvg;
         } else if (isEyeDrop && timeObj.eyeDropSvg) {
           timeSvgHtml = timeObj.eyeDropSvg;
+        } else if (isPainkiller && timeObj.painSvg) {
+          timeSvgHtml = timeObj.painSvg;
         }
       }
 
