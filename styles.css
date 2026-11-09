@@ -659,6 +659,16 @@ select.custom-select:focus {
   box-shadow: var(--shadow-hover);
 }
 
+.control-panel .config-card:nth-child(1) {
+  z-index: 50;
+}
+.control-panel .config-card:nth-child(2) {
+  z-index: 20;
+}
+.control-panel .config-card:nth-child(3) {
+  z-index: 10;
+}
+
 .control-panel .config-card:nth-child(1)::before {
   background: var(--grad-primary);
 }
@@ -1939,17 +1949,16 @@ select.custom-select:focus {
 /* Live Search Results Dropdown for Presets */
 .preset-search-results {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
-  margin-top: 4px;
-  max-height: 280px;
+  max-height: 320px;
   overflow-y: auto;
   background: #ffffff !important;
   border: 1.5px solid var(--color-primary, #0D47A1);
   border-radius: 8px;
-  box-shadow: 0 12px 28px rgba(13, 71, 161, 0.25);
-  z-index: 99999;
+  box-shadow: 0 16px 36px rgba(13, 71, 161, 0.28), 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999999 !important;
 }
 
 .preset-search-results.hidden {
