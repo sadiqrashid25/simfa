@@ -1073,8 +1073,9 @@ select.custom-select:focus {
 /* Icons inside table cells */
 .table-time-svg,
 .table-meal-svg {
-  width: 10mm;
-  height: 10mm;
+  width: 11.5mm;
+  height: 11.5mm;
+  object-fit: contain;
 }
 .table-dose-svg {
   width: 11.5mm;
@@ -1425,14 +1426,50 @@ select.custom-select:focus {
 
   .table-time-svg,
   .table-meal-svg {
-    width: 10mm !important;
-    height: 10mm !important;
+    width: 11.5mm !important;
+    height: 11.5mm !important;
+    object-fit: contain !important;
   }
   .table-dose-svg {
     width: 11.5mm !important;
     height: 11.5mm !important;
     display: block !important;
     object-fit: contain !important;
+  }
+
+  .schedule-table-2rows .table-time-svg {
+    width: 17mm !important;
+    height: 17mm !important;
+    max-width: 95% !important;
+    max-height: 95% !important;
+    object-fit: contain !important;
+  }
+
+  .schedule-table-1col.schedule-table-2rows .table-time-svg,
+  .schedule-table-1col.schedule-table-2rows .table-bila-perlu-svg,
+  .schedule-table-1col .table-topical-svg {
+    width: 20mm !important;
+    height: 20mm !important;
+    max-width: 95% !important;
+    max-height: 95% !important;
+    object-fit: contain !important;
+  }
+
+  .schedule-table-1col:not(.schedule-table-2rows) .table-time-svg,
+  .schedule-table-1col:not(.schedule-table-2rows) .table-bila-perlu-svg,
+  .schedule-table-1col:not(.schedule-table-2rows) .table-meal-svg {
+    width: 13.5mm !important;
+    height: 13.5mm !important;
+    max-width: 95% !important;
+    max-height: 95% !important;
+    object-fit: contain !important;
+  }
+
+  .schedule-table-2rows .table-cell-label,
+  .schedule-table-1col .table-cell-label {
+    font-size: 8.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.2mm !important;
   }
 
   .table-cell-content {
@@ -1937,6 +1974,45 @@ select.custom-select:focus {
 .schedule-table-2rows .table-cell-content-large-icon .table-dose-svg {
   width: 19.5mm !important;
   height: 19.5mm !important;
+}
+
+/* Besarkan ikon masa dalam jadual 2 baris (topikal, sedut, spray, titis) supaya seimbang dengan dos */
+.schedule-table-2rows .table-time-svg {
+  width: 17mm !important;
+  height: 17mm !important;
+  max-width: 95% !important;
+  max-height: 95% !important;
+  object-fit: contain !important;
+}
+
+/* Khas bila hanya 1 lajur (Bila Perlu / 1 masa sahaja): ruang amat luas, besarkan ikon masa & bila perlu secara maksimum */
+.schedule-table-1col.schedule-table-2rows .table-time-svg,
+.schedule-table-1col.schedule-table-2rows .table-bila-perlu-svg,
+.schedule-table-1col .table-topical-svg {
+  width: 20mm !important;
+  height: 20mm !important;
+  max-width: 95% !important;
+  max-height: 95% !important;
+  object-fit: contain !important;
+}
+
+/* Jadual 1 lajur biasa (3 baris: ada Makan): besarkan sedikit ikon masa & makan */
+.schedule-table-1col:not(.schedule-table-2rows) .table-time-svg,
+.schedule-table-1col:not(.schedule-table-2rows) .table-bila-perlu-svg,
+.schedule-table-1col:not(.schedule-table-2rows) .table-meal-svg {
+  width: 13.5mm !important;
+  height: 13.5mm !important;
+  max-width: 95% !important;
+  max-height: 95% !important;
+  object-fit: contain !important;
+}
+
+/* Besarkan teks label BILA PERLU pada jadual 1 lajur / 2 baris */
+.schedule-table-2rows .table-cell-label,
+.schedule-table-1col .table-cell-label {
+  font-size: 8.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2mm !important;
 }
 
 /* Besarkan khas ikon Nasal Spray supaya jelas dan memenuhi sel */

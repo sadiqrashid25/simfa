@@ -164,17 +164,17 @@ const ICONS = {
     },
     "bila_perlu": {
       label: "Bila Perlu",
-      svg: `<svg class="table-time-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#0D47A1" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M 25 12 C 25 12, 16 18, 16 26 C 16 31, 20 35, 25 35 C 30 35, 34 31, 34 26 C 34 18, 25 12, 25 12 Z" fill="#FFE082" opacity="0.4" stroke="#263238" stroke-width="2" />
-          <path d="M 10 26 L 18 26 L 21 17 L 25 33 L 28 23 L 31 26 L 40 26" stroke="#D32F2F" stroke-width="2.5" />
+      svg: `<svg class="table-time-svg table-bila-perlu-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 25 8 C 25 8, 13 17, 13 27 C 13 34, 18 39, 25 39 C 32 39, 37 34, 37 27 C 37 17, 25 8, 25 8 Z" fill="#FFF9C4" stroke="#000000" stroke-width="2.6" />
+          <path d="M 6 27 L 15 27 L 19 15 L 25 39 L 29 23 L 33 27 L 44 27" stroke="#D32F2F" stroke-width="3.8" />
         </g>
       </svg>`,
-      inhalerSvg: `<img class="table-time-svg" src="icons/PENAT.svg" alt="Bila Perlu">`,
-      eyeDropSvg: `<img class="table-time-svg" src="icons/MATA_MERAH.svg" alt="Bila Perlu">`,
-      painSvg: `<img class="table-time-svg" src="icons/BACK_PAIN.svg" alt="Bila Perlu">`,
-      orsSvg: `<img class="table-time-svg" src="icons/SAKIT_PERUT.svg" alt="Bila Perlu">`,
-      topicalSvg: `<img class="table-time-svg" src="icons/KULIT_GATAL.svg" alt="Bila Perlu">`
+      inhalerSvg: `<img class="table-time-svg table-bila-perlu-svg" src="icons/PENAT.svg" alt="Bila Perlu">`,
+      eyeDropSvg: `<img class="table-time-svg table-bila-perlu-svg" src="icons/MATA_MERAH.svg" alt="Bila Perlu">`,
+      painSvg: `<img class="table-time-svg table-bila-perlu-svg" src="icons/BACK_PAIN.svg" alt="Bila Perlu">`,
+      orsSvg: `<img class="table-time-svg table-bila-perlu-svg" src="icons/SAKIT_PERUT.svg" alt="Bila Perlu">`,
+      topicalSvg: `<img class="table-time-svg table-bila-perlu-svg table-topical-svg" src="icons/KULIT_GATAL.svg" alt="Bila Perlu">`
     },
     "sebelum": {
       label: "Sebelum Makan – ambil sebelum makan",
@@ -3153,6 +3153,7 @@ function updatePreview() {
   const table = document.getElementById("label-schedule-table");
   table.innerHTML = "";
   table.classList.toggle("schedule-table-2rows", hideMeal);
+  table.classList.toggle("schedule-table-1col", state.schedule.length === 1);
 
   const trDose = document.createElement("tr");
   const trTime = document.createElement("tr");
