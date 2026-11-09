@@ -1477,9 +1477,9 @@
     "medicineName": "ORAL REHYDRATION SALTS (ORS) Sachet",
     "schedule": [
       {
-        "dosage": "free",
+        "dosage": "bancuh",
         "timing": "bila_perlu",
-        "customDoseText": "1 Bungkus (250ml air)"
+        "customDoseText": "1 Bungkus (Bancuh Air)"
       }
     ],
     "warnings": [

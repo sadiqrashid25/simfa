@@ -117,6 +117,10 @@ const ICONS = {
       label: "Kunyah",
       svg: `<img class="table-dose-svg" src="icons/KUNYAH.svg" alt="Kunyah">`
     },
+    "bancuh": {
+      label: "1 Bungkus (Bancuh Air)",
+      svg: `<img class="table-dose-svg" src="icons/BANCUH.svg" alt="1 Bungkus Bancuh Air">`
+    },
     "cucuk": {
       label: "Cucuk",
       svg: `<svg class="table-dose-svg" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
@@ -1758,9 +1762,9 @@ const PRESETS = {
     "medicineName": "ORAL REHYDRATION SALTS (ORS) Sachet",
     "schedule": [
       {
-        "dosage": "free",
+        "dosage": "bancuh",
         "timing": "bila_perlu",
-        "customDoseText": "1 Bungkus (250ml air)"
+        "customDoseText": "1 Bungkus (Bancuh Air)"
       }
     ],
     "warnings": [
@@ -2781,6 +2785,7 @@ function getMedicineCategory(medName, firstDose) {
   if (n.includes('PATCH') || n.includes('PLASTER') || n.includes('PELEKAT') || d === 'plaster') return 'patch';
   if (n.includes('GUM')) return 'gum';
   if (n.includes('INSULIN') || n.includes('ACTRAPID') || n.includes('INSULATARD') || n.includes('MIXTARD') || n.includes('LANTUS') || n.includes('BASAGLAR') || n.includes('NOVORAPID') || d === 'cucuk') return 'insulin';
+  if (n.includes('ORS') || n.includes('SACHET') || n.includes('BANCUH') || n.includes('SERBUK') || n.includes('POWDER') || d === 'bancuh') return 'sachet';
 
   return 'oral';
 }
@@ -2835,6 +2840,11 @@ function getDosageOptionsHTML(category, currentDosage) {
       { val: 'cucuk', label: 'Unit (Cucuk)' },
       { val: 'free', label: 'Teks Bebas' }
     ];
+  } else if (category === 'sachet') {
+    options = [
+      { val: 'bancuh', label: '1 Bungkus (Bancuh Air)' },
+      { val: 'free', label: 'Teks Bebas' }
+    ];
   } else {
     // Oral / Default (Biji & Tablet Kunyah)
     options = [
@@ -2847,6 +2857,7 @@ function getDosageOptionsHTML(category, currentDosage) {
       { val: '1_half', label: '1 1/2 Biji' },
       { val: '4', label: '4 Biji' },
       { val: 'kunyah', label: 'Kunyah (Tablet Kunyah)' },
+      { val: 'bancuh', label: '1 Bungkus (Bancuh Air)' },
       { val: 'free', label: 'Teks Bebas' }
     ];
   }
@@ -3003,6 +3014,9 @@ function renderDynamicRowCustomizer() {
             r.useCucukIcon = false;
           } else if (newDose === 'kunyah') {
             r.customDoseText = "Kunyah";
+            r.useCucukIcon = false;
+          } else if (newDose === 'bancuh') {
+            r.customDoseText = "1 Bungkus (Bancuh Air)";
             r.useCucukIcon = false;
           } else if (newDose === 'cucuk') {
             r.customDoseText = r.customDoseText || "10";
@@ -3199,6 +3213,9 @@ function updatePreview() {
     } else if (activeEntry.dosage === 'kunyah') {
       doseSvg = ICONS.dosage.kunyah.svg;
       doseLabel = activeEntry.customDoseText || "Kunyah";
+    } else if (activeEntry.dosage === 'bancuh') {
+      doseSvg = ICONS.dosage.bancuh.svg;
+      doseLabel = activeEntry.customDoseText || "1 Bungkus (Bancuh Air)";
     } else if (activeEntry.dosage === 'cucuk') {
       doseSvg = ICONS.dosage.cucuk.svg;
       const val = activeEntry.customDoseText || "";
