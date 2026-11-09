@@ -625,7 +625,7 @@ select.custom-select:focus {
   box-shadow: var(--shadow-card);
   transition: transform var(--transition-bounce), box-shadow var(--transition-normal);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Penting supaya senarai popup carian tidak terpotong */
   margin-bottom: 24px; /* space between cards */
   flex-shrink: 0; /* Prevent layout collapse */
 }
@@ -1943,13 +1943,13 @@ select.custom-select:focus {
   left: 0;
   right: 0;
   margin-top: 4px;
-  max-height: 240px;
+  max-height: 280px;
   overflow-y: auto;
-  background: #ffffff;
+  background: #ffffff !important;
   border: 1.5px solid var(--color-primary, #0D47A1);
   border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(13, 71, 161, 0.18);
-  z-index: 200;
+  box-shadow: 0 12px 28px rgba(13, 71, 161, 0.25);
+  z-index: 99999;
 }
 
 .preset-search-results.hidden {
@@ -1957,13 +1957,17 @@ select.custom-select:focus {
 }
 
 .preset-search-item {
-  padding: 9px 12px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #1e293b;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a !important;
+  background: #ffffff !important;
   cursor: pointer;
-  border-bottom: 1px solid #f1f5f9;
-  transition: background 0.12s;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background 0.12s, color 0.12s;
+  line-height: 1.35;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .preset-search-item:last-child {
@@ -1972,21 +1976,28 @@ select.custom-select:focus {
 
 .preset-search-item:hover,
 .preset-search-item.active {
-  background: #e0f2fe;
-  color: #0D47A1;
+  background: #0D47A1 !important;
+  color: #ffffff !important;
 }
 
 .preset-search-item mark {
   background: #fef08a;
   color: #0f172a;
-  font-weight: 700;
-  padding: 0 2px;
+  font-weight: 800;
+  padding: 1px 3px;
   border-radius: 2px;
 }
 
+.preset-search-item:hover mark,
+.preset-search-item.active mark {
+  background: #fde047;
+  color: #000000;
+}
+
 .preset-search-empty {
-  padding: 10px 12px;
-  font-size: 12.5px;
+  padding: 14px 16px;
+  font-size: 13px;
   color: #64748b;
   text-align: center;
+  background: #ffffff;
 }
