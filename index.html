@@ -11,7 +11,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0A1628">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -252,9 +252,10 @@
             <div class="form-group">
               <label for="schedule-rows-count">Jumlah Waktu Pengambilan Sehari</label>
               <select id="schedule-rows-count" class="custom-select">
-                <option value="1">1 Waktu Sehari</option>
+                <option value="1">1 Waktu Sehari / Bila Perlu</option>
                 <option value="2">2 Waktu Sehari</option>
                 <option value="3">3 Waktu Sehari</option>
+                <option value="4">4 Waktu Sehari</option>
               </select>
             </div>
             <div id="dynamic-rows-container" class="schedule-rows"></div>
@@ -564,7 +565,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
   <script>
     // Register Service Worker for PWA offline support
     if ('serviceWorker' in navigator) {

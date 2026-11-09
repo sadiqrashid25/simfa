@@ -583,7 +583,7 @@
     ]
   },
   "salbutamol_100": {
-    "medicineName": "SALBUTAMOL 100mcg/dose MDI Inhalation",
+    "medicineName": "SALBUTAMOL 100mcg/dose MDI Inhaler",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -596,7 +596,7 @@
     ]
   },
   "berodual_mdi": {
-    "medicineName": "FENOTEROL / IPRATROPIUM (Berodual) MDI Inhaler",
+    "medicineName": "FENOTEROL 50mcg / IPRATROPIUM 20mcg (Berodual) MDI",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -622,7 +622,7 @@
     ]
   },
   "symbicort_160": {
-    "medicineName": "BUDESONIDE / FORMOTEROL (Symbicort) Inhaler",
+    "medicineName": "BUDESONIDE 160mcg / FORMOTEROL 4.5mcg (Symbicort)",
     "schedule": [
       {
         "dosage": "1_sedut",
@@ -633,24 +633,6 @@
         "dosage": "1_sedut",
         "timing": "malam",
         "customDoseText": "1 Sedutan"
-      },
-      {
-        "dosage": "1_sedut",
-        "timing": "bila_perlu",
-        "customDoseText": "1 Sedutan"
-      }
-    ],
-    "warnings": [
-      "kanak"
-    ]
-  },
-  "symbicort_prn": {
-    "medicineName": "BUDESONIDE / FORMOTEROL (Symbicort) Inhaler (Bila Perlu)",
-    "schedule": [
-      {
-        "dosage": "1_sedut",
-        "timing": "bila_perlu",
-        "customDoseText": "1 Sedutan"
       }
     ],
     "warnings": [
@@ -658,7 +640,7 @@
     ]
   },
   "seretide_250": {
-    "medicineName": "FLUTICASONE / SALMETEROL (Seretide) Inhaler",
+    "medicineName": "FLUTICASONE 250mcg / SALMETEROL 50mcg (Seretide)",
     "schedule": [
       {
         "dosage": "1_sedut",
@@ -676,7 +658,7 @@
     ]
   },
   "ipratropium_mdi": {
-    "medicineName": "IPRATROPIUM BROMIDE MDI Inhaler",
+    "medicineName": "IPRATROPIUM BROMIDE 20mcg/dose MDI Inhaler",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -1548,17 +1530,7 @@
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "tengah_hari",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1571,17 +1543,7 @@
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "tengah_hari",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1594,7 +1556,7 @@
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1607,7 +1569,7 @@
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1620,7 +1582,7 @@
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],

@@ -172,6 +172,10 @@ const ICONS = {
       label: "Sebelum Makan – ambil sebelum makan",
       svg: `<img class="table-meal-svg" src="icons/SEBELUM MAKAN VERSI 1.svg" alt="Sebelum Makan – ambil sebelum makan">`
     },
+    "bersama": {
+      label: "Bersama Makanan – ambil bersama makanan",
+      svg: `<img class="table-meal-svg" src="icons/BERSAMA MAKANAN.svg" alt="Bersama Makanan – ambil bersama makanan">`
+    },
     "selepas": {
       label: "Selepas Makan – ambil selepas makan",
       svg: `<img class="table-meal-svg" src="icons/SELEPAS MAKAN VERSI 2.svg" alt="Selepas Makan – ambil selepas makan">`
@@ -860,7 +864,7 @@ const PRESETS = {
     ]
   },
   salbutamol_100: {
-    "medicineName": "SALBUTAMOL 100mcg/dose MDI Inhalation",
+    "medicineName": "SALBUTAMOL 100mcg/dose MDI Inhaler",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -873,7 +877,7 @@ const PRESETS = {
     ]
   },
   berodual_mdi: {
-    "medicineName": "FENOTEROL / IPRATROPIUM (Berodual) MDI Inhaler",
+    "medicineName": "FENOTEROL 50mcg / IPRATROPIUM 20mcg (Berodual) MDI",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -899,7 +903,7 @@ const PRESETS = {
     ]
   },
   symbicort_160: {
-    "medicineName": "BUDESONIDE / FORMOTEROL (Symbicort) Inhaler",
+    "medicineName": "BUDESONIDE 160mcg / FORMOTEROL 4.5mcg (Symbicort)",
     "schedule": [
       {
         "dosage": "1_sedut",
@@ -910,24 +914,6 @@ const PRESETS = {
         "dosage": "1_sedut",
         "timing": "malam",
         "customDoseText": "1 Sedutan"
-      },
-      {
-        "dosage": "1_sedut",
-        "timing": "bila_perlu",
-        "customDoseText": "1 Sedutan"
-      }
-    ],
-    "warnings": [
-      "kanak"
-    ]
-  },
-  symbicort_prn: {
-    "medicineName": "BUDESONIDE / FORMOTEROL (Symbicort) Inhaler (Bila Perlu)",
-    "schedule": [
-      {
-        "dosage": "1_sedut",
-        "timing": "bila_perlu",
-        "customDoseText": "1 Sedutan"
       }
     ],
     "warnings": [
@@ -935,7 +921,7 @@ const PRESETS = {
     ]
   },
   seretide_250: {
-    "medicineName": "FLUTICASONE / SALMETEROL (Seretide) Inhaler",
+    "medicineName": "FLUTICASONE 250mcg / SALMETEROL 50mcg (Seretide)",
     "schedule": [
       {
         "dosage": "1_sedut",
@@ -953,7 +939,7 @@ const PRESETS = {
     ]
   },
   ipratropium_mdi: {
-    "medicineName": "IPRATROPIUM BROMIDE MDI Inhaler",
+    "medicineName": "IPRATROPIUM BROMIDE 20mcg/dose MDI Inhaler",
     "schedule": [
       {
         "dosage": "2_sedut",
@@ -1825,17 +1811,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "tengah_hari",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1848,17 +1824,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "tengah_hari",
-        "meal": "selepas"
-      },
-      {
-        "dosage": "1",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1871,7 +1837,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1884,7 +1850,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -1897,7 +1863,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "1",
-        "timing": "pagi",
+        "timing": "bila_perlu",
         "meal": "selepas"
       }
     ],
@@ -2931,6 +2897,7 @@ function renderDynamicRowCustomizer() {
           <label style="font-size: 11.5px;">Makan</label>
           <select class="custom-select row-meal-select" data-row-idx="${index}">
             <option value="sebelum" ${row.meal === 'sebelum' ? 'selected' : ''}>Sebelum Makan</option>
+            <option value="bersama" ${row.meal === 'bersama' ? 'selected' : ''}>Bersama Makanan</option>
             <option value="selepas" ${row.meal === 'selepas' ? 'selected' : ''}>Selepas Makan</option>
           </select>
         </div>
