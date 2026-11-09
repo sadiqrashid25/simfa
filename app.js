@@ -172,7 +172,8 @@ const ICONS = {
       </svg>`,
       inhalerSvg: `<img class="table-time-svg" src="icons/PENAT.svg" alt="Bila Perlu">`,
       eyeDropSvg: `<img class="table-time-svg" src="icons/MATA_MERAH.svg" alt="Bila Perlu">`,
-      painSvg: `<img class="table-time-svg" src="icons/BACK_PAIN.svg" alt="Bila Perlu">`
+      painSvg: `<img class="table-time-svg" src="icons/BACK_PAIN.svg" alt="Bila Perlu">`,
+      orsSvg: `<img class="table-time-svg" src="icons/SAKIT_PERUT.svg" alt="Bila Perlu">`
     },
     "sebelum": {
       label: "Sebelum Makan – ambil sebelum makan",
@@ -3324,6 +3325,14 @@ function updatePreview() {
         medUpper.includes("PAINKILLER") ||
         medUpper.includes("ANALGESIC");
 
+      const isORS = 
+        medUpper.includes("ORS") ||
+        medUpper.includes("ORAL REHYDRATION") ||
+        medUpper.includes("CHARCOAL") ||
+        medUpper.includes("CIRIT") ||
+        medUpper.includes("DIARRHEA") ||
+        medUpper.includes("PERUT");
+
       let timeSvgHtml = timeObj.svg;
       if (activeEntry.timing === "bila_perlu") {
         if (isPenatInhaler && timeObj.inhalerSvg) {
@@ -3332,6 +3341,8 @@ function updatePreview() {
           timeSvgHtml = timeObj.eyeDropSvg;
         } else if (isPainkiller && timeObj.painSvg) {
           timeSvgHtml = timeObj.painSvg;
+        } else if (isORS && timeObj.orsSvg) {
+          timeSvgHtml = timeObj.orsSvg;
         }
       }
 

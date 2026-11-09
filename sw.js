@@ -1,5 +1,5 @@
 // SiMFa Designer - Service Worker for Offline PWA
-const CACHE_NAME = 'simfa-designer-v11';
+const CACHE_NAME = 'simfa-designer-v12';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
