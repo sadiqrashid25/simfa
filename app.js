@@ -170,7 +170,8 @@ const ICONS = {
           <path d="M 10 26 L 18 26 L 21 17 L 25 33 L 28 23 L 31 26 L 40 26" stroke="#D32F2F" stroke-width="2.5" />
         </g>
       </svg>`,
-      inhalerSvg: `<img class="table-time-svg" src="icons/PENAT.svg" alt="Bila Perlu">`
+      inhalerSvg: `<img class="table-time-svg" src="icons/PENAT.svg" alt="Bila Perlu">`,
+      eyeDropSvg: `<img class="table-time-svg" src="icons/MATA_MERAH.svg" alt="Bila Perlu">`
     },
     "sebelum": {
       label: "Sebelum Makan – ambil sebelum makan",
@@ -3264,9 +3265,19 @@ function updatePreview() {
         medUpper.includes("FORMOTEROL") ||
         medUpper.includes("SALBUTAMOL")
       ) && !medUpper.includes("TABLET");
-      const timeSvgHtml = (activeEntry.timing === "bila_perlu" && isPenatInhaler && timeObj.inhalerSvg)
-        ? timeObj.inhalerSvg
-        : timeObj.svg;
+      const isEyeDrop = ['1_titis_mata', '2_titis_mata', 'titis_mata'].includes(activeEntry.dosage) ||
+        medUpper.includes("EYE") ||
+        medUpper.includes("MATA") ||
+        medUpper.includes("OPHTH");
+
+      let timeSvgHtml = timeObj.svg;
+      if (activeEntry.timing === "bila_perlu") {
+        if (isPenatInhaler && timeObj.inhalerSvg) {
+          timeSvgHtml = timeObj.inhalerSvg;
+        } else if (isEyeDrop && timeObj.eyeDropSvg) {
+          timeSvgHtml = timeObj.eyeDropSvg;
+        }
+      }
 
       tdTime.innerHTML = `
         <div class="table-cell-content">

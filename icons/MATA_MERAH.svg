@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- SiMFa Vector: Sakit Mata / Mata Merah (Bila Perlu Titis Mata) -->
+  <defs>
+    <!-- Clip path to keep veins and iris strictly within eye outline -->
+    <clipPath id="eyeClip">
+      <path d="M 40 310 C 100 180, 200 180, 256 180 C 312 180, 412 180, 472 310 C 412 440, 312 440, 256 440 C 200 440, 100 440, 40 310 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- 3 Lightning / Pain Bolts above eye -->
+  <g stroke="#E53935" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Left bolt -->
+    <path d="M 165 90 L 195 115 L 170 135 L 200 160" />
+    <!-- Center bolt -->
+    <path d="M 264 65 L 254 105 L 272 110 L 252 150" />
+    <!-- Right bolt -->
+    <path d="M 345 85 L 320 115 L 340 125 L 315 160" />
+  </g>
+
+  <!-- Eye Background (Pinkish Red inflamed sclera) -->
+  <path d="M 40 310 C 100 180, 200 180, 256 180 C 312 180, 412 180, 472 310 C 412 440, 312 440, 256 440 C 200 440, 100 440, 40 310 Z"
+        fill="#FFCDD2" stroke="#263238" stroke-width="20" stroke-linejoin="round" />
+
+  <!-- Elements clipped to inside the eye -->
+  <g clip-path="url(#eyeClip)">
+    <!-- Upper eyelid inner skin fold -->
+    <path d="M 30 310 C 100 180, 200 180, 256 180 C 312 180, 412 180, 482 310 C 420 220, 320 215, 256 215 C 192 215, 92 220, 30 310 Z"
+          fill="#FFE0B2" />
+
+    <!-- Red Bloodshot Veins (Left Sclera) -->
+    <g stroke="#E53935" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <!-- Main left branch -->
+      <path d="M 65 315 L 110 325 L 135 305 L 175 320" />
+      <path d="M 110 325 L 90 355" />
+      <!-- Lower left branch -->
+      <path d="M 170 380 L 180 405" />
+      <path d="M 160 395 L 185 395" />
+      <path d="M 250 410 L 260 425 L 275 425" />
+    </g>
+
+    <!-- Red Bloodshot Veins (Right Sclera) -->
+    <g stroke="#E53935" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+      <!-- Main right branch -->
+      <path d="M 445 320 L 405 330 L 380 315 L 340 325" />
+      <path d="M 405 330 L 420 365" />
+      <!-- Lower right branch -->
+      <path d="M 345 380 L 335 405" />
+      <path d="M 355 395 L 330 395" />
+    </g>
+
+    <!-- Blue Iris -->
+    <circle cx="256" cy="310" r="82" fill="#81D4FA" stroke="#263238" stroke-width="14" />
+
+    <!-- Pupil -->
+    <circle cx="256" cy="310" r="38" fill="#263238" />
+
+    <!-- White Light Highlight Dot -->
+    <circle cx="276" cy="290" r="14" fill="#FFFFFF" />
+  </g>
+
+  <!-- Eye outer border re-stroke for sharp crisp edges -->
+  <path d="M 40 310 C 100 180, 200 180, 256 180 C 312 180, 412 180, 472 310 C 412 440, 312 440, 256 440 C 200 440, 100 440, 40 310 Z"
+        fill="none" stroke="#263238" stroke-width="20" stroke-linejoin="round" />
+</svg>
