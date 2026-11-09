@@ -173,7 +173,8 @@ const ICONS = {
       inhalerSvg: `<img class="table-time-svg" src="icons/PENAT.svg" alt="Bila Perlu">`,
       eyeDropSvg: `<img class="table-time-svg" src="icons/MATA_MERAH.svg" alt="Bila Perlu">`,
       painSvg: `<img class="table-time-svg" src="icons/BACK_PAIN.svg" alt="Bila Perlu">`,
-      orsSvg: `<img class="table-time-svg" src="icons/SAKIT_PERUT.svg" alt="Bila Perlu">`
+      orsSvg: `<img class="table-time-svg" src="icons/SAKIT_PERUT.svg" alt="Bila Perlu">`,
+      topicalSvg: `<img class="table-time-svg" src="icons/KULIT_GATAL.svg" alt="Bila Perlu">`
     },
     "sebelum": {
       label: "Sebelum Makan – ambil sebelum makan",
@@ -1037,12 +1038,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "pagi",
-        "customDoseText": "Sapu Nipis"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu Nipis"
       }
     ],
@@ -1055,12 +1051,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "pagi",
-        "customDoseText": "Sapu Nipis"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu Nipis"
       }
     ],
@@ -1073,12 +1064,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "pagi",
-        "customDoseText": "Sapu Nipis"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu Nipis"
       }
     ],
@@ -1091,12 +1077,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "pagi",
-        "customDoseText": "Sapu Nipis"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu Nipis"
       }
     ],
@@ -1109,17 +1090,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "pagi",
-        "customDoseText": "Sapu"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "petang",
-        "customDoseText": "Sapu"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu"
       }
     ],
@@ -1132,12 +1103,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "pagi",
-        "customDoseText": "Sapu"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu"
       }
     ],
@@ -1150,12 +1116,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "pagi",
-        "customDoseText": "Sapu"
-      },
-      {
-        "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu"
       }
     ],
@@ -1194,7 +1155,7 @@ const PRESETS = {
     "schedule": [
       {
         "dosage": "sapu",
-        "timing": "malam",
+        "timing": "bila_perlu",
         "customDoseText": "Sapu Seluruh Badan"
       }
     ],
@@ -3333,12 +3294,31 @@ function updatePreview() {
         medUpper.includes("DIARRHEA") ||
         medUpper.includes("PERUT");
 
+      const isTopical = 
+        !isEyeDrop && (
+          activeEntry.dosage === "sapu" ||
+          medUpper.includes("KRIM") ||
+          medUpper.includes("CREAM") ||
+          medUpper.includes("SALAP") ||
+          medUpper.includes("OINTMENT") ||
+          medUpper.includes("LOTION") ||
+          medUpper.includes("EMULSION") ||
+          medUpper.includes("GEL") ||
+          medUpper.includes("CALAMINE") ||
+          medUpper.includes("EBB") ||
+          medUpper.includes("BENZYL BENZOATE") ||
+          medUpper.includes("AQUEOUS") ||
+          medUpper.includes("GATAL")
+        );
+
       let timeSvgHtml = timeObj.svg;
       if (activeEntry.timing === "bila_perlu") {
         if (isPenatInhaler && timeObj.inhalerSvg) {
           timeSvgHtml = timeObj.inhalerSvg;
         } else if (isEyeDrop && timeObj.eyeDropSvg) {
           timeSvgHtml = timeObj.eyeDropSvg;
+        } else if (isTopical && timeObj.topicalSvg) {
+          timeSvgHtml = timeObj.topicalSvg;
         } else if (isPainkiller && timeObj.painSvg) {
           timeSvgHtml = timeObj.painSvg;
         } else if (isORS && timeObj.orsSvg) {
