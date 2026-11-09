@@ -229,18 +229,16 @@
         <!-- Block 1: Presets -->
         <div class="config-card">
           <div class="config-card-inner">
-            <h3 class="card-title"><span class="icon">💊</span>Pilih Ubat (Preset)</h3>
-            <div class="form-group preset-search-wrapper" style="position: relative; margin-bottom: 10px;">
-              <label for="preset-search-input" style="font-size: 11.5px; color: var(--color-primary); font-weight: 600;">🔍 Carian Pantas (Taip 2–3 huruf)</label>
+            <h3 class="card-title"><span class="icon">💊</span>Carian Ubat</h3>
+            <div class="form-group preset-search-wrapper" style="position: relative; margin-bottom: 0;">
               <div style="position: relative; display: flex; align-items: center;">
-                <input type="text" id="preset-search-input" class="custom-select" placeholder="Contoh: par, aml, met, sal, bet..." autocomplete="off" style="padding-right: 32px; background-image: none; cursor: text;">
+                <input type="text" id="preset-search-input" class="custom-select" placeholder="🔍 Taip nama ubat atau klik untuk pilih..." autocomplete="off" style="padding-right: 56px; background-image: none; cursor: pointer;">
+                <button type="button" id="btn-toggle-preset-list" title="Buka senarai ubat" style="position: absolute; right: 28px; background: none; border: none; font-size: 11px; color: #64748b; cursor: pointer; padding: 4px;">▼</button>
                 <button type="button" id="btn-clear-search" title="Kosongkan carian" style="display: none; position: absolute; right: 8px; background: none; border: none; font-size: 14px; color: #64748b; cursor: pointer; padding: 4px;">✕</button>
               </div>
               <div id="preset-search-results" class="preset-search-results hidden"></div>
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-              <label for="medication-preset" style="font-size: 11.5px;">Senarai Penuh Ubat</label>
-              <select id="medication-preset" class="custom-select">
+              <!-- Hidden select to keep existing preset logic & template import/export completely functional -->
+              <select id="medication-preset" class="custom-select" style="display: none;">
                 <option value="custom">-- Pilihan Custom --</option>
               </select>
             </div>
@@ -566,7 +564,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
   <script>
     // Register Service Worker for PWA offline support
     if ('serviceWorker' in navigator) {

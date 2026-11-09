@@ -2574,43 +2574,46 @@ function bindInputListeners() {
     }
   });
 
-  // Carian Pantas Ubat (Taip 2-3 huruf terus cari)
+  // Carian Ubat (Search-as-you-type & Dropdown bersepadu)
   const searchInput = document.getElementById("preset-search-input");
   const searchResults = document.getElementById("preset-search-results");
   const clearSearchBtn = document.getElementById("btn-clear-search");
+  const togglePresetBtn = document.getElementById("btn-toggle-preset-list");
   let activeSearchIdx = -1;
 
   if (searchInput && searchResults) {
-    function renderSearchMatches(query) {
+    function renderSearchMatches(query = "") {
       const q = query.trim().toLowerCase();
       if (clearSearchBtn) {
-        clearSearchBtn.style.display = q.length > 0 ? "block" : "none";
-      }
-      if (q.length < 1) {
-        searchResults.classList.add("hidden");
-        searchResults.innerHTML = "";
-        activeSearchIdx = -1;
-        return;
+        clearSearchBtn.style.display = query.length > 0 ? "block" : "none";
       }
 
       const allKeys = Object.keys(PRESETS).filter(k => PRESETS[k] && PRESETS[k].medicineName);
-      // Susun: yang bermula dengan huruf carian diutamakan, diikuti yang mengandungi huruf carian
-      const startsWithMatches = [];
-      const containsMatches = [];
+      
+      let matches = [];
+      if (q.length === 0) {
+        // Tunjukkan semua ubat tersusun ikut abjad jika kosong / bila klik anak panah
+        matches = allKeys
+          .map(k => ({ key: k, name: PRESETS[k].medicineName }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+      } else {
+        const startsWithMatches = [];
+        const containsMatches = [];
 
-      allKeys.forEach(k => {
-        const name = PRESETS[k].medicineName;
-        const lower = name.toLowerCase();
-        if (lower.startsWith(q)) {
-          startsWithMatches.push({ key: k, name });
-        } else if (lower.includes(q)) {
-          containsMatches.push({ key: k, name });
-        }
-      });
+        allKeys.forEach(k => {
+          const name = PRESETS[k].medicineName;
+          const lower = name.toLowerCase();
+          if (lower.startsWith(q)) {
+            startsWithMatches.push({ key: k, name });
+          } else if (lower.includes(q)) {
+            containsMatches.push({ key: k, name });
+          }
+        });
 
-      startsWithMatches.sort((a, b) => a.name.localeCompare(b.name));
-      containsMatches.sort((a, b) => a.name.localeCompare(b.name));
-      const matches = [...startsWithMatches, ...containsMatches];
+        startsWithMatches.sort((a, b) => a.name.localeCompare(b.name));
+        containsMatches.sort((a, b) => a.name.localeCompare(b.name));
+        matches = [...startsWithMatches, ...containsMatches];
+      }
 
       if (matches.length === 0) {
         searchResults.innerHTML = `<div class="preset-search-empty">Tiada ubat dijumpai untuk "${query}"</div>`;
@@ -2619,11 +2622,14 @@ function bindInputListeners() {
         return;
       }
 
-      const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(`(${escapedQ})`, 'ig');
+      let regex = null;
+      if (q.length > 0) {
+        const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        regex = new RegExp(`(${escapedQ})`, 'ig');
+      }
 
       searchResults.innerHTML = matches.map((m, idx) => {
-        const highlighted = m.name.replace(regex, '<mark>$1</mark>');
+        const highlighted = regex ? m.name.replace(regex, '<mark>$1</mark>') : m.name;
         return `<div class="preset-search-item ${idx === 0 ? 'active' : ''}" data-preset-key="${m.key}" data-idx="${idx}">${highlighted}</div>`;
       }).join("");
 
@@ -2636,6 +2642,7 @@ function bindInputListeners() {
           presetDropdown.value = key;
           presetDropdown.dispatchEvent(new Event("change"));
           searchInput.value = PRESETS[key].medicineName;
+          if (clearSearchBtn) clearSearchBtn.style.display = "block";
           searchResults.classList.add("hidden");
         });
       });
@@ -2646,14 +2653,33 @@ function bindInputListeners() {
     });
 
     searchInput.addEventListener("focus", (e) => {
-      if (e.target.value.trim().length >= 1) {
-        renderSearchMatches(e.target.value);
-      }
+      renderSearchMatches(e.target.value);
     });
+
+    searchInput.addEventListener("click", () => {
+      renderSearchMatches(searchInput.value);
+    });
+
+    if (togglePresetBtn) {
+      togglePresetBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (searchResults.classList.contains("hidden")) {
+          searchInput.focus();
+          renderSearchMatches("");
+        } else {
+          searchResults.classList.add("hidden");
+        }
+      });
+    }
 
     searchInput.addEventListener("keydown", (e) => {
       const items = searchResults.querySelectorAll(".preset-search-item");
-      if (searchResults.classList.contains("hidden") || items.length === 0) return;
+      if (searchResults.classList.contains("hidden") || items.length === 0) {
+        if (e.key === "ArrowDown") {
+          renderSearchMatches(searchInput.value);
+        }
+        return;
+      }
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -2685,7 +2711,7 @@ function bindInputListeners() {
     }
 
     document.addEventListener("click", (e) => {
-      if (!searchInput.contains(e.target) && !searchResults.contains(e.target) && e.target !== clearSearchBtn) {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target) && e.target !== clearSearchBtn && e.target !== togglePresetBtn) {
         searchResults.classList.add("hidden");
       }
     });
